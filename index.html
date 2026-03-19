@@ -123,15 +123,18 @@ select option{background:var(--mg)}
 .hc-right{display:flex;align-items:center;gap:6px;margin-left:auto;padding-right:8px;flex-wrap:wrap}
 .turbo-tag{padding:3px 9px;border-radius:12px;font-size:11px;cursor:pointer;border:1px solid rgba(255,200,0,0.25);color:var(--cream-m);background:transparent;font-family:'Kanit',sans-serif;transition:all .15s}
 .turbo-tag.on{background:rgba(255,200,0,0.12);border-color:rgba(255,200,0,0.5);color:#ffc800}
-.hc-players{display:flex;gap:7px;overflow-x:auto;padding:9px 8px}
-.score-widget{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;min-width:68px;max-width:120px}
-.sw-name{font-size:11px;color:var(--cream-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
-.sw-ctrl{display:flex;align-items:center;width:100%;border:1px solid rgba(200,168,75,0.25);border-radius:6px;overflow:hidden;background:var(--dg)}
-.sw-btn{width:34px;height:50px;background:none;border:none;color:var(--cream-m);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;user-select:none;-webkit-user-select:none}
-.sw-btn:active{background:rgba(200,168,75,0.15);color:var(--gold)}
-.sw-disp{flex:1;text-align:center;font-size:24px;font-weight:600;color:var(--cream);padding:7px 2px;user-select:none;-webkit-user-select:none;touch-action:none}
-.sw-disp.empty{font-size:18px;color:rgba(255,255,255,0.15)}
-.sw-badge{font-size:11px;height:16px;display:flex;align-items:center;justify-content:center;min-width:60px; border-radius:10px;}
+
+/* VERTICAL PLAYERS SCORING */
+.hc-players{display:flex; flex-direction:column; gap:8px; padding:12px 14px;}
+.score-widget{display:flex; flex-direction:row; align-items:center; justify-content:space-between; gap:10px; width:100%; background:rgba(0,0,0,0.2); padding:10px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);}
+.sw-name{font-size:15px; color:var(--cream); display:flex; flex-direction:column; align-items:flex-start; flex:1; overflow:hidden;}
+.sw-name span{margin-top:4px;}
+.sw-ctrl{display:flex; align-items:center; width:120px; border:1px solid rgba(200,168,75,0.25); border-radius:6px; overflow:hidden; background:var(--dg); flex-shrink:0;}
+.sw-btn{width:36px; height:44px; background:none; border:none; color:var(--cream-m); font-size:22px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; user-select:none; -webkit-user-select:none;}
+.sw-btn:active{background:rgba(200,168,75,0.15); color:var(--gold);}
+.sw-disp{flex:1; text-align:center; font-size:22px; font-weight:600; color:var(--cream); padding:5px 2px; user-select:none; -webkit-user-select:none; touch-action:none;}
+.sw-disp.empty{font-size:18px; color:rgba(255,255,255,0.15);}
+.sw-badge{font-size:12px; font-weight:500; display:flex; align-items:center; justify-content:flex-end; width:60px; flex-shrink:0;}
 .b-eagle{color:var(--gold)}
 .b-birdie{color:#5cc98a}
 .b-par{color:#ffd700}
@@ -175,29 +178,13 @@ select option{background:var(--mg)}
 .res-sub{font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:5px}
 .res-course{font-size:22px;color:var(--cream)}
 .res-date{font-size:14px;color:var(--cream-m);margin-top:3px}
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:20px}
-.p-card{background:var(--mg);border:1px solid var(--gold-d);border-radius:7px;padding:16px}
-.p-card.winner{border-color:var(--gold);background:linear-gradient(135deg,var(--mg),var(--lg))}
-.w-badge{display:inline-block;background:var(--gold-d);color:var(--cream);font-size:11px;letter-spacing:2px;padding:3px 11px;border-radius:20px;margin-bottom:7px}
-.r-badge{font-size:11px;color:var(--cream-m);letter-spacing:2px;margin-bottom:6px}
-.pc-name{font-size:20px;color:var(--cream);border-bottom:1px solid rgba(200,168,75,0.25);padding-bottom:9px;margin-bottom:10px}
-.st{display:flex;justify-content:space-between;padding:4px 0;font-size:15px}
-.sl{color:var(--cream-m)}.sr{color:var(--cream);font-weight:500}
-.net-val{color:var(--gold);font-size:24px;font-weight:600}
-.cd{height:1px;background:rgba(200,168,75,0.2);margin:9px 0}
-.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
-.badge{font-size:12px;padding:2px 9px;border-radius:20px}
-.be{background:var(--gold-d);color:var(--cream)}
-.bb{background:#1a4030;color:#5cc98a}
-.bp{background:rgba(255,215,0,0.2);color:#ffd700}
-.bbo{background:rgba(255,255,255,0.1);color:#ffffff}
-.bd{background:rgba(255,255,255,0.2);color:#ffffff}
-.f9b9{margin-top:9px;font-size:13px;color:var(--cream-m);border-top:1px solid rgba(255,255,255,0.07);padding-top:9px}
-.sc-sum{overflow-x:auto;margin-bottom:18px;border-radius:5px;border:1px solid var(--gold-d)}
-.sc-sum table{min-width:300px;width:100%;border-collapse:collapse}
-.sc-sum thead{background:var(--lg)}
-.sc-sum th{padding:8px 4px;font-size:12px;color:var(--gold);font-weight:500;text-align:center;border-bottom:1px solid var(--gold-d)}
-.sc-sum td{padding:5px 3px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px}
+
+/* RANKING ROW NEW */
+.rank-list{display:flex; flex-direction:column; gap:8px; margin-bottom:24px;}
+.rank-row{display:flex; align-items:center; background:linear-gradient(90deg, var(--mg), var(--dg)); border:1px solid var(--gold-d); border-radius:8px; padding:12px 16px;}
+.rank-num{font-size:22px; font-weight:600; color:var(--gold); width:45px; flex-shrink:0;}
+.rank-name{flex:1; font-size:16px; color:var(--cream); display:flex; flex-direction:column;}
+.rank-net{font-size:24px; font-weight:600; color:var(--win); flex-shrink:0; text-align:right;}
 
 .saved-game{background:var(--mg);border:1px solid var(--gold-d);border-radius:5px;padding:12px;margin-top:9px}
 .saved-players{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
@@ -263,9 +250,6 @@ select option{background:var(--mg)}
 @keyframes hIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
 @keyframes hBack{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
 
-@media(max-width:380px){
-  .sw-btn{width:28px;height:44px;font-size:20px}.sw-disp{font-size:21px}.score-widget{min-width:60px}
-}
 @media print{
   body{background:#fff;color:#111}.nav,.actions,#saving-ov{display:none!important}
   .hdr{background:#f4f0e8;border-bottom:2px solid #8a6e2a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -276,6 +260,12 @@ select option{background:var(--mg)}
 </head>
 <body>
 <div id="saving-ov"><div style="font-size:38px">⛳</div><div style="color:var(--gold);font-size:17px;letter-spacing:2px">กำลังประมวลผล...</div></div>
+
+<div id="resume-banner" style="background:#ffc800; color:#000; border-bottom:1px solid #c8a84b; padding:10px 16px; display:none; align-items:center; gap:12px; flex-wrap:wrap; font-weight:500;">
+  <span style="font-size:14px; flex:1">⚡ พบข้อมูลเกมค้างไว้ — ดึงข้อมูลกลับมาไหมครับ?</span>
+  <button onclick="resumeSession()" style="padding:7px 16px; background:#000; border:none; color:#ffc800; border-radius:4px; cursor:pointer; font-family:'Kanit',sans-serif; font-size:13px; font-weight:600;">▶ โหลดข้อมูลคืน</button>
+  <button onclick="clearSession()" style="padding:7px 14px; background:none; border:1px solid #000; color:#000; border-radius:4px; cursor:pointer; font-family:'Kanit',sans-serif; font-size:13px">✕ ปิด</button>
+</div>
 
 <div class="hdr">
   <div class="hdr-eyebrow">⛳ Golf Scorecard</div>
@@ -532,23 +522,24 @@ select option{background:var(--mg)}
 </div>
 
 <div class="screen" id="scr-money">
-  <div id="money-content"></div>
+  <div id="money-cap">
+    <div id="money-content"></div>
+  </div>
   <div class="actions" style="justify-content:center">
+    <button class="btn btn-primary" onclick="shareToLine('money-cap')" style="background:linear-gradient(135deg,#06c755,#05a546);border-color:#06c755;color:#fff">🟢 แชร์ลง LINE</button>
     <button class="btn" onclick="goTab('scorecard')">← กลับสกอร์</button>
-    <button class="btn btn-primary" onclick="saveAsImage()">📷 บันทึกรูป</button>
+    <button class="btn btn-primary" onclick="saveAsImage('money-cap')">📷 บันทึกรูป</button>
   </div>
 </div>
 
 <div class="screen" id="scr-results">
   <div id="cap"><div id="res-content"></div></div>
   <div class="actions">
-    <button class="btn btn-primary" onclick="shareToLine()" style="background:linear-gradient(135deg,#06c755,#05a546);border-color:#06c755;color:#fff">🟢 แชร์รูปลง LINE</button>
-    <button class="btn btn-primary" onclick="saveAsImage()">📷 บันทึกรูป</button>
-    <button class="btn" onclick="saveGame()">💾 บันทึกไว้ดูย้อนหลัง</button>
+    <button class="btn btn-primary" onclick="shareToLine('cap')" style="background:linear-gradient(135deg,#06c755,#05a546);border-color:#06c755;color:#fff">🟢 แชร์ลง LINE</button>
+    <button class="btn btn-primary" onclick="saveAsImage('cap')">📷 บันทึกรูป</button>
     <button class="btn" onclick="goTab('scorecard')">← แก้สกอร์</button>
     <button class="btn" onclick="newGame()">+ เกมใหม่</button>
   </div>
-  <div id="saved-section" style="margin-top:28px"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -879,6 +870,7 @@ function holeNav(dir){
   if(next<0||next>17)return;
   currentHole=next;
   showHole(currentHole,dir>0?'in':'back');
+  autoSave();
 }
 function showHole(h,dir='in'){
   currentHole=h;
@@ -963,7 +955,7 @@ function getTeamBadgeHTML(h, p) {
   if (!G.team.on) return '';
   const t = getTeamForHole(h, p);
   const c = t === 'A' ? 'background:#1a3a4a;border:1px solid #7ab8d8;color:#7ab8d8' : 'background:#4a1a1a;border:1px solid #d87a7a;color:#d87a7a';
-  return `<span style="display:inline-block;margin-left:5px;padding:2px 7px;border-radius:4px;font-size:10px;cursor:pointer;${c}" onclick="toggleTeamScorecard(${h},${p})">ทีม ${t} 🔄</span>`;
+  return `<span style="display:inline-block;margin-top:4px;padding:2px 7px;border-radius:4px;font-size:11px;cursor:pointer;${c}" onclick="toggleTeamScorecard(${h},${p})">ทีม ${t} 🔄</span>`;
 }
 
 // ── HOLE CARD (single) ──
@@ -971,10 +963,12 @@ function makeHoleCard(h){
   const div=document.createElement('div');
   div.className='hole-card';div.id=`hc-${h}`;
   const turboOn=isTurbo(h);
+  
+  // VERTICAL LAYOUT SCORE WIDGET
   const widgets=players.map((_,p)=>`
     <div class="score-widget" id="sw-${h}-${p}">
       <div class="sw-name">${players[p].name} <span id="tb-${h}-${p}">${getTeamBadgeHTML(h, p)}</span></div>
-      <div class="sw-ctrl" id="swc-${h}-${p}" style="margin-top:4px;">
+      <div class="sw-ctrl" id="swc-${h}-${p}">
         <button class="sw-btn" onpointerdown="startRpt(${h},${p},-1)" onpointerup="stopRpt()" onpointerleave="stopRpt()">−</button>
         <div class="sw-disp empty" id="swd-${h}-${p}" data-h="${h}" data-p="${p}"
           ontouchstart="sws(event,${h},${p})" ontouchmove="swm(event,${h},${p})" ontouchend="swe(event,${h},${p})">—</div>
@@ -1605,44 +1599,81 @@ function buildResults(){
   const sorted=[...stats].sort((a,b)=>a.net-b.net);
   const ds=fmtDate(document.getElementById('game-date').value);
   const cn=document.getElementById('course-name').value;
-  const gr=calcAll();
 
-  const GN={skin:'สกิน',bite:'หมากัด',stableford:'Stableford',team:G.team.swapType==='domo'?'ทีม (โดโมะ)':G.team.swapType!=='fixed'?`ทีมสลับ(${G.team.swapType})`:'ทีม',updown:'จดแต้',doubleRe:'เบิ้ล-รี'};
-  const activeG=Object.keys(GN).filter(k=>gr[k]);
-  let moneyHTML='';
-  if(activeG.length){
-    const hdrs=activeG.map(k=>`<th>${GN[k]}</th>`).join('')+`<th style="color:var(--gold-l)">รวม ฿</th>`;
-    const rows=players.map((pl,p)=>{
-      const cells=activeG.map(k=>`<td>${fmtM(gr[k][p])}</td>`).join('');
-      return`<tr><td>${pl.name}</td>${cells}<td style="font-size:16px">${fmtM(gr.total[p])}</td></tr>`;
-    }).join('');
-    moneyHTML=`
-      <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">สรุปเงินพนัน <span style="color:var(--cream-m);font-weight:300">(+ได้ สีเขียว / −เสีย สีแดง)</span></div>
-      <div class="money-wrap"><table class="money-tbl">
-        <thead><tr><th>ผู้เล่น</th>${hdrs}</tr></thead>
-        <tbody>${rows}<tr>${['',  ...activeG.map(()=>''), ''].map((_,ci)=>ci===0?`<td>รวม</td>`:ci<=activeG.length?`<td></td>`:`<td></td>`).join('')}</tr></tbody>
-      </table></div>`;
-  }
+  const f9Par = pars.slice(0,9).reduce((a,b)=>a+b,0);
+  const b9Par = pars.slice(9).reduce((a,b)=>a+b,0);
 
-  const vertSumRows = Array.from({length:18}, (_, h) => {
-    return `<tr>
-      <td style="text-align:center; padding:10px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px;">${h+1}</td>
-      <td style="text-align:center; padding:10px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px;">${pars[h]}</td>
-      ${players.map((pl, p) => {
-         const s = scores[p][h];
-         if (s === null) return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.2)">—</td>`;
-         const d = s - pars[h];
-         let sy = '';
-         if (d <= -2) sy = 'background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
-         else if (d === -1) sy = 'background:#1a4a2e;color:#5cc98a;border-radius:50%';
-         else if (d === 0) sy = 'background:rgba(255,215,0,0.2);color:#ffd700;border-radius:50%'; // Par = Yellow
-         else sy = 'background:transparent;color:#ffffff'; // Others = White
-         return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05)">
-                   <span style="display:inline-block;width:32px;height:32px;line-height:32px;text-align:center;font-size:18px;${sy}">${s}</span>
-                 </td>`;
-      }).join('')}
-    </tr>`;
-  }).join('');
+  // WIDE HORIZONTAL TABLE SCORECARD (Classic Style)
+  let horizTable = `
+    <div class="sc-sum" style="overflow-x: auto;">
+      <table style="width:100%; border-collapse:collapse; white-space:nowrap; min-width:800px;">
+        <thead style="background:var(--lg)">
+          <tr>
+            <th style="padding:10px 8px; color:var(--gold); border:1px solid rgba(200,168,75,0.3); text-align:left;">Hole</th>
+            ${Array.from({length:9}, (_,i)=>`<th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--gold);">${i+1}</th>`).join('')}
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream);">OUT</th>
+            ${Array.from({length:9}, (_,i)=>`<th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--gold);">${i+10}</th>`).join('')}
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream);">IN</th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--gold);">TOT</th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream-m);">HCP</th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--win);">NET</th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:#5cc98a;">เบอร์ดี้</th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:#ffd700;">พาร์</th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:#ffffff;">โบกี้+</th>
+          </tr>
+          <tr style="background:rgba(0,0,0,0.3)">
+            <th style="padding:10px 8px; color:var(--cream-m); border:1px solid rgba(200,168,75,0.3); text-align:left;">Par</th>
+            ${pars.slice(0,9).map(p=>`<th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream-m);">${p}</th>`).join('')}
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream);">${f9Par}</th>
+            ${pars.slice(9).map(p=>`<th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream-m);">${p}</th>`).join('')}
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream);">${b9Par}</th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--gold);">${tp}</th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
+            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${stats.map((st, i) => {
+            const trBg = i%2===0 ? 'background:rgba(255,255,255,0.02)' : 'background:transparent';
+            
+            const renderCells = (start, end) => {
+              return Array.from({length: end-start}, (_, j) => {
+                const h = start + j;
+                const s = scores[st.p][h];
+                if(s===null) return `<td style="text-align:center; border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.2)">—</td>`;
+                const d = s - pars[h];
+                let sy = '';
+                if (d <= -2) sy = 'background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
+                else if (d === -1) sy = 'background:#1a4a2e;color:#5cc98a;border-radius:50%';
+                else if (d === 0) sy = 'background:rgba(255,215,0,0.2);color:#ffd700;border-radius:50%';
+                else sy = 'background:transparent;color:#ffffff';
+                return `<td style="text-align:center; border:1px solid rgba(255,255,255,0.1); padding:4px;">
+                          <span style="display:inline-block;width:28px;height:28px;line-height:28px;text-align:center;font-size:15px;${sy}">${s}</span>
+                        </td>`;
+              }).join('');
+            };
+
+            return `<tr style="${trBg}">
+              <td style="padding:10px 8px; border:1px solid rgba(255,255,255,0.1); text-align:left; color:var(--cream); font-size:15px;">${st.name}</td>
+              ${renderCells(0, 9)}
+              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); font-weight:500; font-size:16px;">${st.filled ? st.f9 : '—'}</td>
+              ${renderCells(9, 18)}
+              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); font-weight:500; font-size:16px;">${st.filled ? st.b9 : '—'}</td>
+              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); font-weight:bold; color:var(--gold); font-size:17px;">${st.filled ? st.tot : '—'}</td>
+              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:var(--cream-m); font-size:15px;">${st.hcp}</td>
+              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); font-weight:bold; color:var(--win); font-size:17px;">${st.filled ? st.net : '—'}</td>
+              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:#5cc98a; font-weight:500;">${st.e + st.bi}</td>
+              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:#ffd700; font-weight:500;">${st.pa}</td>
+              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:#ffffff; font-weight:500;">${st.bo + st.db}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
 
   document.getElementById('res-content').innerHTML=`
     <div class="res-hdr">
@@ -1650,66 +1681,20 @@ function buildResults(){
       <div class="res-course">⛳ ${cn}</div>
       <div class="res-date">${ds}</div>
     </div>
-    <div class="cards-grid">
-      ${sorted.map((st,rk)=>`
-        <div class="p-card${rk===0&&st.filled?' winner':''}">
-          ${rk===0&&st.filled?'<div class="w-badge">🏆 CHAMPION</div>':`<div class="r-badge">RANK #${rk+1}</div>`}
-          <div class="pc-name">${st.name}</div>
-          <div class="st"><span class="sl">Total Score</span><span class="sr">${st.filled?st.tot:'—'}</span></div>
-          <div class="st"><span class="sl">+/− Par</span><span class="sr" style="color:${st.pm<0?'var(--win)':st.pm>0?'var(--lose)':'var(--cream-d)'}">
-            ${st.filled?(st.pm<0?st.pm:st.pm>0?'+'+st.pm:'E'):'—'}</span></div>
-          <div class="st"><span class="sl">Handicap</span><span class="sr">−${st.hcp}</span></div>
-          <div class="cd"></div>
-          <div class="st"><span class="sl">Net Score</span><span class="net-val">${st.filled?st.net:'—'}</span></div>
-          ${gr.total&&gr.total[st.p]!==0?`<div class="st"><span class="sl">เงินพนัน</span>
-            <span class="sr" style="color:${gr.total[st.p]>0?'var(--win)':'var(--lose)'};font-size:17px">${gr.total[st.p]>0?'+'+gr.total[st.p]:gr.total[st.p]}฿</span></div>`:''}
-          <div class="badges">
-            ${st.e?`<span class="badge be">Eagle ×${st.e}</span>`:''}
-            ${st.bi?`<span class="badge bb">Birdie ×${st.bi}</span>`:''}
-            ${st.pa?`<span class="badge bp">Par ×${st.pa}</span>`:''}
-            ${st.bo?`<span class="badge bbo">Bogey ×${st.bo}</span>`:''}
-            ${st.db?`<span class="badge bd">Dbl+ ×${st.db}</span>`:''}
-          </div>
-          <div class="f9b9">F9: ${st.filled?st.f9:'—'} &nbsp;|&nbsp; B9: ${st.filled?st.b9:'—'}</div>
-        </div>`).join('')}
-    </div>
-    ${moneyHTML}
-    <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">สกอร์แต่ละหลุม</div>
     
-    <div class="sc-sum">
-      <table style="width:100%; border-collapse:collapse;">
-        <thead style="background:var(--lg)">
-          <tr>
-            <th style="padding:10px 4px; color:var(--gold); font-size:13px; border-bottom:1px solid var(--gold-d);">หลุม</th>
-            <th style="padding:10px 4px; color:var(--gold); font-size:13px; border-bottom:1px solid var(--gold-d);">Par</th>
-            ${players.map(p => `<th style="padding:10px 4px; color:var(--gold); font-size:13px; border-bottom:1px solid var(--gold-d);">${p.name}</th>`).join('')}
-          </tr>
-        </thead>
-        <tbody>
-          ${vertSumRows}
-          <tr style="background:rgba(255,255,255,0.03)">
-            <td style="text-align:center; padding:10px 4px; font-size:14px; color:var(--cream-m)">F9</td>
-            <td style="text-align:center; padding:10px 4px; font-size:14px; color:var(--cream-m)">${pars.slice(0,9).reduce((a,b)=>a+b,0)}</td>
-            ${stats.map(st => `<td style="text-align:center; padding:10px 4px; font-weight:500; font-size:16px;">${st.filled?st.f9:'—'}</td>`).join('')}
-          </tr>
-          <tr style="background:rgba(255,255,255,0.03)">
-            <td style="text-align:center; padding:10px 4px; font-size:14px; color:var(--cream-m)">B9</td>
-            <td style="text-align:center; padding:10px 4px; font-size:14px; color:var(--cream-m)">${pars.slice(9).reduce((a,b)=>a+b,0)}</td>
-            ${stats.map(st => `<td style="text-align:center; padding:10px 4px; font-weight:500; font-size:16px;">${st.filled?st.b9:'—'}</td>`).join('')}
-          </tr>
-          <tr style="background:rgba(200,168,75,0.1)">
-            <td style="text-align:center; padding:12px 4px; font-size:15px; color:var(--gold)">รวม</td>
-            <td style="text-align:center; padding:12px 4px; font-size:15px; color:var(--gold)">${tp}</td>
-            ${stats.map(st => `<td style="text-align:center; padding:12px 4px; font-weight:600; color:var(--cream); font-size:18px;">${st.filled?st.tot:'—'}</td>`).join('')}
-          </tr>
-          <tr style="background:rgba(200,168,75,0.2)">
-            <td style="text-align:center; padding:12px 4px; font-size:15px; color:var(--gold)">Net</td>
-            <td style="text-align:center; padding:12px 4px;"></td>
-            ${stats.map(st => `<td style="text-align:center; padding:12px 4px; font-weight:600; color:var(--gold); font-size:18px;">${st.filled?st.net:'—'}</td>`).join('')}
-          </tr>
-        </tbody>
-      </table>
+    <div class="rank-list">
+      ${sorted.map((st,rk)=>`
+        <div class="rank-row">
+          <div class="rank-num">#${rk+1}</div>
+          <div class="rank-name">${st.name} <span style="font-size:12px;color:var(--cream-m);margin-top:2px;">HCP ${st.hcp}</span></div>
+          <div class="rank-net">${st.filled?st.net:'—'}</div>
+        </div>
+      `).join('')}
     </div>
+
+    <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">สกอร์บอร์ด และสถิติ</div>
+    
+    ${horizTable}
 
     <div style="text-align:center;padding:14px 0 3px;font-size:12px;color:var(--cream-m);letter-spacing:2px">SRIKRUNG GOLF DAY · ${ds}</div>
     ${G.srikrungDay.on?`
@@ -1861,19 +1846,14 @@ function buildMoney(){
     </div>`;
 }
 
-function goResults(){
-  if(!gameStarted){alert('กรุณาตั้งค่าและเริ่มเกมก่อนครับ');return;}
-  buildResults();renderSaved();goTab('results');
-}
-
 // ── SAVE & SHARE ──
-function saveAsImage(){
+function saveAsImage(targetId = 'cap'){
   if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
   const ov=document.getElementById('saving-ov');
   ov.querySelector('div:last-child').textContent = 'กำลังบันทึกภาพ...';
   ov.classList.add('show');
   setTimeout(()=>{
-    html2canvas(document.getElementById('cap'),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false})
+    html2canvas(document.getElementById(targetId),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false})
     .then(c=>{
       ov.classList.remove('show');
       const a=document.createElement('a');
@@ -1883,14 +1863,14 @@ function saveAsImage(){
   },300);
 }
 
-async function shareToLine(){
+async function shareToLine(targetId = 'cap'){
   if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
   const ov=document.getElementById('saving-ov');
   ov.querySelector('div:last-child').textContent = 'กำลังเตรียมรูปภาพ...';
   ov.classList.add('show');
   
   try {
-    const canvas = await html2canvas(document.getElementById('cap'),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false});
+    const canvas = await html2canvas(document.getElementById(targetId),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false});
     canvas.toBlob(async (blob) => {
       const file = new File([blob], 'srikrung-scorecard.png', { type: 'image/png' });
       ov.classList.remove('show');
@@ -1979,18 +1959,28 @@ function saveSession(){
 }
 function clearSession(){
   try{localStorage.removeItem(SESSION_KEY);}catch(e){}
+  document.getElementById('resume-banner').style.display='none';
 }
-function checkSessionAndAutoLoad(){
+function checkSession(){
   try{
     const raw=localStorage.getItem(SESSION_KEY);
     if(raw){
       const data=JSON.parse(raw);
-      if (data.v !== 2) { clearSession(); return; } // Force fresh start to prevent bugs from old versions
+      // ถ้าเปิดมาเจอข้อมูลเก่า ให้แสดงปุ่มเหลืองถามว่าจะดึงคืนไหม
       if(data.gameStarted) {
-        applySession(data);
+        const banner=document.getElementById('resume-banner');
+        banner.style.display='flex';
       }
     }
   }catch(e){}
+}
+function resumeSession(){
+  try{
+    const raw=localStorage.getItem(SESSION_KEY);
+    if(!raw)return;
+    applySession(JSON.parse(raw));
+    document.getElementById('resume-banner').style.display='none';
+  }catch(e){alert('โหลดข้อมูลไม่สำเร็จครับ');}
 }
 function applySession(data){
   pars=[...data.pars];
@@ -2007,7 +1997,6 @@ function applySession(data){
     }
   });
 
-  // Ensure new properties exist for backward compatibility 
   if(!G.team.baseTeams || G.team.baseTeams.length === 0) G.team.baseTeams = Array(10).fill('A');
   if(!G.team.domoTeams || G.team.domoTeams.length === 0) G.team.domoTeams = Array(18).fill(null).map(() => Array(10).fill('A'));
 
@@ -2038,39 +2027,10 @@ function applySession(data){
   updateHdrInfo();
 }
 
-function exportSession(){
-  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
-  const data=getSessionData();
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  const date=document.getElementById('game-date').value||'session';
-  a.download=`srikrung-golf-v2-${date}.json`;
-  a.href=URL.createObjectURL(blob);a.click();
-}
-function importSession(){
-  document.getElementById('import-file').click();
-}
-function handleImport(e){
-  const file=e.target.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=ev=>{
-    try{
-      const data=JSON.parse(ev.target.result);
-      if(!data.pars||!data.players){alert('ไฟล์ไม่ถูกต้องครับ');return;}
-      if(confirm(`โหลด session: ${data.courseName||'?'} (${data.players?.length||0} คน)\nดำเนินการต่อไหมครับ?`)){
-        applySession(data);
-        localStorage.setItem(SESSION_KEY,JSON.stringify(data));
-      }
-    }catch(err){alert('อ่านไฟล์ไม่ได้ครับ');}
-  };
-  reader.readAsText(file);
-  e.target.value='';
-}
-
 // Auto-save hook
 function autoSave(){saveSession();}
 
-window.addEventListener('load',()=>checkSessionAndAutoLoad());
+window.addEventListener('load',()=>checkSession());
 
 </script>
 </body>
