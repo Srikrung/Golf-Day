@@ -51,6 +51,7 @@ select option{background:var(--mg)}
 .player-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;padding:12px 14px;background:var(--mg);border:1px solid rgba(200,168,75,0.2);border-radius:5px}
 .p-num{width:26px;height:26px;border-radius:50%;background:var(--gold-d);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--cream);flex-shrink:0}
 .p-name-input{flex:1;min-width:120px}
+.p-name-input::placeholder {color:rgba(255,255,255,0.3);}
 .p-label{font-size:13px;color:var(--cream-m);flex-shrink:0}
 .par-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:5px}
 .par-hole{text-align:center}
@@ -274,7 +275,7 @@ select option{background:var(--mg)}
 </style>
 </head>
 <body>
-<div id="saving-ov"><div style="font-size:38px">⛳</div><div style="color:var(--gold);font-size:17px;letter-spacing:2px">กำลังประมวลผลภาพ...</div></div>
+<div id="saving-ov"><div style="font-size:38px">⛳</div><div style="color:var(--gold);font-size:17px;letter-spacing:2px">กำลังประมวลผล...</div></div>
 
 <div class="hdr">
   <div class="hdr-eyebrow">⛳ Golf Scorecard</div>
@@ -541,7 +542,7 @@ select option{background:var(--mg)}
 <div class="screen" id="scr-results">
   <div id="cap"><div id="res-content"></div></div>
   <div class="actions">
-    <button class="btn btn-primary" onclick="shareToLine()">🟢 แชร์รูปลง LINE</button>
+    <button class="btn btn-primary" onclick="shareToLine()" style="background:linear-gradient(135deg,#06c755,#05a546);border-color:#06c755;color:#fff">🟢 แชร์รูปลง LINE</button>
     <button class="btn btn-primary" onclick="saveAsImage()">📷 บันทึกรูป</button>
     <button class="btn" onclick="saveGame()">💾 บันทึกไว้ดูย้อนหลัง</button>
     <button class="btn" onclick="goTab('scorecard')">← แก้สกอร์</button>
@@ -677,7 +678,6 @@ let G={
 let olympicData=Array(18).fill(null).map(()=>({order:[],status:{}}));
 let sgdData=[];
 function initSGD(){
-  // ตั้งค่า putts เริ่มต้นให้เป็น 1 ตามรีเควสต์
   sgdData=players.map(()=>Array(18).fill(null).map(()=>({fw:null,gir:null,putts:1})));
 }
 
@@ -729,9 +729,11 @@ function renderPlayerRows(){
   const prev=[...wrap.querySelectorAll('.player-row')].map(r=>({name:r.querySelector('.pn').value,hcp:r.querySelector('.ph').value}));
   wrap.innerHTML='';
   for(let i=0;i<n;i++){
+    const defName = `ผู้เล่น ${i+1}`;
+    const vName = (prev[i]?.name && prev[i].name !== defName) ? prev[i].name : '';
     wrap.innerHTML+=`<div class="player-row" style="display:flex;align-items:center;gap:8px;padding:10px 12px;flex-wrap:wrap">
       <div class="p-num">${i+1}</div>
-      <input type="text" class="pn p-name-input" value="${prev[i]?.name||''}" placeholder="ผู้เล่น ${i+1}" style="flex:1;min-width:120px">
+      <input type="text" class="pn p-name-input" value="${vName}" placeholder="${defName}" style="flex:1;min-width:120px">
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
         <span style="font-size:12px;color:var(--cream-m)">HCP</span>
         <input type="number" class="ph" min="0" max="54" value="${prev[i]?.hcp||'0'}" style="width:58px;text-align:center">
@@ -747,7 +749,7 @@ function renderTeamAssign(){
   if(!el)return;
   el.innerHTML='';
   for(let i=0;i<n;i++){
-    const nm=names[i]?.value.trim()||`ผู้เล่น ${i+1}`;
+    const nm=names[i]?.value.trim()||names[i]?.placeholder||`ผู้เล่น ${i+1}`;
     const t=G.team.teams[i] || (i%2===0?'A':'B');
     el.innerHTML+=`<div class="ta-row">
       <div class="ta-name">${nm}</div>
@@ -841,6 +843,7 @@ function startGame(){
     updateHdrInfo();
     autoSave();
   } catch(e) {
+    console.error(e);
     alert("เกิดข้อผิดพลาดในการโหลด กรุณารีเฟรชหน้าเว็บ");
   }
 }
@@ -884,7 +887,6 @@ function showHole(h,dir='in'){
   card.className='hole-card '+(dir==='in'?'hole-in':'hole-back');
   wrap.innerHTML='';wrap.appendChild(card);
   
-  // RESTORE SCORES VISUALLY
   players.forEach((_, p) => refWidget(h, p));
 
   if(G.olympic.on&&olympicData[h]&&(olympicData[h].order.length>0||Object.keys(olympicData[h].status).length>0)){
@@ -912,6 +914,7 @@ function updateScoreStrip(){
       <span class="strip-net">Net</span>
     </div>
     ${players.map((pl,p)=>{
+      if(!scores[p]) return '';
       const f9=scores[p].slice(0,9).reduce((a,b)=>a+(b||0),0);
       const b9=scores[p].slice(9).reduce((a,b)=>a+(b||0),0);
       const filledF=scores[p].slice(0,9).filter(s=>s!==null).length;
@@ -1072,7 +1075,7 @@ function sgdGIR(h,p){
 }
 function sgdPutt(h,p,dir){
   const d=sgdData[p][h];
-  if(d.putts===null)d.putts=1; // Start at 1
+  if(d.putts===null)d.putts=1; 
   else d.putts=Math.max(0,d.putts+dir);
   sgdRefresh(h,p);autoSave();
 }
@@ -1093,7 +1096,7 @@ function sgdRefresh(h,p){
   const pv=document.getElementById(`sgd-pv-${h}-${p}`);
   const pl=document.getElementById(`sgd-putt-lbl-${h}-${p}`);
   if(pv){
-    if(d.putts===null){pv.textContent='1';} // Visual default
+    if(d.putts===null){pv.textContent='1';} 
     else{pv.textContent=d.putts;}
   }
   if(pl){
@@ -1110,7 +1113,6 @@ function sgdSummary(){
       const d=sgdData[p]?.[h];if(!d)continue;
       if(pars[h]!==3){fwTotal++;if(d.fw===true)fw++;}
       girTotal++;if(d.gir===true)gir++;
-      // Since default is technically 1 putts, calculate it if played
       if(scores[p] && scores[p][h]!==null) {
          const pVal = d.putts !== null ? d.putts : 1; 
          putts += pVal;
@@ -1171,6 +1173,7 @@ function chPar(h,d){
 // SCORE
 let rptT=null,rptI=null;
 function chScore(h,p,d){
+  if(!scores[p]) return;
   if(scores[p][h]===null)scores[p][h]=pars[h]+d;
   else scores[p][h]=Math.max(1,Math.min(20,scores[p][h]+d));
   refWidget(h,p);updateTotals();autoSave();
@@ -1186,10 +1189,11 @@ function swm(e,h,p){
 }
 function swe(e,h,p){
   const k=`${h}_${p}`;
-  if(SD[k]&&!SD[k].mv&&scores[p][h]===null){scores[p][h]=pars[h];refWidget(h,p);updateTotals();}
+  if(SD[k]&&!SD[k].mv&&scores[p]&&scores[p][h]===null){scores[p][h]=pars[h];refWidget(h,p);updateTotals();}
   delete SD[k];
 }
 function refWidget(h,p){
+  if(!scores[p]) return;
   const v=scores[p][h];
   const disp=document.getElementById(`swd-${h}-${p}`);
   const ctrl=document.getElementById(`swc-${h}-${p}`);
@@ -1203,7 +1207,6 @@ function refWidget(h,p){
   disp.textContent=v;disp.className='sw-disp';
   const d=v-pars[h];
   
-  // COLOR RULES: Birdie=Green, Par=Yellow, Others=White
   const CSS={
     'e':{b:'var(--gold)',bg:'#1a1200',c:'var(--gold)'},
     'bi':{b:'#2d6a4f',bg:'#071a0f',c:'#5cc98a'},
@@ -1604,7 +1607,6 @@ function buildResults(){
   const cn=document.getElementById('course-name').value;
   const gr=calcAll();
 
-  // GAME NAMES
   const GN={skin:'สกิน',bite:'หมากัด',stableford:'Stableford',team:G.team.swapType==='domo'?'ทีม (โดโมะ)':G.team.swapType!=='fixed'?`ทีมสลับ(${G.team.swapType})`:'ทีม',updown:'จดแต้',doubleRe:'เบิ้ล-รี'};
   const activeG=Object.keys(GN).filter(k=>gr[k]);
   let moneyHTML='';
@@ -1622,7 +1624,6 @@ function buildResults(){
       </table></div>`;
   }
 
-  // BIGGER VERTICAL SCORECARD 
   const vertSumRows = Array.from({length:18}, (_, h) => {
     return `<tr>
       <td style="text-align:center; padding:10px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px;">${h+1}</td>
@@ -1634,8 +1635,8 @@ function buildResults(){
          let sy = '';
          if (d <= -2) sy = 'background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
          else if (d === -1) sy = 'background:#1a4a2e;color:#5cc98a;border-radius:50%';
-         else if (d === 1) sy = 'background:#5a1e1e;color:#ffffff';
-         else if (d >= 2) sy = 'background:#3a0e0e;color:#ffffff';
+         else if (d === 0) sy = 'background:rgba(255,215,0,0.2);color:#ffd700;border-radius:50%'; // Par = Yellow
+         else sy = 'background:transparent;color:#ffffff'; // Others = White
          return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05)">
                    <span style="display:inline-block;width:32px;height:32px;line-height:32px;text-align:center;font-size:18px;${sy}">${s}</span>
                  </td>`;
@@ -1749,84 +1750,6 @@ function buildResults(){
     </div>`;
 }
 
-// ── SAVE & SHARE ──
-function saveAsImage(){
-  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
-  const ov=document.getElementById('saving-ov');ov.classList.add('show');
-  setTimeout(()=>{
-    html2canvas(document.getElementById('cap'),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false})
-    .then(c=>{
-      ov.classList.remove('show');
-      const a=document.createElement('a');
-      a.download=`${(document.getElementById('course-name').value||'golf').replace(/\s+/g,'-')}-${document.getElementById('game-date').value||'day'}.png`;
-      a.href=c.toDataURL('image/png');a.click();
-      setTimeout(()=>alert('ระบบทำการดาวน์โหลดรูปภาพลงเครื่องแล้วครับ'), 500);
-    }).catch(()=>{ov.classList.remove('show');alert('เกิดข้อผิดพลาดในการบันทึกรูปภาพ');});
-  },300);
-}
-
-function shareToLine(){
-  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
-  const ov=document.getElementById('saving-ov');
-  ov.querySelector('div:last-child').textContent = 'กำลังเตรียมรูปภาพสำหรับแชร์...';
-  ov.classList.add('show');
-  
-  setTimeout(()=>{
-    html2canvas(document.getElementById('cap'),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false})
-    .then(async c=>{
-      ov.classList.remove('show');
-      ov.querySelector('div:last-child').textContent = 'กำลังบันทึกภาพ...'; // reset text
-      
-      c.toBlob(async (blob) => {
-        const file = new File([blob], 'srikrung-golf-scorecard.png', { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          try {
-            await navigator.share({
-              files: [file],
-              title: 'Srikrung Golf Scorecard',
-              text: 'สรุปผลคะแนนกอล์ฟวันนี้ครับ ⛳'
-            });
-          } catch(e) { console.log('Share canceled or failed', e); }
-        } else {
-          alert('เบราว์เซอร์ของคุณไม่รองรับการแชร์รูปภาพโดยตรง กรุณากดปุ่ม "📷 บันทึกรูป" แล้วส่งใน LINE ครับ');
-        }
-      }, 'image/png');
-    }).catch(()=>{ov.classList.remove('show');});
-  },300);
-}
-
-function saveGame(){
-  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
-  const tp=totPar();
-  savedGames.push({
-    id:Date.now(),date:fmtDate(document.getElementById('game-date').value),
-    course:document.getElementById('course-name').value,
-    players:players.map((pl,p)=>({name:pl.name,hcp:pl.hcp,
-      tot:scores[p].reduce((a,b)=>a+(b||0),0),
-      net:scores[p].reduce((a,b)=>a+(b||0),0)-pl.hcp,
-      pm:scores[p].reduce((a,b)=>a+(b||0),0)-tp}))
-  });
-  renderSaved();
-  alert('บันทึกสกอร์ไว้ดูย้อนหลังสำเร็จครับ');
-}
-function renderSaved(){
-  if(!savedGames.length)return;
-  document.getElementById('saved-section').innerHTML=`
-    <div style="font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">ผลที่บันทึกไว้ (${savedGames.length} เกม)</div>
-    ${savedGames.map(g=>`<div class="saved-game">
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px">
-        <span style="color:var(--gold);font-size:15px">${g.course}</span>
-        <span style="color:var(--cream-m);font-size:13px">${g.date}</span>
-      </div>
-      <div class="saved-players">
-        ${g.players.sort((a,b)=>a.net-b.net).map((p,r)=>`
-          <div class="saved-p">${r===0?'🏆 ':''}${p.name}: <strong>${p.net}</strong>
-            <span style="color:var(--cream-m);font-size:11px">(${p.pm>=0?'+':''}${p.pm})</span>
-          </div>`).join('')}
-      </div></div>`).join('')}`;
-}
-
-// ── NAV ──
 function goTab(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
@@ -1894,7 +1817,6 @@ function buildMoney(){
       </div>`;
   });
 
-  // รูปแบบโอนเงินใหม่ ให้อ่านง่าย
   let transfers='';
   const bal=[...gr.total];
   const debtors=[];
@@ -1939,6 +1861,87 @@ function buildMoney(){
     </div>`;
 }
 
+function goResults(){
+  if(!gameStarted){alert('กรุณาตั้งค่าและเริ่มเกมก่อนครับ');return;}
+  buildResults();renderSaved();goTab('results');
+}
+
+// ── SAVE & SHARE ──
+function saveAsImage(){
+  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
+  const ov=document.getElementById('saving-ov');
+  ov.querySelector('div:last-child').textContent = 'กำลังบันทึกภาพ...';
+  ov.classList.add('show');
+  setTimeout(()=>{
+    html2canvas(document.getElementById('cap'),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false})
+    .then(c=>{
+      ov.classList.remove('show');
+      const a=document.createElement('a');
+      a.download=`${(document.getElementById('course-name').value||'golf').replace(/\s+/g,'-')}-${document.getElementById('game-date').value||'day'}.png`;
+      a.href=c.toDataURL('image/png');a.click();
+    }).catch(()=>{ov.classList.remove('show');alert('เกิดข้อผิดพลาดในการบันทึกรูปภาพ');});
+  },300);
+}
+
+async function shareToLine(){
+  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
+  const ov=document.getElementById('saving-ov');
+  ov.querySelector('div:last-child').textContent = 'กำลังเตรียมรูปภาพ...';
+  ov.classList.add('show');
+  
+  try {
+    const canvas = await html2canvas(document.getElementById('cap'),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false});
+    canvas.toBlob(async (blob) => {
+      const file = new File([blob], 'srikrung-scorecard.png', { type: 'image/png' });
+      ov.classList.remove('show');
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'Srikrung Golf Scorecard'
+          });
+        } catch(e) { console.log(e); }
+      } else {
+        alert('มือถือหรือเบราว์เซอร์นี้ไม่รองรับการส่งรูปแบบด่วน กรุณากด "บันทึกรูป" แล้วแชร์เองในแอปพลิเคชัน LINE ครับ');
+      }
+    }, 'image/png');
+  } catch(e) {
+    ov.classList.remove('show');
+    alert('เกิดข้อผิดพลาดในการสร้างรูปภาพ');
+  }
+}
+
+function saveGame(){
+  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
+  const tp=totPar();
+  savedGames.push({
+    id:Date.now(),date:fmtDate(document.getElementById('game-date').value),
+    course:document.getElementById('course-name').value,
+    players:players.map((pl,p)=>({name:pl.name,hcp:pl.hcp,
+      tot:scores[p].reduce((a,b)=>a+(b||0),0),
+      net:scores[p].reduce((a,b)=>a+(b||0),0)-pl.hcp,
+      pm:scores[p].reduce((a,b)=>a+(b||0),0)-tp}))
+  });
+  renderSaved();
+  alert('บันทึกสกอร์ไว้ดูย้อนหลังสำเร็จครับ');
+}
+function renderSaved(){
+  if(!savedGames.length)return;
+  document.getElementById('saved-section').innerHTML=`
+    <div style="font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">ผลที่บันทึกไว้ (${savedGames.length} เกม)</div>
+    ${savedGames.map(g=>`<div class="saved-game">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+        <span style="color:var(--gold);font-size:15px">${g.course}</span>
+        <span style="color:var(--cream-m);font-size:13px">${g.date}</span>
+      </div>
+      <div class="saved-players">
+        ${g.players.sort((a,b)=>a.net-b.net).map((p,r)=>`
+          <div class="saved-p">${r===0?'🏆 ':''}${p.name}: <strong>${p.net}</strong>
+            <span style="color:var(--cream-m);font-size:11px">(${p.pm>=0?'+':''}${p.pm})</span>
+          </div>`).join('')}
+      </div></div>`).join('')}`;
+}
+
 function newGame(){
   if(!confirm('เริ่มเกมใหม่? ข้อมูลปัจจุบันจะถูกลบทั้งหมด'))return;
   gameStarted=false;players=[];scores=[];currentHole=0;
@@ -1958,7 +1961,7 @@ function updateHdrInfo(){
 const SESSION_KEY='srikrung_golf_v2';
 function getSessionData(){
   return{
-    v:1,ts:Date.now(),
+    v:2,ts:Date.now(),
     courseName:document.getElementById('course-name').value,
     gameDate:document.getElementById('game-date').value,
     pars:[...pars],players:JSON.parse(JSON.stringify(players)),
@@ -1982,6 +1985,7 @@ function checkSessionAndAutoLoad(){
     const raw=localStorage.getItem(SESSION_KEY);
     if(raw){
       const data=JSON.parse(raw);
+      if (data.v !== 2) { clearSession(); return; } // Force fresh start to prevent bugs from old versions
       if(data.gameStarted) {
         applySession(data);
       }
@@ -2003,8 +2007,26 @@ function applySession(data){
     }
   });
 
+  // Ensure new properties exist for backward compatibility 
+  if(!G.team.baseTeams || G.team.baseTeams.length === 0) G.team.baseTeams = Array(10).fill('A');
+  if(!G.team.domoTeams || G.team.domoTeams.length === 0) G.team.domoTeams = Array(18).fill(null).map(() => Array(10).fill('A'));
+
   document.getElementById('course-name').value=data.courseName||'';
   document.getElementById('game-date').value=data.gameDate||'';
+  document.getElementById('num-players').value=players.length;
+  renderPlayerRows();
+  
+  const pns=document.querySelectorAll('.pn');
+  const phs=document.querySelectorAll('.ph');
+  players.forEach((p,i)=>{
+    if(pns[i]) pns[i].value = p.name.startsWith('ผู้เล่น') ? '' : p.name;
+    if(phs[i]) phs[i].value = p.hcp;
+  });
+
+  ['turbo','bite','team','olympic','doubleRe','skin','stableford','updown','srikrungDay'].forEach(k=>{
+    const cb = document.getElementById(`g-${k}`);
+    if(cb) { cb.checked = G[k].on; toggleGame(k); }
+  });
 
   gameStarted=true;
   currentHole=0;
@@ -2048,7 +2070,6 @@ function handleImport(e){
 // Auto-save hook
 function autoSave(){saveSession();}
 
-// Auto-Load on startup
 window.addEventListener('load',()=>checkSessionAndAutoLoad());
 
 </script>
