@@ -134,11 +134,16 @@ select option{background:var(--mg)}
 .sw-btn:active{background:rgba(200,168,75,0.15); color:var(--gold);}
 .sw-disp{flex:1; text-align:center; font-size:22px; font-weight:600; color:var(--cream); padding:5px 2px; user-select:none; -webkit-user-select:none; touch-action:none;}
 .sw-disp.empty{font-size:18px; color:rgba(255,255,255,0.15);}
-.sw-badge{font-size:12px; font-weight:500; display:flex; align-items:center; justify-content:flex-end; width:60px; flex-shrink:0;}
+.sw-badge{font-size:12px; font-weight:500; display:flex; align-items:center; justify-content:flex-end; width:65px; flex-shrink:0; text-align:right;}
+
+/* COLOR BADGES */
+.b-hio{color:#000; background:linear-gradient(135deg,#ffc800,#c8a84b); padding:2px 6px; border-radius:10px; font-weight:600;}
+.b-alba{color:#ffc800;}
 .b-eagle{color:var(--gold)}
 .b-birdie{color:#5cc98a}
 .b-par{color:#ffd700}
-.b-bogey, .b-double, .b-worse {color:#ffffff}
+.b-bogey, .b-double{color:#ffffff}
+.b-worse{color:#e06060}
 
 /* DR ROW */
 .dr-row{display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(200,168,75,0.1);flex-wrap:wrap}
@@ -151,17 +156,6 @@ select option{background:var(--mg)}
 .dr-re:active,.dr-re.sel{background:rgba(92,201,138,0.15);border-color:var(--win)}
 .dr-rst{padding:6px 10px;border-radius:5px;border:1px solid rgba(255,255,255,0.12);color:var(--cream-m);cursor:pointer;font-family:'Kanit',sans-serif;font-size:12px;background:none}
 .dr-rst:active{background:rgba(255,255,255,0.07)}
-
-/* TOTALS */
-.totals-card{background:var(--mg);border:1px solid var(--gold-d);border-radius:8px;overflow:hidden;margin-bottom:12px}
-.totals-hdr{background:var(--lg);padding:9px 14px;font-size:11px;letter-spacing:3px;color:var(--gold)}
-.tot-row{display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.05)}
-.tot-name{font-size:15px;flex:1}
-.tot-cols{display:flex;gap:10px;flex-wrap:wrap}
-.tc{text-align:center;min-width:44px}
-.tc-lbl{font-size:10px;color:var(--cream-m);letter-spacing:1px}
-.tc-val{font-size:17px;font-weight:600;color:var(--cream)}
-.val-gold{color:var(--gold)}.val-w{color:var(--win)}.val-l{color:var(--lose)}.val-e{color:var(--cream-d)}
 
 /* MONEY TABLE */
 .money-wrap{overflow-x:auto;border-radius:5px;border:1px solid var(--gold-d);margin-bottom:18px}
@@ -1203,17 +1197,38 @@ function refWidget(h,p){
   const d=v-pars[h];
   
   const CSS={
+    'hio':{b:'#ffc800',bg:'linear-gradient(135deg,#ffc800,#c8a84b)',c:'#000'},
+    'alba':{b:'#ffc800',bg:'rgba(255,200,0,0.15)',c:'#ffc800'},
     'e':{b:'var(--gold)',bg:'#1a1200',c:'var(--gold)'},
     'bi':{b:'#2d6a4f',bg:'#071a0f',c:'#5cc98a'},
     'pa':{b:'rgba(255,215,0,0.4)',bg:'rgba(255,215,0,0.05)',c:'#ffd700'},
     'bo':{b:'rgba(255,255,255,0.3)',bg:'rgba(255,255,255,0.05)',c:'#ffffff'},
     'db':{b:'rgba(255,255,255,0.3)',bg:'rgba(255,255,255,0.05)',c:'#ffffff'},
-    'wr':{b:'rgba(255,255,255,0.3)',bg:'rgba(255,255,255,0.05)',c:'#ffffff'},
+    'wr':{b:'#400e0e',bg:'#3a0e0e',c:'#e06060'}
   };
-  const k=d<=-2?'e':d===-1?'bi':d===0?'pa':d===1?'bo':d===2?'db':'wr';
+  
+  let k='';
+  if(v===1) k='hio';
+  else if(d<=-3) k='alba';
+  else if(d===-2) k='e';
+  else if(d===-1) k='bi';
+  else if(d===0) k='pa';
+  else if(d===1) k='bo';
+  else if(d===2) k='db';
+  else k='wr';
+  
   const s=CSS[k];
   ctrl.style.borderColor=s.b;ctrl.style.background=s.bg;disp.style.color=s.c;
-  const BT={e:{cls:'b-eagle',t:'Eagle'},bi:{cls:'b-birdie',t:'Birdie'},pa:{cls:'b-par',t:'Par'},bo:{cls:'b-bogey',t:'Bogey'},db:{cls:'b-double',t:'Double'},wr:{cls:'b-worse',t:'+'+d}};
+  const BT={
+    hio:{cls:'b-hio',t:'Hole in One'},
+    alba:{cls:'b-alba',t:'Albatross'},
+    e:{cls:'b-eagle',t:'Eagle'},
+    bi:{cls:'b-birdie',t:'Birdie'},
+    pa:{cls:'b-par',t:'Par'},
+    bo:{cls:'b-bogey',t:'Bogey'},
+    db:{cls:'b-double',t:'Double'},
+    wr:{cls:'b-worse',t:'เละ'}
+  };
   const bt=BT[k];badge.textContent=bt.t;badge.className=`sw-badge ${bt.cls}`;
 }
 
@@ -1592,87 +1607,119 @@ function buildResults(){
     const tot=scores[p].reduce((a,b)=>a+(b||0),0);
     const f9=scores[p].slice(0,9).reduce((a,b)=>a+(b||0),0);
     const b9=scores[p].slice(9).reduce((a,b)=>a+(b||0),0);
-    let e=0,bi=0,pa=0,bo=0,db=0;
-    scores[p].forEach((s,h)=>{if(s===null)return;const d=s-pars[h];
-      if(d<=-2)e++;else if(d===-1)bi++;else if(d===0)pa++;else if(d===1)bo++;else db++;});
-    return{...pl,p,filled,tot,f9,b9,pm:tot-tp,net:tot-pl.hcp,e,bi,pa,bo,db};
+    let hio=0, alba=0, e=0, bi=0, pa=0, bo=0, db=0, mx=0;
+    scores[p].forEach((s,h)=>{
+      if(s===null) return;
+      const d=s-pars[h];
+      if (s===1) hio++;
+      else if(d<=-3) alba++;
+      else if(d===-2) e++;
+      else if(d===-1) bi++;
+      else if(d===0) pa++;
+      else if(d===1) bo++;
+      else if(d===2) db++;
+      else if(d>=3) mx++;
+    });
+    return{...pl,p,filled,tot,f9,b9,pm:tot-tp,net:tot-pl.hcp,hio,alba,e,bi,pa,bo,db,mx};
   });
   const sorted=[...stats].sort((a,b)=>a.net-b.net);
   const ds=fmtDate(document.getElementById('game-date').value);
   const cn=document.getElementById('course-name').value;
 
-  const f9Par = pars.slice(0,9).reduce((a,b)=>a+b,0);
-  const b9Par = pars.slice(9).reduce((a,b)=>a+b,0);
-
-  let horizTable = `
-    <div class="sc-sum" style="overflow-x: auto;">
-      <table style="width:100%; border-collapse:collapse; white-space:nowrap; min-width:800px;">
+  // ── VERTICAL SCORECARD TABLE ──
+  let vertHtml = `
+    <div class="sc-sum" style="overflow-x: auto; margin-bottom: 24px;">
+      <table style="width:100%; border-collapse:collapse; min-width:320px;">
         <thead style="background:var(--lg)">
           <tr>
-            <th style="padding:10px 8px; color:var(--gold); border:1px solid rgba(200,168,75,0.3); text-align:left;">Hole</th>
-            ${Array.from({length:9}, (_,i)=>`<th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--gold);">${i+1}</th>`).join('')}
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream);">OUT</th>
-            ${Array.from({length:9}, (_,i)=>`<th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--gold);">${i+10}</th>`).join('')}
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream);">IN</th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--gold);">TOT</th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream-m);">HCP</th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--win);">NET</th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:#5cc98a;">เบอร์ดี้</th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:#ffd700;">พาร์</th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:#ffffff;">โบกี้+</th>
-          </tr>
-          <tr style="background:rgba(0,0,0,0.3)">
-            <th style="padding:10px 8px; color:var(--cream-m); border:1px solid rgba(200,168,75,0.3); text-align:left;">Par</th>
-            ${pars.slice(0,9).map(p=>`<th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream-m);">${p}</th>`).join('')}
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream);">${f9Par}</th>
-            ${pars.slice(9).map(p=>`<th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream-m);">${p}</th>`).join('')}
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--cream);">${b9Par}</th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3); color:var(--gold);">${tp}</th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
-            <th style="padding:10px 8px; border:1px solid rgba(200,168,75,0.3);"></th>
+            <th style="padding:10px 4px; color:var(--gold); font-size:13px; border-bottom:1px solid var(--gold-d);">หลุม</th>
+            <th style="padding:10px 4px; color:var(--gold); font-size:13px; border-bottom:1px solid var(--gold-d);">Par</th>
+            ${players.map(p => `<th style="padding:10px 4px; color:var(--gold); font-size:13px; border-bottom:1px solid var(--gold-d);">${p.name}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
-          ${stats.map((st, i) => {
-            const trBg = i%2===0 ? 'background:rgba(255,255,255,0.02)' : 'background:transparent';
-            const renderCells = (start, end) => {
-              return Array.from({length: end-start}, (_, j) => {
-                const h = start + j;
-                const s = scores[st.p]?.[h];
-                if(s===null || s===undefined) return `<td style="text-align:center; border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.2)">—</td>`;
-                const d = s - pars[h];
-                let sy = '';
-                if (d <= -2) sy = 'background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
-                else if (d === -1) sy = 'background:#1a4a2e;color:#5cc98a;border-radius:50%';
-                else if (d === 0) sy = 'background:rgba(255,215,0,0.2);color:#ffd700;border-radius:50%';
-                else sy = 'background:transparent;color:#ffffff';
-                return `<td style="text-align:center; border:1px solid rgba(255,255,255,0.1); padding:4px;">
-                          <span style="display:inline-block;width:28px;height:28px;line-height:28px;text-align:center;font-size:15px;${sy}">${s}</span>
-                        </td>`;
-              }).join('');
-            };
-
-            return `<tr style="${trBg}">
-              <td style="padding:10px 8px; border:1px solid rgba(255,255,255,0.1); text-align:left; color:var(--cream); font-size:15px;">${st.name}</td>
-              ${renderCells(0, 9)}
-              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); font-weight:500; font-size:16px;">${st.filled ? st.f9 : '—'}</td>
-              ${renderCells(9, 18)}
-              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); font-weight:500; font-size:16px;">${st.filled ? st.b9 : '—'}</td>
-              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); font-weight:bold; color:var(--gold); font-size:17px;">${st.filled ? st.tot : '—'}</td>
-              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:var(--cream-m); font-size:15px;">${st.hcp}</td>
-              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); font-weight:bold; color:var(--win); font-size:17px;">${st.filled ? st.net : '—'}</td>
-              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:#5cc98a; font-weight:500;">${st.e + st.bi}</td>
-              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:#ffd700; font-weight:500;">${st.pa}</td>
-              <td style="padding:10px 8px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:#ffffff; font-weight:500;">${st.bo + st.db}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>
   `;
+  
+  for(let h=0; h<18; h++){
+    vertHtml += `<tr>
+      <td style="text-align:center; padding:8px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px;">${h+1}</td>
+      <td style="text-align:center; padding:8px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px;">${pars[h]}</td>
+      ${players.map((pl, p) => {
+          const s = scores[p][h];
+          if (s === null) return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.2)">—</td>`;
+          const d = s - pars[h];
+          let sy = '';
+          if (s === 1) sy = 'background:linear-gradient(135deg,#ffc800,#c8a84b);color:#000;border-radius:50%;font-weight:bold';
+          else if (d <= -3) sy = 'background:rgba(255,200,0,0.15);color:#ffc800;border-radius:50%;font-weight:bold';
+          else if (d === -2) sy = 'background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
+          else if (d === -1) sy = 'background:#1a4a2e;color:#5cc98a;border-radius:50%';
+          else if (d === 0) sy = 'background:rgba(255,215,0,0.2);color:#ffd700;border-radius:50%';
+          else if (d >= 3) sy = 'background:#3a0e0e;color:#e06060';
+          else sy = 'background:transparent;color:#ffffff';
+          return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05)">
+                    <span style="display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;font-size:16px;${sy}">${s}</span>
+                  </td>`;
+      }).join('')}
+    </tr>`;
+
+    if(h === 8) {
+        vertHtml += `<tr style="background:rgba(255,255,255,0.03)">
+            <td style="text-align:center; padding:10px 4px; font-size:13px; color:var(--cream-m)">OUT</td>
+            <td style="text-align:center; padding:10px 4px; font-size:13px; color:var(--cream-m)">${pars.slice(0,9).reduce((a,b)=>a+b,0)}</td>
+            ${stats.map(st => `<td style="text-align:center; padding:10px 4px; font-weight:500; font-size:15px; color:var(--cream-d)">${st.filled?st.f9:'—'}</td>`).join('')}
+        </tr>`;
+    }
+    if(h === 17) {
+        vertHtml += `<tr style="background:rgba(255,255,255,0.03)">
+            <td style="text-align:center; padding:10px 4px; font-size:13px; color:var(--cream-m)">IN</td>
+            <td style="text-align:center; padding:10px 4px; font-size:13px; color:var(--cream-m)">${pars.slice(9).reduce((a,b)=>a+b,0)}</td>
+            ${stats.map(st => `<td style="text-align:center; padding:10px 4px; font-weight:500; font-size:15px; color:var(--cream-d)">${st.filled?st.b9:'—'}</td>`).join('')}
+        </tr>`;
+    }
+  }
+  
+  vertHtml += `
+      <tr style="background:rgba(200,168,75,0.1)">
+          <td style="text-align:center; padding:12px 4px; font-size:15px; color:var(--gold)">TOTAL</td>
+          <td style="text-align:center; padding:12px 4px; font-size:15px; color:var(--gold)">${tp}</td>
+          ${stats.map(st => `<td style="text-align:center; padding:12px 4px; font-weight:600; color:var(--cream); font-size:18px;">${st.filled?st.tot:'—'}</td>`).join('')}
+      </tr>
+      <tr style="background:rgba(200,168,75,0.15)">
+          <td style="text-align:center; padding:12px 4px; font-size:13px; color:var(--cream-m)">HCP</td>
+          <td style="text-align:center; padding:12px 4px;"></td>
+          ${stats.map(st => `<td style="text-align:center; padding:12px 4px; font-weight:500; color:var(--cream-m); font-size:15px;">${st.hcp}</td>`).join('')}
+      </tr>
+      <tr style="background:rgba(200,168,75,0.2)">
+          <td style="text-align:center; padding:12px 4px; font-size:15px; color:var(--gold)">NET</td>
+          <td style="text-align:center; padding:12px 4px;"></td>
+          ${stats.map(st => `<td style="text-align:center; padding:12px 4px; font-weight:600; color:var(--gold); font-size:18px;">${st.filled?st.net:'—'}</td>`).join('')}
+      </tr>
+      <tr><td colspan="${players.length+2}" style="height:16px;"></td></tr>
+      <tr style="background:var(--lg)">
+          <td colspan="${players.length+2}" style="padding:10px 12px; color:var(--gold); font-size:13px; text-align:left; letter-spacing:1px;">📊 สถิติ (จำนวนหลุม)</td>
+      </tr>
+  `;
+
+  const statRows = [
+      { label: 'โฮลอินวัน', key: 'hio', color: '#ffc800' },
+      { label: 'อัลบาทรอส', key: 'alba', color: '#ffc800' },
+      { label: 'อีเกิ้ล', key: 'e', color: 'var(--gold)' },
+      { label: 'เบอร์ดี้', key: 'bi', color: '#5cc98a' },
+      { label: 'พาร์', key: 'pa', color: '#ffd700' },
+      { label: 'โบกี้', key: 'bo', color: '#ffffff' },
+      { label: 'ดับเบิ้ลโบกี้', key: 'db', color: '#ffffff' },
+      { label: 'เละ (+3 ขึ้นไป)', key: 'mx', color: '#e06060' }
+  ];
+
+  statRows.forEach(sr => {
+      vertHtml += `
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+          <td colspan="2" style="text-align:left; padding:10px 12px; font-size:13px; color:${sr.color};">${sr.label}</td>
+          ${stats.map(st => `<td style="text-align:center; padding:10px 4px; font-size:16px; color:${st[sr.key] > 0 ? sr.color : 'rgba(255,255,255,0.1)'}; font-weight:${st[sr.key] > 0 ? '600' : '400'}">${st[sr.key] > 0 ? st[sr.key] : '—'}</td>`).join('')}
+      </tr>`;
+  });
+
+  vertHtml += `</tbody></table></div>`;
 
   document.getElementById('res-content').innerHTML=`
     <div class="res-hdr">
@@ -1691,9 +1738,9 @@ function buildResults(){
       `).join('')}
     </div>
 
-    <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">สกอร์บอร์ด และสถิติ</div>
+    <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">สกอร์บอร์ด และสถิติผลงาน</div>
     
-    ${horizTable}
+    ${vertHtml}
 
     <div style="text-align:center;padding:14px 0 3px;font-size:12px;color:var(--cream-m);letter-spacing:2px">SRIKRUNG GOLF DAY · ${ds}</div>
     ${G.srikrungDay.on?`
@@ -1951,10 +1998,10 @@ function updateHdrInfo(){
 }
 
 // ── SESSION ──
-const SESSION_KEY='srikrung_golf_v2';
+const SESSION_KEY='srikrung_golf_v3'; // Changed key to force clean load and drop buggy old sessions
 function getSessionData(){
   return{
-    v:3,ts:Date.now(),
+    v:4,ts:Date.now(),
     courseName:document.getElementById('course-name').value,
     gameDate:document.getElementById('game-date').value,
     pars:[...pars],players:JSON.parse(JSON.stringify(players)),
@@ -1972,14 +2019,15 @@ function saveSession(){
 }
 function clearSession(){
   try{localStorage.removeItem(SESSION_KEY);}catch(e){}
-  document.getElementById('resume-banner').style.display='none';
+  const banner = document.getElementById('resume-banner');
+  if(banner) banner.style.display='none';
 }
 function checkSession(){
   try{
     const raw=localStorage.getItem(SESSION_KEY);
     if(raw){
       const data=JSON.parse(raw);
-      if (data.v !== 3) { clearSession(); return; } 
+      if (data.v !== 4) { clearSession(); return; } 
       if(data.gameStarted) {
         const banner=document.getElementById('resume-banner');
         if(banner) banner.style.display='flex';
@@ -1992,7 +2040,8 @@ function resumeSession(){
     const raw=localStorage.getItem(SESSION_KEY);
     if(!raw)return;
     applySession(JSON.parse(raw));
-    document.getElementById('resume-banner').style.display='none';
+    const banner = document.getElementById('resume-banner');
+    if(banner) banner.style.display='none';
   }catch(e){alert('โหลดข้อมูลไม่สำเร็จครับ');}
 }
 function applySession(data){
