@@ -537,9 +537,11 @@ select option{background:var(--mg)}
   <div class="actions">
     <button class="btn btn-primary" onclick="shareToLine('cap')" style="background:linear-gradient(135deg,#06c755,#05a546);border-color:#06c755;color:#fff">🟢 แชร์ลง LINE</button>
     <button class="btn btn-primary" onclick="saveAsImage('cap')">📷 บันทึกรูป</button>
+    <button class="btn" onclick="saveGame()">💾 บันทึกไว้ดูย้อนหลัง</button>
     <button class="btn" onclick="goTab('scorecard')">← แก้สกอร์</button>
     <button class="btn" onclick="newGame()">+ เกมใหม่</button>
   </div>
+  <div id="saved-section" style="margin-top:28px"></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -964,7 +966,6 @@ function makeHoleCard(h){
   div.className='hole-card';div.id=`hc-${h}`;
   const turboOn=isTurbo(h);
   
-  // VERTICAL LAYOUT SCORE WIDGET
   const widgets=players.map((_,p)=>`
     <div class="score-widget" id="sw-${h}-${p}">
       <div class="sw-name">${players[p].name} <span id="tb-${h}-${p}">${getTeamBadgeHTML(h, p)}</span></div>
@@ -1603,7 +1604,6 @@ function buildResults(){
   const f9Par = pars.slice(0,9).reduce((a,b)=>a+b,0);
   const b9Par = pars.slice(9).reduce((a,b)=>a+b,0);
 
-  // WIDE HORIZONTAL TABLE SCORECARD (Classic Style)
   let horizTable = `
     <div class="sc-sum" style="overflow-x: auto;">
       <table style="width:100%; border-collapse:collapse; white-space:nowrap; min-width:800px;">
@@ -1638,12 +1638,11 @@ function buildResults(){
         <tbody>
           ${stats.map((st, i) => {
             const trBg = i%2===0 ? 'background:rgba(255,255,255,0.02)' : 'background:transparent';
-            
             const renderCells = (start, end) => {
               return Array.from({length: end-start}, (_, j) => {
                 const h = start + j;
-                const s = scores[st.p][h];
-                if(s===null) return `<td style="text-align:center; border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.2)">—</td>`;
+                const s = scores[st.p]?.[h];
+                if(s===null || s===undefined) return `<td style="text-align:center; border:1px solid rgba(255,255,255,0.1); color:rgba(255,255,255,0.2)">—</td>`;
                 const d = s - pars[h];
                 let sy = '';
                 if (d <= -2) sy = 'background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
@@ -1846,6 +1845,18 @@ function buildMoney(){
     </div>`;
 }
 
+function goResults(){
+  if(!gameStarted){alert('กรุณาตั้งค่าและเริ่มเกมก่อนครับ');return;}
+  try {
+    buildResults();
+    renderSaved();
+    goTab('results');
+  } catch(e) {
+    console.error(e);
+    alert('เกิดข้อผิดพลาดในการคำนวณผลลัพธ์: ' + e.message);
+  }
+}
+
 // ── SAVE & SHARE ──
 function saveAsImage(targetId = 'cap'){
   if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
@@ -1907,7 +1918,9 @@ function saveGame(){
 }
 function renderSaved(){
   if(!savedGames.length)return;
-  document.getElementById('saved-section').innerHTML=`
+  const sec = document.getElementById('saved-section');
+  if(!sec) return;
+  sec.innerHTML=`
     <div style="font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">ผลที่บันทึกไว้ (${savedGames.length} เกม)</div>
     ${savedGames.map(g=>`<div class="saved-game">
       <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px">
@@ -1941,7 +1954,7 @@ function updateHdrInfo(){
 const SESSION_KEY='srikrung_golf_v2';
 function getSessionData(){
   return{
-    v:2,ts:Date.now(),
+    v:3,ts:Date.now(),
     courseName:document.getElementById('course-name').value,
     gameDate:document.getElementById('game-date').value,
     pars:[...pars],players:JSON.parse(JSON.stringify(players)),
@@ -1966,10 +1979,10 @@ function checkSession(){
     const raw=localStorage.getItem(SESSION_KEY);
     if(raw){
       const data=JSON.parse(raw);
-      // ถ้าเปิดมาเจอข้อมูลเก่า ให้แสดงปุ่มเหลืองถามว่าจะดึงคืนไหม
+      if (data.v !== 3) { clearSession(); return; } 
       if(data.gameStarted) {
         const banner=document.getElementById('resume-banner');
-        banner.style.display='flex';
+        if(banner) banner.style.display='flex';
       }
     }
   }catch(e){}
