@@ -273,7 +273,6 @@ select option{background:var(--mg)}
 <body>
 <div id="saving-ov"><div style="font-size:38px">⛳</div><div style="color:var(--gold);font-size:17px;letter-spacing:2px">กำลังบันทึกภาพ...</div></div>
 
-<!-- RESUME BANNER -->
 <div id="resume-banner" style="display:none;background:rgba(200,168,75,0.12);border-bottom:1px solid rgba(200,168,75,0.35);padding:10px 16px;display:none;align-items:center;gap:12px;flex-wrap:wrap">
   <span style="font-size:14px;color:var(--gold);flex:1">⚡ พบข้อมูลเกมค้างไว้ — กลับมาต่อไหมครับ?</span>
   <button onclick="resumeSession()" style="padding:7px 16px;background:var(--gold-d);border:none;color:var(--cream);border-radius:4px;cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px">▶ เล่นต่อ</button>
@@ -294,15 +293,27 @@ select option{background:var(--mg)}
   <button class="nav-btn" id="tab-money" onclick="goMoney()">💰 เงิน</button>
 </nav>
 
-<!-- ═══ SETUP ═══ -->
 <div class="screen active" id="scr-setup">
+  
+  <div class="sec">
+    <div class="sec-title">ข้อมูลผู้เล่น</div>
+    <div class="form-row" style="margin-bottom: 12px;">
+      <span class="form-label">จำนวนผู้เล่น</span>
+      <select id="num-players" onchange="renderPlayerRows()">
+        <option value="1">1 คน</option><option value="2">2 คน</option><option value="3">3 คน</option>
+        <option value="4" selected>4 คน</option><option value="5">5 คน</option><option value="6">6 คน</option>
+      </select>
+    </div>
+    <div id="player-rows"></div>
+  </div>
+
   <div class="sec">
     <div class="sec-title">ข้อมูลสนาม</div>
     <div class="form-row" style="flex-direction:column;align-items:flex-start;gap:6px">
       <span class="form-label">สนามกอล์ฟ</span>
       <div style="width:100%;max-width:420px">
         <div style="position:relative;margin-bottom:6px">
-          <input type="text" id="course-search" placeholder="🔍 ค้นหาสนาม..." style="width:100%;padding-right:32px"
+          <input type="text" id="course-search" placeholder="🔍 ค้นหาสนาม หรือพิมพ์ชื่อใหม่..." style="width:100%;padding-right:32px"
             oninput="filterCourses()" onfocus="showCourseList()" autocomplete="off">
           <span onclick="clearCourseSearch()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--cream-m);font-size:16px">✕</span>
         </div>
@@ -310,24 +321,13 @@ select option{background:var(--mg)}
           <div id="course-list"></div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <input type="text" id="course-name" value="Srikrung Golf Club" style="flex:1;min-width:180px" placeholder="ชื่อสนาม">
-          <select id="course-layout" style="display:none;min-width:150px" onchange="onLayoutChange()">
+          <input type="text" id="course-name" style="flex:1;min-width:180px" placeholder="ชื่อสนาม">
+          <select id="course-layout" style="display:none;min-width:150px">
           </select>
         </div>
       </div>
     </div>
     <div class="form-row"><span class="form-label">วันที่</span><input type="date" id="game-date"><button class="today-btn" onclick="setToday()">วันนี้</button></div>
-    <div class="form-row"><span class="form-label">จำนวนผู้เล่น</span>
-      <select id="num-players" onchange="renderPlayerRows()">
-        <option value="1">1 คน</option><option value="2">2 คน</option><option value="3">3 คน</option>
-        <option value="4" selected>4 คน</option><option value="5">5 คน</option><option value="6">6 คน</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="sec">
-    <div class="sec-title">ข้อมูลผู้เล่น</div>
-    <div id="player-rows"></div>
   </div>
 
   <div class="sec">
@@ -339,11 +339,9 @@ select option{background:var(--mg)}
     <div class="par-grid" id="par-back"></div>
   </div>
 
-  <!-- ═══ GAMES ═══ -->
   <div class="sec">
     <div class="sec-title">เกมพนัน <span style="font-size:10px;color:var(--cream-m);font-weight:300;letter-spacing:1px">(เลือกได้หลายเกม)</span></div>
 
-    <!-- 1. เทอโบ -->
     <div class="game-row" id="gr-turbo">
       <div class="g-header" onclick="toggleGame('turbo')">
         <div class="g-icon">⚡</div>
@@ -360,7 +358,6 @@ select option{background:var(--mg)}
       </div></div>
     </div>
 
-    <!-- 2. หมากัด -->
     <div class="game-row" id="gr-bite">
       <div class="g-header" onclick="toggleGame('bite')">
         <div class="g-icon">🐶</div>
@@ -368,19 +365,18 @@ select option{background:var(--mg)}
         <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-bite" onchange="toggleGame('bite')"><span class="toggle-sl"></span></label>
       </div>
       <div class="g-body" id="gb-bite"><div class="g-body-inner">
-        <div class="pt-row">
-          <span class="pt-lbl">คิดแบบ</span>
-          <select class="pt-type" id="gt-bite"><option value="bite">บาท / ครั้งที่กัด</option><option value="hole">บาท / หลุม (flat)</option></select>
+        <div class="pt-row"><span class="pt-lbl">มูลค่า</span><input type="number" class="pt-val" id="gv-bite" value="20" min="1"><span class="pt-unit">บาท / หลุม</span></div>
+        <div style="font-size:11px;color:var(--cream-m);line-height:1.7;margin-top:5px;">
+          * ออก Birdie x2 &nbsp;·&nbsp; Eagle x3 &nbsp;·&nbsp; Hole-in-One x50<br>
+          * สกอร์ต่ำสุดเสมอกัน ถือว่าชน (ไม่มีใครเสีย)
         </div>
-        <div class="pt-row"><span class="pt-lbl">มูลค่า</span><input type="number" class="pt-val" id="gv-bite" value="20" min="1"><span class="pt-unit">บาท</span></div>
       </div></div>
     </div>
 
-    <!-- 3. ทีม / ทีมสลับ -->
     <div class="game-row" id="gr-team">
       <div class="g-header" onclick="toggleGame('team')">
         <div class="g-icon">🤝</div>
-        <div class="g-info"><div class="g-name">ทีม / ทีมสลับ</div><div class="g-desc">Best 1 + Best 2 ต่อทีม · ช้วน = แพ้ทั้งคู่</div></div>
+        <div class="g-info"><div class="g-name">ทีม / ทีมสลับ / โดโมะ</div><div class="g-desc">Best 1 + Best 2 ต่อทีม · ช้วน = แพ้ทั้งคู่</div></div>
         <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-team" onchange="toggleGame('team')"><span class="toggle-sl"></span></label>
       </div>
       <div class="g-body" id="gb-team"><div class="g-body-inner">
@@ -401,19 +397,20 @@ select option{background:var(--mg)}
             <input type="checkbox" id="g-team-swap" style="position:absolute;opacity:0" onchange="document.getElementById('team-swap-sel').style.display=this.checked?'inline-block':'none'">
             <span class="toggle-sl"></span>
           </label>
-          <span style="font-size:14px;color:var(--cream-m)">ทีมสลับ</span>
+          <span style="font-size:14px;color:var(--cream-m)">เปลี่ยนทีมอัตโนมัติ/เลือกเอง</span>
           <select id="team-swap-sel" style="display:none;padding:6px 10px;font-size:14px;width:auto">
-            <option value="3">ทุก 3 หลุม</option>
-            <option value="6" selected>ทุก 6 หลุม</option>
-            <option value="9">ทุก 9 หลุม</option>
+            <option value="domo">โดโมะ (เลือกทีมเองทุกหลุม)</option>
+            <option value="3">สลับอัตโนมัติ ทุก 3 หลุม</option>
+            <option value="6" selected>สลับอัตโนมัติ ทุก 6 หลุม</option>
+            <option value="9">สลับอัตโนมัติ ทุก 9 หลุม</option>
           </select>
         </div>
-        <div style="font-size:12px;color:var(--cream-m);margin-bottom:7px">กำหนดทีม</div>
+        <div style="font-size:12px;color:var(--cream-m);margin-bottom:7px">กำหนดทีมตั้งต้น</div>
         <div id="team-assign"></div>
+        <div style="font-size:11px;color:var(--gold);margin-top:7px">* สามารถกดเปลี่ยนทีม A/B ให้แต่ละคนได้ที่หน้าจดสกอร์</div>
       </div></div>
     </div>
 
-    <!-- 4. โอลิมปิก -->
     <div class="game-row" id="gr-olympic">
       <div class="g-header" onclick="toggleGame('olympic')">
         <div class="g-icon">🏅</div>
@@ -431,7 +428,6 @@ select option{background:var(--mg)}
       </div></div>
     </div>
 
-    <!-- 5. เบิ้ล-รี -->
     <div class="game-row" id="gr-doubleRe">
       <div class="g-header" onclick="toggleGame('doubleRe')">
         <div class="g-icon">🎲</div>
@@ -444,10 +440,8 @@ select option{background:var(--mg)}
       </div></div>
     </div>
 
-    <!-- อื่นๆ -->
     <div style="font-size:10px;letter-spacing:2px;color:var(--cream-m);margin:14px 0 8px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07)">อื่นๆ</div>
 
-    <!-- สกิน -->
     <div class="game-row" id="gr-skin">
       <div class="g-header" onclick="toggleGame('skin')">
         <div class="g-icon">🏆</div>
@@ -463,7 +457,6 @@ select option{background:var(--mg)}
       </div></div>
     </div>
 
-    <!-- Stableford -->
     <div class="game-row" id="gr-stableford">
       <div class="g-header" onclick="toggleGame('stableford')">
         <div class="g-icon">⭐</div>
@@ -479,7 +472,6 @@ select option{background:var(--mg)}
       </div></div>
     </div>
 
-    <!-- จดแต้ได้/เสีย -->
     <div class="game-row" id="gr-updown">
       <div class="g-header" onclick="toggleGame('updown')">
         <div class="g-icon">📊</div>
@@ -495,7 +487,6 @@ select option{background:var(--mg)}
       </div></div>
     </div>
 
-    <!-- SRIKRUNG GOLF DAY -->
     <div class="game-row" id="gr-srikrungDay" style="border-color:rgba(200,168,75,0.35)">
       <div class="g-header" onclick="toggleGame('srikrungDay')">
         <div class="g-icon">⛳</div>
@@ -524,9 +515,7 @@ select option{background:var(--mg)}
   <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
 </div>
 
-<!-- ═══ SCORECARD ═══ -->
 <div class="screen" id="scr-scorecard">
-  <!-- Progress Bar -->
   <div style="padding:10px 14px 6px;background:var(--mg);border-bottom:1px solid rgba(200,168,75,0.2)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
       <span style="font-size:11px;color:var(--cream-m);letter-spacing:2px">HOLE</span>
@@ -535,11 +524,8 @@ select option{background:var(--mg)}
     </div>
     <div id="progress-dots" style="display:flex;gap:3px"></div>
   </div>
-  <!-- Single Hole -->
   <div id="single-hole-wrap" style="padding:0 0 16px"></div>
-  <!-- Score Strip -->
   <div id="score-strip" style="margin:0 14px 10px;background:var(--mg);border:1px solid rgba(200,168,75,0.2);border-radius:7px;overflow:hidden"></div>
-  <!-- Nav -->
   <div style="display:flex;gap:8px;padding:0 14px;margin-bottom:14px">
     <button class="btn" id="btn-prev" onclick="holeNav(-1)" style="flex:1;font-size:16px">← ก่อนหน้า</button>
     <button class="btn btn-primary" id="btn-next" onclick="holeNav(1)" style="flex:1;font-size:16px">ถัดไป →</button>
@@ -549,7 +535,6 @@ select option{background:var(--mg)}
   </div>
 </div>
 
-<!-- ═══ MONEY SUMMARY ═══ -->
 <div class="screen" id="scr-money">
   <div id="money-content"></div>
   <div class="actions">
@@ -558,7 +543,6 @@ select option{background:var(--mg)}
   </div>
 </div>
 
-<!-- ═══ RESULTS ═══ -->
 <div class="screen" id="scr-results">
   <div id="cap"><div id="res-content"></div></div>
   <div class="actions">
@@ -575,87 +559,38 @@ select option{background:var(--mg)}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 // ── GOLF COURSE DATABASE ──
-const GOLF_DB=[
-  // ── กรุงเทพฯ และปริมณฑล ──
-  {name:'สนามกอล์ฟแอลไพน์',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'อมตะ สปริง คันทรีคลับ',province:'ชลบุรี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'อโยธยา ลิงค์ส',province:'พระนครศรีอยุธยา',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'คาสเคด้า กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'ช่วงเชื่อน กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'เกียรติธานี คันทรีคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'กรุงกวี กอล์ฟ แอนด์ คันทรีคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'กรุงเทพกรีฑา สปอร์ตคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'ลำลูกกา คันทรีคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนาม 1',holes:18,par:72},{name:'สนาม 2',holes:18,par:72}]},
-  {name:'เลกาซี่ กอล์ฟคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'เมโทร โรสการ์เดน กอล์ฟคลับ',province:'นครปฐม',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'รอยัล เจมส์ กอล์ฟ ซิตี้',province:'นครปฐม',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'สโตนฮิลล์ กอล์ฟคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'สุภาพฤกษ์ กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'ซัมมิท วินด์มิลล์ กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'สุวรรณ กอล์ฟ แอนด์ คันทรีคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'ไทย คันทรีคลับ',province:'ฉะเชิงเทรา',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'วินด์เซอร์ พาร์ค แอนด์ กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'เอไอที กอล์ฟคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'เลควูด คันทรีคลับ',province:'สมุทรปราการ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  // ── ชลบุรี / พัทยา ──
-  {name:'บูรพา กอล์ฟคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'อีสต์ คอร์ส',holes:18,par:72},{name:'เวสต์ คอร์ส',holes:18,par:72}]},
-  {name:'ชีจรรย์ กอล์ฟ รีสอร์ท',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'คริสตัล เบย์ กอล์ฟคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'เอมเมอรัลด์ กอล์ฟคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'กรีนวัลเลย์ คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'แหลมฉบัง อินเตอร์เนชันแนล คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'เมาท์เทน คอร์ส',holes:9,par:36},{name:'เลค คอร์ส',holes:9,par:36},{name:'วัลเลย์ คอร์ส',holes:9,par:36}]},
-  {name:'พัทนา กอล์ฟคลับ แอนด์ รีสอร์ท',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'แชมเปี้ยนชิพ คอร์ส',holes:18,par:72},{name:'เอ็กเซคคิวทีฟ คอร์ส',holes:9,par:36}]},
-  {name:'พัทยา คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'ฟีนิกซ์ โกลด์ กอล์ฟ แอนด์ คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'โอเชียน คอร์ส',holes:9,par:36},{name:'เลค คอร์ส',holes:9,par:36},{name:'เมาท์เทน คอร์ส',holes:9,par:36}]},
-  {name:'เพลแซนท์ วัลเลย์ กอล์ฟ แอนด์ คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'สยาม คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'โอลด์ คอร์ส',holes:18,par:72},{name:'แพลนเทชั่น คอร์ส',holes:27,par:108},{name:'วอเตอร์ไซด์ คอร์ส',holes:18,par:72},{name:'โรลลิ่ง ฮิลล์ส คอร์ส',holes:18,par:72}]},
-  {name:'ศรีราชา อินเตอร์เนชันแนล กอล์ฟคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'เซนต์ แอนดรูว์ 2000',province:'ระยอง',region:'ชลบุรี / พัทยา',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  // ── หัวหิน / ประจวบฯ ──
-  {name:'แบล็ค เมาท์เทน กอล์ฟคลับ',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'หัวหิน คันทรีคลับ',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามหลัก',holes:18,par:71}]},
-  {name:'ปาล์ม ฮิลส์ กอล์ฟคลับ',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'ไพน์แอปเปิ้ล วัลเลย์ กอล์ฟคลับ (บันยัน)',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'รอยัล หัวหิน กอล์ฟคอร์ส',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'สปริงฟิลด์ รอยัล คันทรีคลับ',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'วัลเลย์ คอร์ส',holes:18,par:72},{name:'เมาท์เทน คอร์ส',holes:9,par:36}]},
-  // ── ภาคเหนือ ──
-  {name:'แอลไพน์ กอล์ฟ รีสอร์ท เชียงใหม่',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'เชียงใหม่ ไฮแลนด์ส กอล์ฟคลับ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'ไฮแลนด์ คอร์ส',holes:18,par:72},{name:'วัลเลย์ คอร์ส',holes:9,par:36}]},
-  {name:'แก๊สซัน คุณตาน กอล์ฟ แอนด์ รีสอร์ท',province:'ลำพูน',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'แก๊สซัน เลค ซิตี้ กอล์ฟคลับ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'แก๊สซัน พาโนรามา กอล์ฟคลับ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'พาโนรามา คอร์ส',holes:18,par:72}]},
-  {name:'ล้านนา กอล์ฟคลับ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'นอร์ท ฮิลล์ เชียงใหม่ กอล์ฟ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'ซัมมิท กรีนวัลเลย์ คันทรีคลับ เชียงใหม่',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'สันติบุรี เชียงราย คันทรีคลับ',province:'เชียงราย',region:'ภาคเหนือ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'สิงห์ปาร์ค เชียงราย กอล์ฟคลับ',province:'เชียงราย',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  // ── ภาคอีสาน ──
-  {name:'โบนันซ่า กอล์ฟ แอนด์ คันทรีคลับ',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'คิริมายา กอล์ฟ รีสอร์ท แอนด์ สปา',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'รุกส์ โคราช คันทรีคลับ',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'สตาร์รี่ วัลเลย์ กอล์ฟคลับ',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'สุรนารี กอล์ฟคลับ',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'สิงห์ปาร์ค ขอนแก่น กอล์ฟคลับ',province:'ขอนแก่น',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'อุดรธานี คันทรีคลับ',province:'อุดรธานี',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  // ── ภาคกลาง ──
-  {name:'แกรนด์ ปรีซ์ กอล์ฟคลับ',province:'กาญจนบุรี',region:'ภาคกลาง',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'บลู แซฟไฟร์ กอล์ฟ แอนด์ รีสอร์ท',province:'กาญจนบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'ดราก้อน ฮิลส์ กอล์ฟ แอนด์ คันทรีคลับ',province:'กาญจนบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'มิชชั่น ฮิลส์ กอล์ฟคลับ กาญจนบุรี',province:'กาญจนบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'สนามกอล์ฟกองทัพบก ลพบุรี',province:'ลพบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'สนามกอล์ฟนารายณ์',province:'ลพบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  // ── ภาคตะวันออก ──
-  {name:'ระยอง กรีนวัลเลย์ คันทรีคลับ',province:'ระยอง',region:'ภาคตะวันออก',courses:[{name:'วัลเลย์ คอร์ส',holes:18,par:72},{name:'ไฮแลนด์ คอร์ส',holes:18,par:72}]},
-  {name:'331 กอล์ฟคลับ',province:'ปราจีนบุรี',region:'ภาคตะวันออก',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  // ── ภาคใต้ ──
-  {name:'บลู แคนยอน คันทรีคลับ',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'แคนยอน คอร์ส',holes:18,par:72},{name:'เลคส์ คอร์ส',holes:18,par:72}]},
-  {name:'ลากูนา กอล์ฟ ภูเก็ต',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:71}]},
-  {name:'มิชชั่น ฮิลส์ ภูเก็ต กอล์ฟ รีสอร์ท',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'ภูเก็ต คันทรีคลับ',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'เรด เมาท์เทน กอล์ฟคลับ ภูเก็ต',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
-  {name:'สันติบุรี สมุย คันทรีคลับ',province:'สุราษฎร์ธานี',region:'ภาคใต้',courses:[{name:'สนามหลัก',holes:18,par:72}]},
-  {name:'เซาเทิร์น ฮิลส์ กอล์ฟ แอนด์ คันทรีคลับ',province:'สงขลา',region:'ภาคใต้',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+const GOLF_DB = [
+  {
+    name: 'มลฑลทหารบกที่ 13 (มทบ.13)', province: 'ลพบุรี', region: 'สนามประจำ', courses: [
+      { name: '18 Holes', holes: 18, par: 72, pars: [4,4,3,4,5,4,3,4,5, 4,4,3,4,5,4,3,4,5] }
+    ]
+  },
+  {
+    name: 'ปัญญาอินทรา กอล์ฟ คลับ', province: 'กรุงเทพฯ', region: 'สนามประจำ', courses: [
+      { name: 'Lagoon (A) + Palm (B)', holes: 18, par: 72, pars: [4,4,3,4,5,4,4,3,5, 4,3,4,4,5,4,4,3,5] },
+      { name: 'Palm (B) + Garden (C)', holes: 18, par: 72, pars: [4,3,4,4,5,4,4,3,5, 4,4,3,4,5,4,3,4,5] },
+      { name: 'Garden (C) + Lagoon (A)', holes: 18, par: 72, pars: [4,4,3,4,5,4,3,4,5, 4,4,3,4,5,4,4,3,5] }
+    ]
+  },
+  {
+    name: 'นารายณ์ฮิลล์ กอล์ฟ รีสอร์ท', province: 'ลพบุรี', region: 'สนามประจำ', courses: [
+      { name: 'Course A + B', holes: 18, par: 72, pars: [4,4,3,5,4,4,3,5,4, 4,4,3,5,4,4,3,5,4] },
+      { name: 'Course B + C', holes: 18, par: 72, pars: [4,4,3,5,4,4,3,5,4, 4,4,3,5,4,4,3,5,4] },
+      { name: 'Course C + A', holes: 18, par: 72, pars: [4,4,3,5,4,4,3,5,4, 4,4,3,5,4,4,3,5,4] }
+    ]
+  },
+  {
+    name: 'เมืองเอก กอล์ฟ คอร์ส', province: 'ปทุมธานี', region: 'สนามประจำ', courses: [
+      { name: '18 Holes', holes: 18, par: 72, pars: [4,4,3,4,5,4,3,4,5, 4,4,3,4,5,4,3,4,5] }
+    ]
+  },
+  {
+    name: 'วิสต้า กอล์ฟ คอร์ส (Vista)', province: 'ปทุมธานี', region: 'สนามประจำ', courses: [
+      { name: '18 Holes', holes: 18, par: 72, pars: [4,4,3,4,5,4,3,4,5, 4,4,3,4,5,4,3,4,5] }
+    ]
+  }
 ];
+
 function searchCourses(q){
   if(!q.trim())return GOLF_DB;
   const lq=q.toLowerCase();
@@ -664,6 +599,7 @@ function searchCourses(q){
 function filterCourses(){
   const q=document.getElementById('course-search').value;
   renderCourseList(searchCourses(q));
+  document.getElementById('course-name').value = q; // Allow custom name typing
   document.getElementById('course-dropdown').style.display='block';
 }
 function showCourseList(){
@@ -673,20 +609,21 @@ function showCourseList(){
 function hideCourseList(){setTimeout(()=>{const d=document.getElementById('course-dropdown');if(d)d.style.display='none';},200);}
 function clearCourseSearch(){
   document.getElementById('course-search').value='';
+  document.getElementById('course-name').value='';
   document.getElementById('course-dropdown').style.display='none';
 }
 function renderCourseList(list){
   const el=document.getElementById('course-list');if(!el)return;
-  if(!list.length){el.innerHTML='<div style="padding:10px 12px;color:var(--cream-m);font-size:14px">ไม่พบสนามครับ</div>';return;}
+  if(!list.length){el.innerHTML='<div style="padding:10px 12px;color:var(--cream-m);font-size:14px">สามารถพิมพ์ชื่อสนามใหม่ได้เลยครับ</div>';return;}
   const grouped={};
   list.slice(0,60).forEach(c=>{if(!grouped[c.region])grouped[c.region]=[];grouped[c.region].push(c);});
   let html='';
   Object.entries(grouped).forEach(([region,courses])=>{
     html+=`<div style="padding:5px 12px 3px;font-size:10px;letter-spacing:2px;color:var(--gold);background:rgba(0,0,0,0.2)">${region}</div>`;
-    courses.forEach(c=>{
+    courses.forEach((c, idx)=>{
       const multi=c.courses.length>1;
       html+=`<div onclick="selectCourse(this)"
-        data-name="${c.name}" data-courses='${JSON.stringify(c.courses)}'
+        data-cidx="${GOLF_DB.indexOf(c)}"
         style="padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px;color:var(--cream)"
         onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''">
         ${c.name} <span style="font-size:11px;color:var(--cream-m)">${c.province}</span>
@@ -697,16 +634,21 @@ function renderCourseList(list){
   el.innerHTML=html;
 }
 function selectCourse(el){
-  const name=el.getAttribute('data-name');
-  const courses=JSON.parse(el.getAttribute('data-courses'));
-  document.getElementById('course-name').value=name;
-  document.getElementById('course-search').value=name;
+  const cIdx = el.getAttribute('data-cidx');
+  const c = GOLF_DB[cIdx];
+  document.getElementById('course-name').value=c.name;
+  document.getElementById('course-search').value=c.name;
   document.getElementById('course-dropdown').style.display='none';
   const sel=document.getElementById('course-layout');
-  if(courses.length>1){
+  if(c.courses.length>0){
     sel.style.display='block';
-    sel.innerHTML=courses.map(c=>`<option value="${c.name}">${c.name} (${c.holes}H Par${c.par})</option>`).join('');
-    sel.onchange=()=>{document.getElementById('course-name').value=name+' — '+sel.value;};
+    sel.innerHTML=c.courses.map((cs, i)=>`<option value="${i}">${cs.name} (${cs.holes}H Par${cs.par})</option>`).join('');
+    sel.onchange=()=>{
+       const cs = c.courses[sel.value];
+       document.getElementById('course-name').value = c.name + (c.courses.length > 1 ? ' — ' + cs.name : '');
+       if(cs.pars) { pars = [...cs.pars]; buildParGrid(); }
+    };
+    sel.onchange(); // trigger pars update immediately
   } else {
     sel.style.display='none';
     sel.innerHTML='';
@@ -717,29 +659,35 @@ document.addEventListener('click',e=>{
 });
 
 // ── STATE ──
-const DEF_PARS=[4,4,3,4,5,3,4,4,5,4,4,3,5,4,3,4,5,4];
+const DEF_PARS=[4,4,3,4,5,4,3,4,5,4,4,3,4,5,4,3,4,5];
 let pars=[...DEF_PARS],players=[],scores=[],savedGames=[],gameStarted=false;
 
 let G={
   skin:      {on:false,type:'skin',val:100},
   turbo:     {on:false,holes:new Set(),mult:2},
-  bite:      {on:false,type:'bite',val:50},
+  bite:      {on:false,type:'bite',val:20},
   stableford:{on:false,type:'point',val:10},
-  team:      {on:false,type:'hole',val:20,chuan:false,chuanVal:100,swap:false,swapInterval:6,teams:[]},
+  team:      {on:false,type:'hole',val:20,chuan:false,chuanVal:100,swap:false,swapType:'6',teams:[],baseTeams:[],domoTeams:[]},
   updown:    {on:false,type:'hole',val:100},
   doubleRe:  {on:false,val:100,mults:Array(18).fill(1)},
   olympic:   {on:false,val:10},
   srikrungDay:{on:false}
 };
 let olympicData=Array(18).fill(null).map(()=>({order:[],status:{}}));
-// srikrungDay stats: per player per hole — fw=null(N/A)/true/false, gir=null/true/false, putts=null/number
 let sgdData=[];
 function initSGD(){
   sgdData=players.map(()=>Array(18).fill(null).map(()=>({fw:null,gir:null,putts:null})));
 }
 
 // ── INIT ──
-setToday();buildParGrid();renderPlayerRows();buildTurboGrid();
+setToday();
+// Set default to MTB 13
+document.getElementById('course-name').value = 'มลฑลทหารบกที่ 13 (มทบ.13)';
+document.getElementById('course-search').value = 'มลฑลทหารบกที่ 13 (มทบ.13)';
+pars = [...GOLF_DB[0].courses[0].pars]; 
+buildParGrid();
+renderPlayerRows();
+buildTurboGrid();
 
 // ── HELPERS ──
 function setToday(){
@@ -799,7 +747,7 @@ function renderTeamAssign(){
   el.innerHTML='';
   for(let i=0;i<n;i++){
     const nm=names[i]?.value||`P${i+1}`;
-    const t=G.team.teams[i];
+    const t=G.team.teams[i] || (i%2===0?'A':'B');
     el.innerHTML+=`<div class="ta-row">
       <div class="ta-name">${nm}</div>
       <div class="ta-btns">
@@ -848,6 +796,7 @@ function toggleGame(id){
 
 function startGame(){
   const n=+document.getElementById('num-players').value;
+  // Update pars securely from grid in case user manually typed custom pars
   document.querySelectorAll('.par-hole input').forEach((inp,i)=>{
     if(i<18)pars[i]=Math.max(3,Math.min(5,+inp.value||4));
   });
@@ -869,11 +818,15 @@ function startGame(){
   if(gve)G.team.val=Math.max(1,+gve.value||20);
   G.team.chuan=document.getElementById('g-team-chuan')?.checked||false;
   G.team.chuanVal=Math.max(1,+document.getElementById('gv-team-chuan')?.value||100);
+  
   G.team.swap=document.getElementById('g-team-swap').checked;
-  G.team.swapInterval=+document.getElementById('team-swap-sel').value||6;
+  G.team.swapType = G.team.swap ? document.getElementById('team-swap-sel').value : 'fixed';
   for(let i=0;i<n;i++){if(!G.team.teams[i])G.team.teams[i]=i%2===0?'A':'B';}
+  G.team.baseTeams = [...G.team.teams];
+  G.team.domoTeams = Array(18).fill(null).map(() => [...G.team.teams]);
+
   G.doubleRe.val=Math.max(1,+document.getElementById('gv-doubleRe').value||100);
-  G.doubleRe.mults=Array(18).fill(0); // 0=normal, 1=เบิ้ล(×2), 2=รี(×3)
+  G.doubleRe.mults=Array(18).fill(0); 
   G.olympic.val=Math.max(1,+document.getElementById('gv-olympic').value||20);
   if(G.srikrungDay.on)initSGD();
   olympicData=Array(18).fill(null).map(()=>({order:[],status:{}}));
@@ -924,6 +877,10 @@ function showHole(h,dir='in'){
   const card=makeHoleCard(h);
   card.className='hole-card '+(dir==='in'?'hole-in':'hole-back');
   wrap.innerHTML='';wrap.appendChild(card);
+  
+  // RESTORE SCORES VISUALLY (Fix bug where scores disappear when navigating back)
+  players.forEach((_, p) => refWidget(h, p));
+
   // Restore olympic state
   if(G.olympic.on&&olympicData[h]&&(olympicData[h].order.length>0||Object.keys(olympicData[h].status).length>0)){
     setTimeout(()=>olyRenderHole(h),0);
@@ -969,6 +926,39 @@ function updateScoreStrip(){
     }).join('')}`;
 }
 
+// TEAM LOGIC FOR SCORECARD
+function getTeamForHole(h, p) {
+  if (G.team.swapType === 'domo') return G.team.domoTeams[h][p];
+  let baseTeam = G.team.baseTeams[p];
+  if (G.team.swap && G.team.swapType !== 'domo') {
+    const interval = parseInt(G.team.swapType);
+    if (Math.floor(h / interval) % 2 === 1) {
+      return baseTeam === 'A' ? 'B' : 'A';
+    }
+  }
+  return baseTeam;
+}
+
+window.toggleTeamScorecard = function(h, p) {
+  if (G.team.swapType === 'domo') {
+    G.team.domoTeams[h][p] = G.team.domoTeams[h][p] === 'A' ? 'B' : 'A';
+  } else {
+    G.team.baseTeams[p] = G.team.baseTeams[p] === 'A' ? 'B' : 'A';
+    G.team.teams[p] = G.team.baseTeams[p]; // Sync back to setup
+    renderTeamAssign();
+  }
+  document.getElementById(`tb-${h}-${p}`).innerHTML = getTeamBadgeHTML(h, p);
+  updateTotals();
+  autoSave();
+};
+
+function getTeamBadgeHTML(h, p) {
+  if (!G.team.on) return '';
+  const t = getTeamForHole(h, p);
+  const c = t === 'A' ? 'background:#1a3a4a;border:1px solid #7ab8d8;color:#7ab8d8' : 'background:#4a1a1a;border:1px solid #d87a7a;color:#d87a7a';
+  return `<span style="display:inline-block;margin-left:5px;padding:2px 7px;border-radius:4px;font-size:10px;cursor:pointer;${c}" onclick="toggleTeamScorecard(${h},${p})">ทีม ${t} 🔄</span>`;
+}
+
 // ── HOLE CARD (single) ──
 function makeHoleCard(h){
   const div=document.createElement('div');
@@ -976,8 +966,8 @@ function makeHoleCard(h){
   const turboOn=isTurbo(h);
   const widgets=players.map((_,p)=>`
     <div class="score-widget" id="sw-${h}-${p}">
-      <div class="sw-name">${players[p].name}</div>
-      <div class="sw-ctrl" id="swc-${h}-${p}">
+      <div class="sw-name">${players[p].name} <span id="tb-${h}-${p}">${getTeamBadgeHTML(h, p)}</span></div>
+      <div class="sw-ctrl" id="swc-${h}-${p}" style="margin-top:4px;">
         <button class="sw-btn" onpointerdown="startRpt(${h},${p},-1)" onpointerup="stopRpt()" onpointerleave="stopRpt()">−</button>
         <div class="sw-disp empty" id="swd-${h}-${p}" data-h="${h}" data-p="${p}"
           ontouchstart="sws(event,${h},${p})" ontouchmove="swm(event,${h},${p})" ontouchend="swe(event,${h},${p})">—</div>
@@ -1112,7 +1102,6 @@ function sgdRefresh(h,p){
   }
 }
 function sgdSummary(){
-  // Returns per-player stats summary
   return players.map((pl,p)=>{
     let fw=0,fwTotal=0,gir=0,girTotal=0,putts=0,puttH=0;
     for(let h=0;h<18;h++){
@@ -1146,14 +1135,11 @@ function updDR(h){
   const dblBtn=document.getElementById(`dr-dbl-${h}`);
   const reBtn=document.getElementById(`dr-re-${h}`);
   if(!multEl)return;
-  // Update multiplier display
   multEl.textContent=`×${mult}`;
   multEl.className='dr-mult'+(state===1?' x2':state===2?' x3':'');
-  // Update status text
   const labels=['ปกติ — ฝ่ายแพ้กด เบิ้ล ได้','เบิ้ล ×2 — ฝ่ายชนะกด รี ได้','รี ×3 — ล็อกหลุมนี้'];
   const colors=['var(--cream-m)','#ffc800','var(--win)'];
   if(stEl){stEl.textContent=labels[state];stEl.style.color=colors[state];}
-  // Toggle buttons
   if(dblBtn){
     dblBtn.style.display=state===2?'none':'inline-block';
     dblBtn.classList.toggle('sel',state===1);
@@ -1172,6 +1158,7 @@ function chPar(h,d){
   setT(`pv-${h}`,pars[h]);
   players.forEach((_,p)=>refWidget(h,p));
   updateTotals();
+  autoSave();
 }
 
 // SCORE
@@ -1249,6 +1236,7 @@ function calcSkin(){
   }
   return money;
 }
+// BITE GAME LOGIC (หมากัด) - UPDATED
 function calcBite(){
   const n=players.length,money=Array(n).fill(0);
   for(let h=0;h<18;h++){
@@ -1257,8 +1245,19 @@ function calcBite(){
     const hs=players.map((_,p)=>scores[p][h]);
     const mn=Math.min(...hs);
     const biters=hs.reduce((a,s,i)=>s===mn?[...a,i]:a,[]);
-    if(biters.length!==1)continue;
-    const br=biters[0],bv=G.bite.val*t;
+    
+    // ถ้าสกอร์ต่ำสุดมีมากกว่า 1 คน ถือว่าชน (เสมอเจ๊า)
+    if(biters.length!==1)continue; 
+    
+    const br=biters[0];
+    const diff = mn - pars[h];
+    
+    let mult = 1;
+    if (mn === 1) mult = 50; // Hole in One x50
+    else if (diff <= -2) mult = 3; // Eagle x3
+    else if (diff === -1) mult = 2; // Birdie x2
+
+    const bv = G.bite.val * t * mult;
     players.forEach((_,p)=>{if(p===br)money[p]+=(n-1)*bv;else money[p]-=bv;});
   }
   return money;
@@ -1287,14 +1286,14 @@ function calcStableford(){
   }
   return money;
 }
+// TEAM GAME LOGIC - UPDATED
 function calcTeam(){
   const n=players.length,money=Array(n).fill(0);
   for(let h=0;h<18;h++){
     const t=tm(h);
     if(!players.every((_,p)=>scores[p][h]!==null))continue;
-    let hTeams=[...G.team.teams];
-    if(G.team.swap&&Math.floor(h/G.team.swapInterval)%2===1)
-      hTeams=hTeams.map(t=>t==='A'?'B':'A');
+    
+    const hTeams = players.map((_, p) => getTeamForHole(h, p));
     const aP=players.map((_,i)=>i).filter(i=>hTeams[i]==='A');
     const bP=players.map((_,i)=>i).filter(i=>hTeams[i]==='B');
     if(!aP.length||!bP.length)continue;
@@ -1329,7 +1328,6 @@ function calcTeam(){
       const loseTeam=winTeam==='A'?'B':'A';
       const losePlayers=players.map((_,i)=>i).filter(i=>hTeams[i]===loseTeam);
       const winPlayers=players.map((_,i)=>i).filter(i=>hTeams[i]===winTeam);
-      // ช้วน = lose both best1 and best2
       const isChuanA=aWins===0&&bWins===2; // A แพ้ช้วน
       const isChuanB=bWins===0&&aWins===2; // B แพ้ช้วน
       if(isChuanA||isChuanB){
@@ -1375,9 +1373,7 @@ const OLY_PTS=[2,3,4,5]; // nearest=2, farthest=5
 
 function olyRank(h,p){
   const od=olympicData[h];
-  // if already disq or chipped, ignore
   if(od.status[p]==='disq'||od.status[p]==='chip')return;
-  // if already in order, remove (deselect)
   const idx=od.order.indexOf(p);
   if(idx!==-1){od.order.splice(idx,1);delete od.status[p];}
   else{
@@ -1387,12 +1383,10 @@ function olyRank(h,p){
 }
 
 function olySetChip(h){
-  // toggle chip-in mode: next click on a player button sets them as chip-in
   const btn=document.getElementById(`oly-chip-${h}`);
   const isOn=btn.classList.contains('sel');
   btn.classList.toggle('sel',!isOn);
   if(!isOn){
-    // mark chip mode active — next olyRank call will set chip
     olympicData[h]._chipMode=true;
   } else {
     olympicData[h]._chipMode=false;
@@ -1402,7 +1396,6 @@ function olySetChip(h){
 function olyRankWithChip(h,p){
   const od=olympicData[h];
   if(od._chipMode){
-    // set this player as chip-in, remove from order if present
     const idx=od.order.indexOf(p);
     if(idx!==-1)od.order.splice(idx,1);
     if(od.status[p]==='chip'){delete od.status[p];}
@@ -1438,10 +1431,9 @@ function olyReset(h){
 }
 
 function olyGetPts(h,p){
-  // Returns point value for player p at hole h (or null if not ranked/chipped)
   const od=olympicData[h];
   if(od.status[p]==='chip')return 7;
-  if(od.status[p]==='disq')return -1; // special: consolation
+  if(od.status[p]==='disq')return -1; 
   const idx=od.order.indexOf(p);
   if(idx===-1)return null;
   return OLY_PTS[Math.min(idx,OLY_PTS.length-1)];
@@ -1450,7 +1442,6 @@ function olyGetPts(h,p){
 function olyRenderHole(h){
   const od=olympicData[h];
   const n=players.length;
-  // Re-render rank buttons
   players.forEach((_,p)=>{
     const btn=document.getElementById(`oly-btn-${h}-${p}`);
     const rb=document.getElementById(`oly-rb-${h}-${p}`);
@@ -1462,7 +1453,7 @@ function olyRenderHole(h){
     if(st==='chip'){
       btn.classList.add('chipped');
       rb.textContent='⛳';pb.textContent='7พ้อย';pb.className='oly-pts-badge gold';
-      btn.onclick=()=>olyDisq(h,p); // long press or second click = disq
+      btn.onclick=()=>olyDisq(h,p);
     } else if(st==='disq'){
       btn.classList.add('disq');
       rb.textContent='🚫';pb.textContent='1พัด';pb.className='oly-pts-badge gray';
@@ -1481,12 +1472,10 @@ function olyRenderHole(h){
     }
   });
 
-  // Show sank row if any ranked players
   const hasRanked=od.order.length>0||Object.values(od.status).includes('chip');
   const sankRow=document.getElementById(`oly-sank-${h}`);
   if(sankRow)sankRow.style.display=hasRanked?'flex':'none';
 
-  // Render sank buttons
   players.forEach((_,p)=>{
     const sb=document.getElementById(`oly-sb-${h}-${p}`);
     if(!sb)return;
@@ -1497,7 +1486,6 @@ function olyRenderHole(h){
     if(pts===null&&!isDisq){sb.style.display='none';return;}
     sb.style.display='';
     if(isDisq){
-      // disq gets consolation 1 putt — toggle sank/miss
       sb.textContent=`${players[p].name} (1พัด)`;
       const sst=od.status[p];
       if(sst==='disq-sank'){sb.className='oly-sb sank';}
@@ -1518,7 +1506,6 @@ function olyRenderHole(h){
     else{sb.className='oly-sb';}
   });
 
-  // Summary
   olyUpdateSummary(h);
 }
 
@@ -1539,7 +1526,6 @@ function calcOlympicHole(h){
   const money=Array(n).fill(0);
   const rate=G.olympic.val;
 
-  // Get effective pts and sank status per player
   const info=players.map((_,p)=>{
     const st=od.status[p];
     const idx=od.order.indexOf(p);
@@ -1555,9 +1541,8 @@ function calcOlympicHole(h){
   const sankers=info.filter(x=>x.sank&&x.pts!==null);
   const missers=info.filter(x=>!x.sank&&x.pts!==null);
 
-  if(sankers.length===0)return money; // no transactions
+  if(sankers.length===0)return money;
 
-  // Among sankers: higher pts collects difference from lower pts (pairwise)
   for(let i=0;i<sankers.length;i++){
     for(let j=i+1;j<sankers.length;j++){
       const a=sankers[i],b=sankers[j];
@@ -1568,8 +1553,6 @@ function calcOlympicHole(h){
     }
   }
 
-  // Sankers collect from missers: sanker gets their own pts × rate from each misser
-  // misser pays each sanker the sanker's pt value × rate
   for(const s of sankers){
     for(const m of missers){
       const amt=s.pts*rate;
@@ -1623,7 +1606,7 @@ function buildResults(){
   const gr=calcAll();
 
   // GAME NAMES
-  const GN={skin:'สกิน',bite:'หมากัด',stableford:'Stableford',team:G.team.swap?`ทีมสลับ(${G.team.swapInterval})`:'ทีม',updown:'จดแต้',doubleRe:'เบิ้ล-รี'};
+  const GN={skin:'สกิน',bite:'หมากัด',stableford:'Stableford',team:G.team.swapType==='domo'?'ทีม (โดโมะ)':G.team.swapType!=='fixed'?`ทีมสลับ(${G.team.swapType})`:'ทีม',updown:'จดแต้',doubleRe:'เบิ้ล-รี'};
   const activeG=Object.keys(GN).filter(k=>gr[k]);
   let moneyHTML='';
   if(activeG.length){
@@ -1640,24 +1623,22 @@ function buildResults(){
       </table></div>`;
   }
 
-  const sumRows=stats.map(st=>{
-    const cells=Array.from({length:18},(_,h)=>{
-      const s=scores[st.p][h];if(s===null)return`<td style="color:var(--cream-m)">—</td>`;
-      const d=s-pars[h];let sy='';
-      if(d<=-2)sy='background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
-      else if(d===-1)sy='background:#1a4a2e;color:#5cc98a;border-radius:50%';
-      else if(d===1)sy='background:#5a1e1e;color:#e06060';
-      else if(d>=2)sy='background:#3a0e0e;color:#c04040';
-      return`<td><span style="display:inline-block;width:25px;height:25px;line-height:25px;text-align:center;font-size:13px;${sy}">${s}</span></td>`;
-    }).join('');
-    const monV=gr.total?gr.total[st.p]:null;
-    const monStr=monV!==null&&monV!==0?`<span style="font-size:11px;${monV>0?'color:var(--win)':'color:var(--lose)'}">${monV>0?'+'+monV:monV}฿</span>`:'';
-    return`<tr>
-      <td style="text-align:left;padding:6px 9px;white-space:nowrap;font-size:14px">${st.name}${monStr?'<br>'+monStr:''}</td>
-      ${cells}
-      <td>${st.filled?st.f9:'—'}</td><td>${st.filled?st.b9:'—'}</td>
-      <td style="font-weight:600;color:var(--cream)">${st.filled?st.tot:'—'}</td>
-      <td style="font-weight:600;color:var(--gold)">${st.filled?st.net:'—'}</td>
+  // VERTICAL SCORECARD FIX
+  const vertSumRows = Array.from({length:18}, (_, h) => {
+    return `<tr>
+      <td style="text-align:center; padding:6px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05)">${h+1}</td>
+      <td style="text-align:center; padding:6px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05)">${pars[h]}</td>
+      ${players.map((pl, p) => {
+         const s = scores[p][h];
+         if (s === null) return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.2)">—</td>`;
+         const d = s - pars[h];
+         let sy = '';
+         if (d <= -2) sy = 'background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
+         else if (d === -1) sy = 'background:#1a4a2e;color:#5cc98a;border-radius:50%';
+         else if (d === 1) sy = 'background:#5a1e1e;color:#e06060';
+         else if (d >= 2) sy = 'background:#3a0e0e;color:#c04040';
+         return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05)"><span style="display:inline-block;width:25px;height:25px;line-height:25px;text-align:center;font-size:13px;${sy}">${s}</span></td>`;
+      }).join('')}
     </tr>`;
   }).join('');
 
@@ -1692,21 +1673,42 @@ function buildResults(){
     </div>
     ${moneyHTML}
     <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">สกอร์แต่ละหลุม</div>
-    <div class="sc-sum"><table>
-      <thead>
-        <tr><th style="text-align:left;padding:8px 9px">ผู้เล่น</th>
-          ${Array.from({length:18},(_,i)=>`<th>${i+1}</th>`).join('')}
-          <th>F9</th><th>B9</th><th>รวม</th><th>Net</th></tr>
-        <tr style="background:rgba(0,0,0,0.2)">
-          <td style="text-align:left;padding:4px 9px;font-size:11px;color:var(--cream-m)">Par</td>
-          ${pars.map(p=>`<td style="font-size:11px;color:var(--cream-m)">${p}</td>`).join('')}
-          <td style="color:var(--cream-m)">${pars.slice(0,9).reduce((a,b)=>a+b,0)}</td>
-          <td style="color:var(--cream-m)">${pars.slice(9).reduce((a,b)=>a+b,0)}</td>
-          <td style="color:var(--cream-d)">${tp}</td><td style="color:var(--cream-m)">—</td>
-        </tr>
-      </thead>
-      <tbody>${sumRows}</tbody>
-    </table></div>
+    
+    <div class="sc-sum">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead style="background:var(--lg)">
+          <tr>
+            <th style="padding:8px 4px; color:var(--gold); font-size:12px; border-bottom:1px solid var(--gold-d);">หลุม</th>
+            <th style="padding:8px 4px; color:var(--gold); font-size:12px; border-bottom:1px solid var(--gold-d);">Par</th>
+            ${players.map(p => `<th style="padding:8px 4px; color:var(--gold); font-size:12px; border-bottom:1px solid var(--gold-d);">${p.name}</th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          ${vertSumRows}
+          <tr style="background:rgba(255,255,255,0.03)">
+            <td style="text-align:center; padding:6px 4px; font-size:12px; color:var(--cream-m)">F9</td>
+            <td style="text-align:center; padding:6px 4px; font-size:12px; color:var(--cream-m)">${pars.slice(0,9).reduce((a,b)=>a+b,0)}</td>
+            ${stats.map(st => `<td style="text-align:center; padding:6px 4px; font-weight:500;">${st.filled?st.f9:'—'}</td>`).join('')}
+          </tr>
+          <tr style="background:rgba(255,255,255,0.03)">
+            <td style="text-align:center; padding:6px 4px; font-size:12px; color:var(--cream-m)">B9</td>
+            <td style="text-align:center; padding:6px 4px; font-size:12px; color:var(--cream-m)">${pars.slice(9).reduce((a,b)=>a+b,0)}</td>
+            ${stats.map(st => `<td style="text-align:center; padding:6px 4px; font-weight:500;">${st.filled?st.b9:'—'}</td>`).join('')}
+          </tr>
+          <tr style="background:rgba(200,168,75,0.1)">
+            <td style="text-align:center; padding:8px 4px; font-size:13px; color:var(--gold)">รวม</td>
+            <td style="text-align:center; padding:8px 4px; font-size:13px; color:var(--gold)">${tp}</td>
+            ${stats.map(st => `<td style="text-align:center; padding:8px 4px; font-weight:600; color:var(--cream)">${st.filled?st.tot:'—'}</td>`).join('')}
+          </tr>
+          <tr style="background:rgba(200,168,75,0.2)">
+            <td style="text-align:center; padding:8px 4px; font-size:13px; color:var(--gold)">Net</td>
+            <td style="text-align:center; padding:8px 4px;"></td>
+            ${stats.map(st => `<td style="text-align:center; padding:8px 4px; font-weight:600; color:var(--gold)">${st.filled?st.net:'—'}</td>`).join('')}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <div style="text-align:center;padding:14px 0 3px;font-size:12px;color:var(--cream-m);letter-spacing:2px">SRIKRUNG GOLF DAY · ${ds}</div>
     ${G.srikrungDay.on?`
     <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">⛳ SRIKRUNG GOLF DAY — สถิติส่วนตัว</div>
@@ -1807,7 +1809,7 @@ function buildMoney(){
   const n=players.length;
   const activeGames=Object.keys(gr).filter(k=>k!=='total');
   const GN={skin:'สกิน',bite:'หมากัด',stableford:'Stableford',
-    team:G.team.swap?`ทีมสลับ(${G.team.swapInterval}h)`:'ทีม',
+    team:G.team.swapType==='domo'?'ทีม (โดโมะ)':G.team.swapType!=='fixed'?`ทีมสลับ(${G.team.swapType}h)`:'ทีม',
     updown:'จดแต้ได้/เสีย',doubleRe:'เบิ้ล-รี',olympic:'โอลิมปิก'};
   const ds=fmtDate(document.getElementById('game-date').value);
   const cn=document.getElementById('course-name').value;
@@ -1919,7 +1921,7 @@ function newGame(){
 }
 function updateHdrInfo(){
   const el=document.getElementById('hdr-info');
-  const gl=Object.entries({skin:'สกิน',bite:'หมากัด',stableford:'SF',team:G.team.swap?`ทีมสลับ(${G.team.swapInterval}h)`:'ทีม',updown:'จดแต้',doubleRe:'เบิ้ล-รี',olympic:'โอลิมปิก'}).filter(([k])=>G[k].on).map(([,v])=>v);
+  const gl=Object.entries({skin:'สกิน',bite:'หมากัด',stableford:'SF',team:G.team.swapType==='domo'?'ทีม(โดโมะ)':G.team.swapType!=='fixed'?`ทีมสลับ(${G.team.swapType}h)`:'ทีม',updown:'จดแต้',doubleRe:'เบิ้ล-รี',olympic:'โอลิมปิก'}).filter(([k])=>G[k].on).map(([,v])=>v);
   el.textContent=players.map(p=>p.name).join(' · ')+' — Par '+totPar()+(gl.length?` | ${gl.join(' + ')}`:'');
 }
 
@@ -1985,6 +1987,7 @@ function applySession(data){
 
   gameStarted=true;
   currentHole=0;
+  buildParGrid(); // Re-sync frontend setup grid with saved pars
   buildProgressBar();
   showHole(0,'in');
   updateScoreStrip();
@@ -2020,10 +2023,9 @@ function handleImport(e){
   e.target.value='';
 }
 
-// Auto-save hook — called after every score/game change
+// Auto-save hook
 function autoSave(){saveSession();}
 
-// Check session on load
 window.addEventListener('load',()=>checkSession());
 
 </script>
