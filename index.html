@@ -562,31 +562,31 @@ select option{background:var(--mg)}
 const GOLF_DB = [
   {
     name: 'มลฑลทหารบกที่ 13 (มทบ.13)', province: 'ลพบุรี', region: 'สนามประจำ', courses: [
-      { name: '18 Holes', holes: 18, par: 72, pars: [4,4,3,4,5,4,3,4,5, 4,4,3,4,5,4,3,4,5] }
+      { name: '18 Holes', holes: 18, par: 71, pars: [4,3,5,3,5,4,3,4,4, 3,4,4,5,3,4,4,4,5] }
     ]
   },
   {
     name: 'ปัญญาอินทรา กอล์ฟ คลับ', province: 'กรุงเทพฯ', region: 'สนามประจำ', courses: [
-      { name: 'Lagoon (A) + Palm (B)', holes: 18, par: 72, pars: [4,4,3,4,5,4,4,3,5, 4,3,4,4,5,4,4,3,5] },
-      { name: 'Palm (B) + Garden (C)', holes: 18, par: 72, pars: [4,3,4,4,5,4,4,3,5, 4,4,3,4,5,4,3,4,5] },
-      { name: 'Garden (C) + Lagoon (A)', holes: 18, par: 72, pars: [4,4,3,4,5,4,3,4,5, 4,4,3,4,5,4,4,3,5] }
+      { name: 'Lagoon (A) + Palm (B)', holes: 18, par: 72, pars: [4,4,3,5,4,4,5,3,4, 5,4,4,3,4,5,4,3,4] },
+      { name: 'Palm (B) + Garden (C)', holes: 18, par: 72, pars: [5,4,4,3,4,5,4,3,4, 4,3,5,4,4,3,4,5,4] },
+      { name: 'Garden (C) + Lagoon (A)', holes: 18, par: 72, pars: [4,3,5,4,4,3,4,5,4, 4,4,3,5,4,4,5,3,4] }
     ]
   },
   {
     name: 'นารายณ์ฮิลล์ กอล์ฟ รีสอร์ท', province: 'ลพบุรี', region: 'สนามประจำ', courses: [
-      { name: 'Course A + B', holes: 18, par: 72, pars: [4,4,3,5,4,4,3,5,4, 4,4,3,5,4,4,3,5,4] },
-      { name: 'Course B + C', holes: 18, par: 72, pars: [4,4,3,5,4,4,3,5,4, 4,4,3,5,4,4,3,5,4] },
-      { name: 'Course C + A', holes: 18, par: 72, pars: [4,4,3,5,4,4,3,5,4, 4,4,3,5,4,4,3,5,4] }
+      { name: 'Course A + B', holes: 18, par: 74, pars: [4,4,3,4,5,5,4,4,5, 4,5,4,4,3,4,3,5,4] },
+      { name: 'Course B + C', holes: 18, par: 72, pars: [4,5,4,4,3,4,3,5,4, 4,4,5,4,3,4,4,3,5] },
+      { name: 'Course C + A', holes: 18, par: 74, pars: [4,4,5,4,3,4,4,3,5, 4,4,3,4,5,5,4,4,5] }
     ]
   },
   {
     name: 'เมืองเอก กอล์ฟ คอร์ส', province: 'ปทุมธานี', region: 'สนามประจำ', courses: [
-      { name: '18 Holes', holes: 18, par: 72, pars: [4,4,3,4,5,4,3,4,5, 4,4,3,4,5,4,3,4,5] }
+      { name: '18 Holes', holes: 18, par: 72, pars: [4,4,5,4,5,3,4,3,4, 4,5,3,4,4,5,4,3,4] }
     ]
   },
   {
     name: 'วิสต้า กอล์ฟ คอร์ส (Vista)', province: 'ปทุมธานี', region: 'สนามประจำ', courses: [
-      { name: '18 Holes', holes: 18, par: 72, pars: [4,4,3,4,5,4,3,4,5, 4,4,3,4,5,4,3,4,5] }
+      { name: '18 Holes', holes: 18, par: 70, pars: [4,3,4,5,4,3,5,3,4, 4,3,5,3,5,3,4,4,4] }
     ]
   }
 ];
@@ -633,34 +633,46 @@ function renderCourseList(list){
   });
   el.innerHTML=html;
 }
+
+// ✨ FIXED BUG: Force Update Par Grid When Selecting Course
 function selectCourse(el){
   const cIdx = el.getAttribute('data-cidx');
   const c = GOLF_DB[cIdx];
   document.getElementById('course-name').value=c.name;
   document.getElementById('course-search').value=c.name;
   document.getElementById('course-dropdown').style.display='none';
+  
   const sel=document.getElementById('course-layout');
   if(c.courses.length>0){
-    sel.style.display='block';
+    sel.style.display = c.courses.length > 1 ? 'block' : 'none';
     sel.innerHTML=c.courses.map((cs, i)=>`<option value="${i}">${cs.name} (${cs.holes}H Par${cs.par})</option>`).join('');
-    sel.onchange=()=>{
-       const cs = c.courses[sel.value];
+    
+    // Assign handler to sync Pars
+    sel.onchange = () => {
+       const idx = sel.value || 0;
+       const cs = c.courses[idx];
        document.getElementById('course-name').value = c.name + (c.courses.length > 1 ? ' — ' + cs.name : '');
-       if(cs.pars) { pars = [...cs.pars]; buildParGrid(); }
+       if(cs.pars && cs.pars.length === 18) { 
+         pars = [...cs.pars]; 
+         buildParGrid(); // Force regenerate Par Inputs
+       }
     };
-    sel.onchange(); // trigger pars update immediately
+    
+    // Trigger it explicitly
+    sel.value = "0"; 
+    sel.onchange(); 
   } else {
     sel.style.display='none';
     sel.innerHTML='';
   }
 }
+
 document.addEventListener('click',e=>{
   if(!e.target.closest('#course-search')&&!e.target.closest('#course-dropdown'))hideCourseList();
 });
 
 // ── STATE ──
-const DEF_PARS=[4,4,3,4,5,4,3,4,5,4,4,3,4,5,4,3,4,5];
-let pars=[...DEF_PARS],players=[],scores=[],savedGames=[],gameStarted=false;
+let pars=Array(18).fill(4),players=[],scores=[],savedGames=[],gameStarted=false;
 
 let G={
   skin:      {on:false,type:'skin',val:100},
@@ -713,7 +725,8 @@ function fmtM(v){
 // ── SETUP ──
 function buildParGrid(){
   ['par-front','par-back'].forEach((id,half)=>{
-    const el=document.getElementById(id);el.innerHTML='';
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML='';
     for(let i=half*9;i<half*9+9;i++){
       el.innerHTML+=`<div class="par-hole"><div class="par-hole-num">H${i+1}</div>
         <input type="number" min="3" max="5" value="${pars[i]}"
@@ -1236,7 +1249,7 @@ function calcSkin(){
   }
   return money;
 }
-// BITE GAME LOGIC (หมากัด) - UPDATED
+// BITE GAME LOGIC (หมากัด)
 function calcBite(){
   const n=players.length,money=Array(n).fill(0);
   for(let h=0;h<18;h++){
@@ -1246,7 +1259,6 @@ function calcBite(){
     const mn=Math.min(...hs);
     const biters=hs.reduce((a,s,i)=>s===mn?[...a,i]:a,[]);
     
-    // ถ้าสกอร์ต่ำสุดมีมากกว่า 1 คน ถือว่าชน (เสมอเจ๊า)
     if(biters.length!==1)continue; 
     
     const br=biters[0];
@@ -1286,7 +1298,7 @@ function calcStableford(){
   }
   return money;
 }
-// TEAM GAME LOGIC - UPDATED
+// TEAM GAME LOGIC
 function calcTeam(){
   const n=players.length,money=Array(n).fill(0);
   for(let h=0;h<18;h++){
@@ -1298,24 +1310,19 @@ function calcTeam(){
     const bP=players.map((_,i)=>i).filter(i=>hTeams[i]==='B');
     if(!aP.length||!bP.length)continue;
 
-    // Sort each team scores ascending (best = lowest)
     const aScores=aP.map(p=>scores[p][h]).sort((a,b)=>a-b);
     const bScores=bP.map(p=>scores[p][h]).sort((a,b)=>a-b);
 
-    // Best 1
     const aB1=aScores[0],bB1=bScores[0];
-    // Best 2 (use best1 if team has only 1 player)
     const aB2=aScores[1]??aScores[0];
     const bB2=bScores[1]??bScores[0];
 
-    // Count how many "mains" each team wins (Best1 and Best2)
     let aWins=0,bWins=0;
     if(aB1<bB1)aWins++;else if(bB1<aB1)bWins++;
     if(aB2<bB2)aWins++;else if(bB2<aB2)bWins++;
 
-    // No winner if tied both
     if(aWins===0&&bWins===0)continue;
-    if(aWins===bWins)continue; // 1-1 tie
+    if(aWins===bWins)continue; 
 
     const winTeam=aWins>bWins?'A':'B';
     const sv=G.team.val*t;
@@ -1323,13 +1330,12 @@ function calcTeam(){
       if(hTeams[p]===winTeam)money[p]+=sv;else money[p]-=sv;
     });
 
-    // ช้วน: ฝ่ายแพ้ทั้ง Best1 และ Best2
     if(G.team.chuan){
       const loseTeam=winTeam==='A'?'B':'A';
       const losePlayers=players.map((_,i)=>i).filter(i=>hTeams[i]===loseTeam);
       const winPlayers=players.map((_,i)=>i).filter(i=>hTeams[i]===winTeam);
-      const isChuanA=aWins===0&&bWins===2; // A แพ้ช้วน
-      const isChuanB=bWins===0&&aWins===2; // B แพ้ช้วน
+      const isChuanA=aWins===0&&bWins===2; 
+      const isChuanB=bWins===0&&aWins===2; 
       if(isChuanA||isChuanB){
         const cv=G.team.chuanVal*t;
         players.forEach((_,p)=>{
@@ -1369,7 +1375,7 @@ function calcDoubleRe(){
   return money;
 }
 // ── OLYMPIC FUNCTIONS ──
-const OLY_PTS=[2,3,4,5]; // nearest=2, farthest=5
+const OLY_PTS=[2,3,4,5]; 
 
 function olyRank(h,p){
   const od=olympicData[h];
