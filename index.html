@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Srikrung Golf Day v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dg:#08180e;--mg:#112619;--lg:#1a3a24;
+  --gold:#c8a84b;--gold-l:#e8c96a;--gold-d:#8a6e2a;
+  --cream:#f5f0e2;--cream-d:#cdc5ab;--cream-m:#a09070;
+  --win:#5cc98a;--lose:#e06060;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--dg);color:var(--cream);font-family:'Kanit',sans-serif;min-height:100vh;overflow-x:hidden;font-size:16px}
+
+.hdr{background:linear-gradient(180deg,var(--mg) 0%,var(--dg) 100%);border-bottom:1px solid var(--gold-d);padding:16px 20px 12px;text-align:center;position:relative;overflow:hidden}
+.hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.hdr-eyebrow{font-size:11px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:4px}
+.hdr-title{font-size:24px;font-weight:500;color:var(--cream);letter-spacing:2px}
+.hdr-title span{color:var(--gold)}
+.hdr-sub{font-size:12px;color:var(--cream-m);margin-top:3px}
+.hdr-orn{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:4px;opacity:.4}
+.hdr-orn::before,.hdr-orn::after{content:'';flex:1;max-width:60px;height:1px;background:var(--gold)}
+
+.nav{display:flex;background:var(--mg);border-bottom:1px solid var(--gold-d)}
+.nav-btn{flex:1;padding:13px 6px;background:none;border:none;color:var(--cream-m);cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px;transition:color .2s;position:relative;text-align:center}
+.nav-btn.active{color:var(--gold)}
+.nav-btn.active::after{content:'';position:absolute;bottom:0;left:15%;right:15%;height:2px;background:var(--gold)}
+
+.screen{display:none;padding:16px 14px 60px}
+.screen.active{display:block}
+.sec{margin-bottom:20px}
+.sec-title{font-size:11px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid var(--gold-d);display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--gold-d),transparent)}
+
+/* FORM */
+.form-row{display:flex;gap:10px;align-items:center;margin-bottom:11px;flex-wrap:wrap}
+.form-label{font-size:14px;color:var(--cream-m);min-width:80px}
+input[type=text],input[type=number],input[type=date],select{
+  background:var(--mg);border:1px solid var(--gold-d);color:var(--cream);
+  padding:10px 12px;font-family:'Kanit',sans-serif;font-size:16px;border-radius:4px;outline:none;-webkit-appearance:none}
+input[type=text]:focus,input[type=number]:focus,input[type=date]:focus,select:focus{border-color:var(--gold);background:var(--lg)}
+input[type=text]{min-width:200px}
+input[type=number]{width:68px;text-align:center}
+input[type=date]{color-scheme:dark;min-width:170px}
+select{padding:10px 12px;cursor:pointer}
+select option{background:var(--mg)}
+.today-btn{padding:10px 15px;background:var(--gold-d);border:none;color:var(--cream);border-radius:4px;cursor:pointer;font-family:'Kanit',sans-serif;font-size:15px}
+.player-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;padding:12px 14px;background:var(--mg);border:1px solid rgba(200,168,75,0.2);border-radius:5px}
+.p-num{width:26px;height:26px;border-radius:50%;background:var(--gold-d);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--cream);flex-shrink:0}
+.p-name-input{flex:1;min-width:120px}
+.p-label{font-size:13px;color:var(--cream-m);flex-shrink:0}
+.par-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:5px}
+.par-hole{text-align:center}
+.par-hole-num{font-size:10px;color:var(--cream-m);margin-bottom:3px}
+.par-hole input{width:100%;text-align:center;padding:6px 1px;font-size:14px}
+
+/* BUTTONS */
+.btn{padding:10px 18px;border:1px solid var(--gold-d);background:transparent;color:var(--gold);cursor:pointer;font-family:'Kanit',sans-serif;font-size:14px;border-radius:4px;transition:all .2s}
+.btn:hover{background:var(--gold-d);color:var(--cream)}
+.btn-primary{background:linear-gradient(135deg,var(--gold-d),#6a4e18);color:var(--cream);border-color:var(--gold)}
+.btn-primary:hover{background:linear-gradient(135deg,var(--gold),var(--gold-d));color:var(--dg)}
+.btn-lg{padding:13px 34px;font-size:16px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+
+/* TOGGLE SWITCH */
+.toggle{position:relative;display:inline-block;width:42px;height:23px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-sl{position:absolute;inset:0;background:rgba(255,255,255,0.1);border-radius:23px;transition:.3s;border:1px solid rgba(255,255,255,0.15);cursor:pointer}
+.toggle-sl::before{content:'';position:absolute;width:17px;height:17px;left:2px;bottom:2px;background:var(--cream-m);border-radius:50%;transition:.3s}
+.toggle input:checked+.toggle-sl{background:var(--gold-d);border-color:var(--gold)}
+.toggle input:checked+.toggle-sl::before{transform:translateX(19px);background:var(--cream)}
+
+/* GAME ROWS */
+.game-row{background:var(--mg);border:1px solid rgba(200,168,75,0.15);border-radius:7px;margin-bottom:8px;overflow:hidden}
+.game-row.game-on{border-color:rgba(200,168,75,0.4)}
+.g-header{display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;user-select:none}
+.g-icon{font-size:20px;flex-shrink:0;width:28px;text-align:center}
+.g-info{flex:1}
+.g-name{font-size:16px;color:var(--cream);font-weight:500}
+.g-desc{font-size:11px;color:var(--cream-m);margin-top:1px}
+.g-body{display:none;padding:0 14px 14px;background:rgba(0,0,0,0.2)}
+.g-body-inner{padding-top:12px;border-top:1px solid rgba(200,168,75,0.1)}
+
+/* POINT CONFIG */
+.pt-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.pt-lbl{font-size:13px;color:var(--cream-m);white-space:nowrap}
+.pt-type{padding:8px 10px;font-size:14px}
+.pt-val{width:90px;padding:8px 10px;font-size:15px;text-align:center}
+.pt-unit{font-size:13px;color:var(--cream-m)}
+
+/* TURBO GRID */
+.t-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin-top:6px}
+.t-hole{text-align:center}
+.t-hole-num{font-size:10px;color:var(--cream-m);margin-bottom:3px}
+.t-cb{height:30px;background:var(--dg);border:1px solid var(--gold-d);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--cream-m);transition:all .15s;user-select:none}
+.t-cb.on{background:rgba(255,200,0,0.15);border-color:rgba(255,200,0,0.5);color:#ffc800}
+
+/* TEAM ASSIGN */
+.ta-row{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--dg);border-radius:4px;margin-bottom:5px}
+.ta-name{flex:1;font-size:15px}
+.ta-btns{display:flex;gap:4px}
+.ta-btn{padding:4px 12px;border-radius:4px;border:1px solid;cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px;background:none;transition:all .15s}
+.ta-a{border-color:#3a6a8a;color:#7ab8d8}
+.ta-a.on{background:#1a3a4a;border-color:#7ab8d8}
+.ta-b{border-color:#6a3a3a;color:#d87a7a}
+.ta-b.on{background:#4a1a1a;border-color:#d87a7a}
+
+/* HOLE CARD */
+.hole-card{background:var(--mg);border:1px solid rgba(200,168,75,0.2);border-radius:8px;margin-bottom:9px;overflow:hidden}
+.hc-top{display:flex;align-items:center;background:var(--lg);border-bottom:1px solid rgba(200,168,75,0.15)}
+.hc-num{min-width:50px;padding:9px 0;text-align:center;font-size:12px;color:var(--cream-m);letter-spacing:1px;border-right:1px solid rgba(200,168,75,0.15)}
+.hc-num strong{display:block;font-size:19px;font-weight:600;color:var(--cream);line-height:1}
+.hc-par-wrap{display:flex;align-items:center;gap:0;padding:5px 10px}
+.hc-par-lbl{font-size:11px;color:var(--cream-m);margin-right:7px}
+.par-stepper{display:flex;align-items:center;background:var(--dg);border:1px solid var(--gold-d);border-radius:20px;overflow:hidden}
+.ps-btn{width:28px;height:28px;background:none;border:none;color:var(--gold);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ps-btn:active{background:var(--gold-d)}
+.ps-val{min-width:26px;text-align:center;font-size:15px;font-weight:500;color:var(--cream)}
+.hc-right{display:flex;align-items:center;gap:6px;margin-left:auto;padding-right:8px;flex-wrap:wrap}
+.turbo-tag{padding:3px 9px;border-radius:12px;font-size:11px;cursor:pointer;border:1px solid rgba(255,200,0,0.25);color:var(--cream-m);background:transparent;font-family:'Kanit',sans-serif;transition:all .15s}
+.turbo-tag.on{background:rgba(255,200,0,0.12);border-color:rgba(255,200,0,0.5);color:#ffc800}
+.hc-players{display:flex;gap:7px;overflow-x:auto;padding:9px 8px}
+.score-widget{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;min-width:68px;max-width:120px}
+.sw-name{font-size:11px;color:var(--cream-m);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center}
+.sw-ctrl{display:flex;align-items:center;width:100%;border:1px solid rgba(200,168,75,0.25);border-radius:6px;overflow:hidden;background:var(--dg)}
+.sw-btn{width:34px;height:50px;background:none;border:none;color:var(--cream-m);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;user-select:none;-webkit-user-select:none}
+.sw-btn:active{background:rgba(200,168,75,0.15);color:var(--gold)}
+.sw-disp{flex:1;text-align:center;font-size:24px;font-weight:600;color:var(--cream);padding:7px 2px;user-select:none;-webkit-user-select:none;touch-action:none}
+.sw-disp.empty{font-size:18px;color:rgba(255,255,255,0.15)}
+.sw-badge{font-size:11px;height:16px;display:flex;align-items:center;justify-content:center;min-width:60px}
+.b-eagle{color:var(--gold)}.b-birdie{color:#5cc98a}.b-par{color:var(--cream-m)}.b-bogey{color:#e06060}.b-double{color:#c04040}.b-worse{color:#a03030}
+
+/* DR ROW */
+.dr-row{display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(200,168,75,0.1);flex-wrap:wrap}
+.dr-info{font-size:13px;color:var(--gold);flex:1;display:flex;align-items:center;gap:8px}
+.dr-mult{font-size:18px;font-weight:600;color:var(--gold);min-width:28px}
+.dr-mult.x2{color:#ffc800}.dr-mult.x3{color:var(--win)}
+.dr-dbl{padding:6px 14px;border-radius:5px;border:1px solid rgba(255,200,0,0.5);color:#ffc800;cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px;background:none;transition:all .15s}
+.dr-dbl:active,.dr-dbl.sel{background:rgba(255,200,0,0.15);border-color:#ffc800}
+.dr-re{padding:6px 14px;border-radius:5px;border:1px solid rgba(92,201,138,0.5);color:var(--win);cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px;background:none;transition:all .15s;display:none}
+.dr-re:active,.dr-re.sel{background:rgba(92,201,138,0.15);border-color:var(--win)}
+.dr-rst{padding:6px 10px;border-radius:5px;border:1px solid rgba(255,255,255,0.12);color:var(--cream-m);cursor:pointer;font-family:'Kanit',sans-serif;font-size:12px;background:none}
+.dr-rst:active{background:rgba(255,255,255,0.07)}
+
+/* TOTALS */
+.totals-card{background:var(--mg);border:1px solid var(--gold-d);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.totals-hdr{background:var(--lg);padding:9px 14px;font-size:11px;letter-spacing:3px;color:var(--gold)}
+.tot-row{display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.tot-name{font-size:15px;flex:1}
+.tot-cols{display:flex;gap:10px;flex-wrap:wrap}
+.tc{text-align:center;min-width:44px}
+.tc-lbl{font-size:10px;color:var(--cream-m);letter-spacing:1px}
+.tc-val{font-size:17px;font-weight:600;color:var(--cream)}
+.val-gold{color:var(--gold)}.val-w{color:var(--win)}.val-l{color:var(--lose)}.val-e{color:var(--cream-d)}
+
+/* MONEY TABLE */
+.money-wrap{overflow-x:auto;border-radius:5px;border:1px solid var(--gold-d);margin-bottom:18px}
+.money-tbl{width:100%;border-collapse:collapse;min-width:300px}
+.money-tbl th{padding:9px 8px;font-size:13px;color:var(--gold);font-weight:500;text-align:center;background:var(--lg);border-bottom:1px solid var(--gold-d)}
+.money-tbl th:first-child{text-align:left;padding-left:12px}
+.money-tbl td{padding:9px 6px;font-size:15px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.05)}
+.money-tbl td:first-child{text-align:left;padding-left:12px;color:var(--cream)}
+.money-tbl tr:last-child td{border-top:2px solid var(--gold-d);font-weight:600;font-size:16px;background:var(--mg)}
+.mw{color:var(--win)}.ml{color:var(--lose)}.me{color:var(--cream-m)}
+
+/* RESULTS */
+.res-hdr{text-align:center;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--gold-d)}
+.res-sub{font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:5px}
+.res-course{font-size:22px;color:var(--cream)}
+.res-date{font-size:14px;color:var(--cream-m);margin-top:3px}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-bottom:20px}
+.p-card{background:var(--mg);border:1px solid var(--gold-d);border-radius:7px;padding:16px}
+.p-card.winner{border-color:var(--gold);background:linear-gradient(135deg,var(--mg),var(--lg))}
+.w-badge{display:inline-block;background:var(--gold-d);color:var(--cream);font-size:11px;letter-spacing:2px;padding:3px 11px;border-radius:20px;margin-bottom:7px}
+.r-badge{font-size:11px;color:var(--cream-m);letter-spacing:2px;margin-bottom:6px}
+.pc-name{font-size:20px;color:var(--cream);border-bottom:1px solid rgba(200,168,75,0.25);padding-bottom:9px;margin-bottom:10px}
+.st{display:flex;justify-content:space-between;padding:4px 0;font-size:15px}
+.sl{color:var(--cream-m)}.sr{color:var(--cream);font-weight:500}
+.net-val{color:var(--gold);font-size:24px;font-weight:600}
+.cd{height:1px;background:rgba(200,168,75,0.2);margin:9px 0}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.badge{font-size:12px;padding:2px 9px;border-radius:20px}
+.be{background:var(--gold-d);color:var(--cream)}
+.bb{background:#1a4030;color:#5cc98a}
+.bp{background:rgba(255,255,255,0.07);color:var(--cream-m)}
+.bbo{background:#3a1010;color:#e06060}
+.bd{background:#200808;color:#c04040}
+.f9b9{margin-top:9px;font-size:13px;color:var(--cream-m);border-top:1px solid rgba(255,255,255,0.07);padding-top:9px}
+.sc-sum{overflow-x:auto;margin-bottom:18px;border-radius:5px;border:1px solid var(--gold-d)}
+.sc-sum table{min-width:300px;width:100%;border-collapse:collapse}
+.sc-sum thead{background:var(--lg)}
+.sc-sum th{padding:8px 4px;font-size:12px;color:var(--gold);font-weight:500;text-align:center;border-bottom:1px solid var(--gold-d)}
+.sc-sum td{padding:5px 3px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px}
+
+.saved-game{background:var(--mg);border:1px solid var(--gold-d);border-radius:5px;padding:12px;margin-top:9px}
+.saved-players{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.saved-p{font-size:13px;background:rgba(0,0,0,0.2);padding:4px 10px;border-radius:3px}
+.saved-p strong{color:var(--gold)}
+
+#saving-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#saving-ov.show{display:flex}
+#cap{background:var(--dg);padding:18px}
+
+/* OLYMPIC PUTTING GAME */
+.oly-wrap{background:rgba(0,0,50,0.35);border-top:1px solid rgba(100,140,255,0.2);padding:10px 10px 12px}
+/* SRIKRUNG GOLF DAY */
+.sgd-wrap{background:rgba(200,168,75,0.06);border-top:1px solid rgba(200,168,75,0.2);padding:10px 12px}
+.sgd-title{font-size:10px;letter-spacing:2px;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.sgd-title::after{content:'';flex:1;height:1px;background:rgba(200,168,75,0.2)}
+.sgd-row{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+.sgd-name{font-size:13px;color:var(--cream);min-width:80px;flex-shrink:0}
+.sgd-btn{padding:5px 11px;border-radius:5px;border:1px solid rgba(255,255,255,0.12);background:none;color:var(--cream-m);cursor:pointer;font-family:'Kanit',sans-serif;font-size:12px;transition:all .15s}
+.sgd-btn.hit{background:rgba(92,201,138,0.18);border-color:rgba(92,201,138,0.5);color:var(--win)}
+.sgd-btn.miss{background:rgba(224,96,96,0.1);border-color:rgba(224,96,96,0.3);color:var(--lose)}
+.sgd-btn.na{background:rgba(255,255,255,0.05);color:var(--cream-m);border-style:dashed}
+.sgd-putt{display:flex;align-items:center;border:1px solid rgba(200,168,75,0.25);border-radius:5px;overflow:hidden;background:var(--dg)}
+.sgd-pb{width:28px;height:30px;background:none;border:none;color:var(--cream-m);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sgd-pb:active{background:rgba(200,168,75,0.15)}
+.sgd-pv{min-width:28px;text-align:center;font-size:14px;font-weight:600;color:var(--cream);padding:0 4px}
+.oly-title{font-size:10px;letter-spacing:2px;color:#8ab4ff;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.oly-title::after{content:'';flex:1;height:1px;background:rgba(100,140,255,0.2)}
+.oly-rank-area{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.oly-p-btn{flex:1;min-width:70px;padding:8px 6px;border-radius:6px;border:1px solid rgba(100,140,255,0.25);background:rgba(100,140,255,0.06);color:var(--cream-m);cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px;text-align:center;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:2px}
+.oly-p-btn.ranked{background:rgba(100,140,255,0.15);border-color:rgba(100,140,255,0.5);color:var(--cream)}
+.oly-p-btn.chipped{background:rgba(255,215,0,0.15);border-color:rgba(255,215,0,0.6);color:#ffd700}
+.oly-p-btn.disq{opacity:.6;border-style:dashed}
+.oly-rank-badge{font-size:17px;font-weight:600;line-height:1.1}
+.oly-pts-badge{font-size:10px;padding:1px 7px;border-radius:10px;background:rgba(100,140,255,0.2);color:#8ab4ff;margin-top:2px}
+.oly-pts-badge.gold{background:rgba(255,215,0,0.2);color:#ffd700}
+.oly-pts-badge.gray{background:rgba(150,150,150,0.15);color:var(--cream-m)}
+.oly-actions{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+.oly-act{padding:5px 12px;border-radius:5px;border:1px solid;cursor:pointer;font-family:'Kanit',sans-serif;font-size:12px;background:none;transition:all .15s}
+.oly-chip{border-color:rgba(255,215,0,0.4);color:#ffd700}.oly-chip:active,.oly-chip.sel{background:rgba(255,215,0,0.12);border-color:#ffd700}
+.oly-rst{border-color:rgba(255,255,255,0.15);color:var(--cream-m)}.oly-rst:active{background:rgba(255,255,255,0.07)}
+.oly-sank-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;padding-top:6px;border-top:1px solid rgba(100,140,255,0.15)}
+.oly-sank-lbl{font-size:10px;color:#8ab4ff;width:100%;letter-spacing:1px}
+.oly-sb{flex:1;min-width:65px;padding:6px 4px;border-radius:5px;border:1px solid rgba(255,255,255,0.12);background:none;color:var(--cream-m);cursor:pointer;font-family:'Kanit',sans-serif;font-size:12px;text-align:center;transition:all .15s}
+.oly-sb.sank{background:rgba(92,201,138,0.15);border-color:rgba(92,201,138,0.5);color:var(--win)}
+.oly-sb.miss{background:rgba(224,96,96,0.1);border-color:rgba(224,96,96,0.3);color:var(--lose)}
+.oly-sum{font-size:11px;color:#8ab4ff;margin-top:7px;padding-top:6px;border-top:1px solid rgba(100,140,255,0.1);min-height:16px}
+
+/* PROGRESS BAR v2 */
+.prog-dot{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,0.08);transition:background .2s,transform .15s;cursor:pointer}
+.prog-dot.done{background:rgba(200,168,75,0.35)}.prog-dot.scored{background:rgba(200,168,75,0.65)}
+.prog-dot.current{background:var(--gold);transform:scaleY(1.5)}
+.strip-hdr{background:var(--lg);padding:5px 12px;display:flex;gap:6px}
+.strip-hdr span{font-size:10px;color:var(--cream-m);letter-spacing:1px}
+.strip-row{display:flex;align-items:center;padding:7px 12px;border-bottom:1px solid rgba(255,255,255,0.05);gap:6px}
+.strip-row:last-child{border-bottom:none}
+.strip-name{font-size:14px;color:var(--cream);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip-val{font-size:13px;min-width:30px;text-align:center;color:var(--cream-m)}
+.strip-tot{font-size:15px;font-weight:600;color:var(--cream);min-width:34px;text-align:center}
+.strip-pm{font-size:13px;min-width:34px;text-align:center}
+.strip-net{font-size:14px;font-weight:600;color:var(--gold);min-width:34px;text-align:center}
+.hole-in{animation:hIn .18s ease-out}.hole-back{animation:hBack .18s ease-out}
+@keyframes hIn{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes hBack{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+
+@media(max-width:380px){
+  .sw-btn{width:28px;height:44px;font-size:20px}.sw-disp{font-size:21px}.score-widget{min-width:60px}
+}
+@media print{
+  body{background:#fff;color:#111}.nav,.actions,#saving-ov{display:none!important}
+  .hdr{background:#f4f0e8;border-bottom:2px solid #8a6e2a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .screen{display:block!important}#scr-setup,#scr-scorecard{display:none!important}
+  #scr-results{display:block!important;padding:0}
+}
+</style>
+</head>
+<body>
+<div id="saving-ov"><div style="font-size:38px">⛳</div><div style="color:var(--gold);font-size:17px;letter-spacing:2px">กำลังบันทึกภาพ...</div></div>
+
+<!-- RESUME BANNER -->
+<div id="resume-banner" style="display:none;background:rgba(200,168,75,0.12);border-bottom:1px solid rgba(200,168,75,0.35);padding:10px 16px;display:none;align-items:center;gap:12px;flex-wrap:wrap">
+  <span style="font-size:14px;color:var(--gold);flex:1">⚡ พบข้อมูลเกมค้างไว้ — กลับมาต่อไหมครับ?</span>
+  <button onclick="resumeSession()" style="padding:7px 16px;background:var(--gold-d);border:none;color:var(--cream);border-radius:4px;cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px">▶ เล่นต่อ</button>
+  <button onclick="clearSession()" style="padding:7px 14px;background:none;border:1px solid rgba(200,168,75,0.3);color:var(--cream-m);border-radius:4px;cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px">✕ เริ่มใหม่</button>
+</div>
+
+<div class="hdr">
+  <div class="hdr-eyebrow">⛳ Golf Scorecard</div>
+  <div class="hdr-title">SRIKRUNG <span>GOLF DAY</span></div>
+  <div class="hdr-orn"><span style="color:var(--gold);font-size:12px">✦</span></div>
+  <div class="hdr-sub" id="hdr-info"></div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" id="tab-setup" onclick="goTab('setup')">⚙ ตั้งค่า</button>
+  <button class="nav-btn" id="tab-scorecard" onclick="goTab('scorecard')">✏ สกอร์</button>
+  <button class="nav-btn" id="tab-results" onclick="goResults()">🏆 ผลลัพธ์</button>
+  <button class="nav-btn" id="tab-money" onclick="goMoney()">💰 เงิน</button>
+</nav>
+
+<!-- ═══ SETUP ═══ -->
+<div class="screen active" id="scr-setup">
+  <div class="sec">
+    <div class="sec-title">ข้อมูลสนาม</div>
+    <div class="form-row" style="flex-direction:column;align-items:flex-start;gap:6px">
+      <span class="form-label">สนามกอล์ฟ</span>
+      <div style="width:100%;max-width:420px">
+        <div style="position:relative;margin-bottom:6px">
+          <input type="text" id="course-search" placeholder="🔍 ค้นหาสนาม..." style="width:100%;padding-right:32px"
+            oninput="filterCourses()" onfocus="showCourseList()" autocomplete="off">
+          <span onclick="clearCourseSearch()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--cream-m);font-size:16px">✕</span>
+        </div>
+        <div id="course-dropdown" style="display:none;background:var(--mg);border:1px solid var(--gold-d);border-radius:5px;max-height:200px;overflow-y:auto;margin-bottom:6px">
+          <div id="course-list"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <input type="text" id="course-name" value="Srikrung Golf Club" style="flex:1;min-width:180px" placeholder="ชื่อสนาม">
+          <select id="course-layout" style="display:none;min-width:150px" onchange="onLayoutChange()">
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="form-row"><span class="form-label">วันที่</span><input type="date" id="game-date"><button class="today-btn" onclick="setToday()">วันนี้</button></div>
+    <div class="form-row"><span class="form-label">จำนวนผู้เล่น</span>
+      <select id="num-players" onchange="renderPlayerRows()">
+        <option value="1">1 คน</option><option value="2">2 คน</option><option value="3">3 คน</option>
+        <option value="4" selected>4 คน</option><option value="5">5 คน</option><option value="6">6 คน</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">ข้อมูลผู้เล่น</div>
+    <div id="player-rows"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">Par — Front 9</div>
+    <div class="par-grid" id="par-front"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-title">Par — Back 9</div>
+    <div class="par-grid" id="par-back"></div>
+  </div>
+
+  <!-- ═══ GAMES ═══ -->
+  <div class="sec">
+    <div class="sec-title">เกมพนัน <span style="font-size:10px;color:var(--cream-m);font-weight:300;letter-spacing:1px">(เลือกได้หลายเกม)</span></div>
+
+    <!-- 1. เทอโบ -->
+    <div class="game-row" id="gr-turbo">
+      <div class="g-header" onclick="toggleGame('turbo')">
+        <div class="g-icon">⚡</div>
+        <div class="g-info"><div class="g-name">เทอโบ</div><div class="g-desc">หลุมที่เลือก — คูณเดิมพันทุกเกมอัตโนมัติ</div></div>
+        <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-turbo" onchange="toggleGame('turbo')"><span class="toggle-sl"></span></label>
+      </div>
+      <div class="g-body" id="gb-turbo"><div class="g-body-inner">
+        <div class="pt-row"><span class="pt-lbl">คูณ</span><input type="number" id="gv-turbo-mult" value="2" min="2" max="5" style="width:60px"> <span class="pt-unit">เท่า</span></div>
+        <div style="font-size:12px;color:var(--cream-m);margin-bottom:5px">Front 9</div>
+        <div class="t-grid" id="tg-front"></div>
+        <div style="font-size:12px;color:var(--cream-m);margin:8px 0 5px">Back 9</div>
+        <div class="t-grid" id="tg-back"></div>
+        <div style="font-size:11px;color:var(--cream-m);margin-top:7px">* กดได้อีกครั้งในหน้าสกอร์แต่ละหลุม</div>
+      </div></div>
+    </div>
+
+    <!-- 2. หมากัด -->
+    <div class="game-row" id="gr-bite">
+      <div class="g-header" onclick="toggleGame('bite')">
+        <div class="g-icon">🐶</div>
+        <div class="g-info"><div class="g-name">หมากัด</div><div class="g-desc">สกอร์ต่ำสุดเดียว = กัดทุกคน, เสมอ = ไม่กัด</div></div>
+        <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-bite" onchange="toggleGame('bite')"><span class="toggle-sl"></span></label>
+      </div>
+      <div class="g-body" id="gb-bite"><div class="g-body-inner">
+        <div class="pt-row">
+          <span class="pt-lbl">คิดแบบ</span>
+          <select class="pt-type" id="gt-bite"><option value="bite">บาท / ครั้งที่กัด</option><option value="hole">บาท / หลุม (flat)</option></select>
+        </div>
+        <div class="pt-row"><span class="pt-lbl">มูลค่า</span><input type="number" class="pt-val" id="gv-bite" value="20" min="1"><span class="pt-unit">บาท</span></div>
+      </div></div>
+    </div>
+
+    <!-- 3. ทีม / ทีมสลับ -->
+    <div class="game-row" id="gr-team">
+      <div class="g-header" onclick="toggleGame('team')">
+        <div class="g-icon">🤝</div>
+        <div class="g-info"><div class="g-name">ทีม / ทีมสลับ</div><div class="g-desc">Best 1 + Best 2 ต่อทีม · ช้วน = แพ้ทั้งคู่</div></div>
+        <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-team" onchange="toggleGame('team')"><span class="toggle-sl"></span></label>
+      </div>
+      <div class="g-body" id="gb-team"><div class="g-body-inner">
+        <div style="font-size:12px;color:var(--cream-m);line-height:1.9;margin-bottom:10px">
+          นับ <strong style="color:var(--cream)">Best 1 + Best 2</strong> ต่อทีม ต่อหลุม
+        </div>
+        <div class="pt-row"><span class="pt-lbl">เดิมพัน</span><input type="number" class="pt-val" id="gv-team" value="20" min="1"><span class="pt-unit">บาท / หลุม</span></div>
+        <div class="pt-row" style="margin-top:4px">
+          <label class="toggle"><input type="checkbox" id="g-team-chuan" onchange="document.getElementById('chuan-val-row').style.display=this.checked?'flex':'none'"><span class="toggle-sl"></span></label>
+          <span style="font-size:14px;color:var(--cream-m);margin-left:6px">ทีมช้วน</span>
+          <span style="font-size:11px;color:var(--cream-m);margin-left:4px">(แพ้ทั้ง Best1 และ Best2)</span>
+        </div>
+        <div class="pt-row" id="chuan-val-row" style="display:none;margin-top:4px">
+          <span class="pt-lbl">ช้วน</span><input type="number" class="pt-val" id="gv-team-chuan" value="100" min="1"><span class="pt-unit">บาท / หลุม</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;margin:10px 0 8px;flex-wrap:wrap">
+          <label class="toggle" style="width:36px;height:20px">
+            <input type="checkbox" id="g-team-swap" style="position:absolute;opacity:0" onchange="document.getElementById('team-swap-sel').style.display=this.checked?'inline-block':'none'">
+            <span class="toggle-sl"></span>
+          </label>
+          <span style="font-size:14px;color:var(--cream-m)">ทีมสลับ</span>
+          <select id="team-swap-sel" style="display:none;padding:6px 10px;font-size:14px;width:auto">
+            <option value="3">ทุก 3 หลุม</option>
+            <option value="6" selected>ทุก 6 หลุม</option>
+            <option value="9">ทุก 9 หลุม</option>
+          </select>
+        </div>
+        <div style="font-size:12px;color:var(--cream-m);margin-bottom:7px">กำหนดทีม</div>
+        <div id="team-assign"></div>
+      </div></div>
+    </div>
+
+    <!-- 4. โอลิมปิก -->
+    <div class="game-row" id="gr-olympic">
+      <div class="g-header" onclick="toggleGame('olympic')">
+        <div class="g-icon">🏅</div>
+        <div class="g-info"><div class="g-name">โอลิมปิก</div><div class="g-desc">พัตต์บนกรีน • กดเรียงลำดับใกล้→ไกล • Chip-in = 7 พ้อย</div></div>
+        <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-olympic" onchange="toggleGame('olympic')"><span class="toggle-sl"></span></label>
+      </div>
+      <div class="g-body" id="gb-olympic"><div class="g-body-inner">
+        <div class="pt-row"><span class="pt-lbl">1 พ้อย =</span><input type="number" class="pt-val" id="gv-olympic" value="20" min="1"><span class="pt-unit">บาท</span></div>
+        <div style="font-size:11px;color:var(--cream-m);line-height:1.7">
+          📍 ใกล้สุด = 2พ้อย &nbsp;·&nbsp; 3พ้อย &nbsp;·&nbsp; 4พ้อย &nbsp;·&nbsp; ไกลสุด = 5พ้อย<br>
+          ⛳ Chip-in จากข้างกรีน = 7พ้อย<br>
+          🚫 เกิน Par+2 ออน = ไม่ร่วมโอลิมปิก แต่ได้ 1พัด = 1พ้อย<br>
+          💡 คนพัดลงจากไกลกว่า กินส่วนต่างพ้อยจากคนใกล้กว่า
+        </div>
+      </div></div>
+    </div>
+
+    <!-- 5. เบิ้ล-รี -->
+    <div class="game-row" id="gr-doubleRe">
+      <div class="g-header" onclick="toggleGame('doubleRe')">
+        <div class="g-icon">🎲</div>
+        <div class="g-info"><div class="g-name">เบิ้ล-รี</div><div class="g-desc">แพ้หลุม → กด เบิ้ล (×2) หรือ รี (รีเซ็ต) ได้เลย</div></div>
+        <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-doubleRe" onchange="toggleGame('doubleRe')"><span class="toggle-sl"></span></label>
+      </div>
+      <div class="g-body" id="gb-doubleRe"><div class="g-body-inner">
+        <div class="pt-row"><span class="pt-lbl">เดิมพันเริ่ม</span><input type="number" class="pt-val" id="gv-doubleRe" value="100" min="1"><span class="pt-unit">บาท / หลุม</span></div>
+        <div style="font-size:11px;color:var(--cream-m)">* ปุ่ม เบิ้ล/รี จะแสดงใต้แต่ละหลุมในหน้าสกอร์</div>
+      </div></div>
+    </div>
+
+    <!-- อื่นๆ -->
+    <div style="font-size:10px;letter-spacing:2px;color:var(--cream-m);margin:14px 0 8px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.07)">อื่นๆ</div>
+
+    <!-- สกิน -->
+    <div class="game-row" id="gr-skin">
+      <div class="g-header" onclick="toggleGame('skin')">
+        <div class="g-icon">🏆</div>
+        <div class="g-info"><div class="g-name">สกิน</div><div class="g-desc">ชนะหลุม=รับสกิน • เสมอ=สกินแขวนสะสมไปหลุมต่อไป</div></div>
+        <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-skin" onchange="toggleGame('skin')"><span class="toggle-sl"></span></label>
+      </div>
+      <div class="g-body" id="gb-skin"><div class="g-body-inner">
+        <div class="pt-row">
+          <span class="pt-lbl">คิดแบบ</span>
+          <select class="pt-type" id="gt-skin"><option value="skin">บาท / สกิน (สะสม)</option><option value="hole">บาท / หลุม ที่ชนะ</option></select>
+        </div>
+        <div class="pt-row"><span class="pt-lbl">มูลค่า</span><input type="number" class="pt-val" id="gv-skin" value="100" min="1"><span class="pt-unit">บาท</span></div>
+      </div></div>
+    </div>
+
+    <!-- Stableford -->
+    <div class="game-row" id="gr-stableford">
+      <div class="g-header" onclick="toggleGame('stableford')">
+        <div class="g-icon">⭐</div>
+        <div class="g-info"><div class="g-name">Stableford</div><div class="g-desc">Eagle=4 • Birdie=3 • Par=2 • Bogey=1 • Dbl+=0</div></div>
+        <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-stableford" onchange="toggleGame('stableford')"><span class="toggle-sl"></span></label>
+      </div>
+      <div class="g-body" id="gb-stableford"><div class="g-body-inner">
+        <div class="pt-row">
+          <span class="pt-lbl">คิดแบบ</span>
+          <select class="pt-type" id="gt-stableford"><option value="point">บาท / แต้มต่าง (ระหว่างผู้เล่น)</option><option value="hole">บาท / หลุม ที่ชนะ</option></select>
+        </div>
+        <div class="pt-row"><span class="pt-lbl">มูลค่า</span><input type="number" class="pt-val" id="gv-stableford" value="10" min="1"><span class="pt-unit">บาท</span></div>
+      </div></div>
+    </div>
+
+    <!-- จดแต้ได้/เสีย -->
+    <div class="game-row" id="gr-updown">
+      <div class="g-header" onclick="toggleGame('updown')">
+        <div class="g-icon">📊</div>
+        <div class="g-info"><div class="g-name">จดแต้ได้/เสีย</div><div class="g-desc">ทุกคู่ ทุกหลุม — ชนะ+, แพ้−, เสมอ=0</div></div>
+        <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-updown" onchange="toggleGame('updown')"><span class="toggle-sl"></span></label>
+      </div>
+      <div class="g-body" id="gb-updown"><div class="g-body-inner">
+        <div class="pt-row">
+          <span class="pt-lbl">คิดแบบ</span>
+          <select class="pt-type" id="gt-updown"><option value="hole">บาท / หลุม (ต่อคู่)</option><option value="diff">บาท / สกอร์ต่าง</option></select>
+        </div>
+        <div class="pt-row"><span class="pt-lbl">มูลค่า</span><input type="number" class="pt-val" id="gv-updown" value="100" min="1"><span class="pt-unit">บาท</span></div>
+      </div></div>
+    </div>
+
+    <!-- SRIKRUNG GOLF DAY -->
+    <div class="game-row" id="gr-srikrungDay" style="border-color:rgba(200,168,75,0.35)">
+      <div class="g-header" onclick="toggleGame('srikrungDay')">
+        <div class="g-icon">⛳</div>
+        <div class="g-info">
+          <div class="g-name" style="color:var(--gold)">SRIKRUNG GOLF DAY</div>
+          <div class="g-desc">Fairway Hit · GIR · Putts — สถิติส่วนตัว ไม่คิดเงิน</div>
+        </div>
+        <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-srikrungDay" onchange="toggleGame('srikrungDay')"><span class="toggle-sl"></span></label>
+      </div>
+      <div class="g-body" id="gb-srikrungDay"><div class="g-body-inner">
+        <div style="font-size:12px;color:var(--cream-m);line-height:1.9">
+          🏌️ <strong style="color:var(--cream)">Fairway Hit</strong> — ลูกอยู่ในแฟร์เวย์ = 1 คะแนน (ยกเว้น Par 3)<br>
+          📍 <strong style="color:var(--cream)">GIR</strong> — ออนกรีนในสโตรกที่กำหนด (Par−2)<br>
+          🎯 <strong style="color:var(--cream)">Putts</strong> — จำนวนพัต (0 = holed out, กด +/−)
+        </div>
+      </div></div>
+    </div>
+
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="btn btn-primary btn-lg" onclick="startGame()">เริ่มบันทึกสกอร์ →</button>
+    <button class="btn btn-lg" onclick="document.getElementById('import-file').click()">📥 โหลด Session</button>
+  </div>
+  <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
+</div>
+
+<!-- ═══ SCORECARD ═══ -->
+<div class="screen" id="scr-scorecard">
+  <!-- Progress Bar -->
+  <div style="padding:10px 14px 6px;background:var(--mg);border-bottom:1px solid rgba(200,168,75,0.2)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+      <span style="font-size:11px;color:var(--cream-m);letter-spacing:2px">HOLE</span>
+      <span style="font-size:13px;color:var(--cream)" id="prog-label">1 / 18</span>
+      <span style="font-size:11px;color:var(--cream-m)" id="prog-total">Par —</span>
+    </div>
+    <div id="progress-dots" style="display:flex;gap:3px"></div>
+  </div>
+  <!-- Single Hole -->
+  <div id="single-hole-wrap" style="padding:0 0 16px"></div>
+  <!-- Score Strip -->
+  <div id="score-strip" style="margin:0 14px 10px;background:var(--mg);border:1px solid rgba(200,168,75,0.2);border-radius:7px;overflow:hidden"></div>
+  <!-- Nav -->
+  <div style="display:flex;gap:8px;padding:0 14px;margin-bottom:14px">
+    <button class="btn" id="btn-prev" onclick="holeNav(-1)" style="flex:1;font-size:16px">← ก่อนหน้า</button>
+    <button class="btn btn-primary" id="btn-next" onclick="holeNav(1)" style="flex:1;font-size:16px">ถัดไป →</button>
+  </div>
+  <div style="padding:0 14px 40px">
+    <button class="btn btn-primary" onclick="goResults()" style="width:100%;font-size:16px">🏆 ดูผลลัพธ์</button>
+  </div>
+</div>
+
+<!-- ═══ MONEY SUMMARY ═══ -->
+<div class="screen" id="scr-money">
+  <div id="money-content"></div>
+  <div class="actions">
+    <button class="btn" onclick="goTab('scorecard')">← กลับสกอร์</button>
+    <button class="btn btn-primary" onclick="saveAsImage()">📷 บันทึกรูป</button>
+  </div>
+</div>
+
+<!-- ═══ RESULTS ═══ -->
+<div class="screen" id="scr-results">
+  <div id="cap"><div id="res-content"></div></div>
+  <div class="actions">
+    <button class="btn btn-primary" onclick="saveAsImage()">📷 รูปภาพ</button>
+    <button class="btn btn-primary" onclick="saveGame()">💾 บันทึก</button>
+    <button class="btn" onclick="exportSession()">📤 Export</button>
+    <button class="btn" onclick="window.print()">🖨 พิมพ์</button>
+    <button class="btn" onclick="goTab('scorecard')">← สกอร์</button>
+    <button class="btn" onclick="newGame()">+ เกมใหม่</button>
+  </div>
+  <div id="saved-section" style="margin-top:28px"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// ── GOLF COURSE DATABASE ──
+const GOLF_DB=[
+  // ── กรุงเทพฯ และปริมณฑล ──
+  {name:'สนามกอล์ฟแอลไพน์',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'อมตะ สปริง คันทรีคลับ',province:'ชลบุรี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'อโยธยา ลิงค์ส',province:'พระนครศรีอยุธยา',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'คาสเคด้า กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'ช่วงเชื่อน กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'เกียรติธานี คันทรีคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'กรุงกวี กอล์ฟ แอนด์ คันทรีคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'กรุงเทพกรีฑา สปอร์ตคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'ลำลูกกา คันทรีคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนาม 1',holes:18,par:72},{name:'สนาม 2',holes:18,par:72}]},
+  {name:'เลกาซี่ กอล์ฟคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'เมโทร โรสการ์เดน กอล์ฟคลับ',province:'นครปฐม',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'รอยัล เจมส์ กอล์ฟ ซิตี้',province:'นครปฐม',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'สโตนฮิลล์ กอล์ฟคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'สุภาพฤกษ์ กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'ซัมมิท วินด์มิลล์ กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'สุวรรณ กอล์ฟ แอนด์ คันทรีคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'ไทย คันทรีคลับ',province:'ฉะเชิงเทรา',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'วินด์เซอร์ พาร์ค แอนด์ กอล์ฟคลับ',province:'กรุงเทพฯ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'เอไอที กอล์ฟคลับ',province:'ปทุมธานี',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'เลควูด คันทรีคลับ',province:'สมุทรปราการ',region:'กรุงเทพฯ และปริมณฑล',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  // ── ชลบุรี / พัทยา ──
+  {name:'บูรพา กอล์ฟคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'อีสต์ คอร์ส',holes:18,par:72},{name:'เวสต์ คอร์ส',holes:18,par:72}]},
+  {name:'ชีจรรย์ กอล์ฟ รีสอร์ท',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'คริสตัล เบย์ กอล์ฟคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'เอมเมอรัลด์ กอล์ฟคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'กรีนวัลเลย์ คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'แหลมฉบัง อินเตอร์เนชันแนล คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'เมาท์เทน คอร์ส',holes:9,par:36},{name:'เลค คอร์ส',holes:9,par:36},{name:'วัลเลย์ คอร์ส',holes:9,par:36}]},
+  {name:'พัทนา กอล์ฟคลับ แอนด์ รีสอร์ท',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'แชมเปี้ยนชิพ คอร์ส',holes:18,par:72},{name:'เอ็กเซคคิวทีฟ คอร์ส',holes:9,par:36}]},
+  {name:'พัทยา คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'ฟีนิกซ์ โกลด์ กอล์ฟ แอนด์ คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'โอเชียน คอร์ส',holes:9,par:36},{name:'เลค คอร์ส',holes:9,par:36},{name:'เมาท์เทน คอร์ส',holes:9,par:36}]},
+  {name:'เพลแซนท์ วัลเลย์ กอล์ฟ แอนด์ คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'สยาม คันทรีคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'โอลด์ คอร์ส',holes:18,par:72},{name:'แพลนเทชั่น คอร์ส',holes:27,par:108},{name:'วอเตอร์ไซด์ คอร์ส',holes:18,par:72},{name:'โรลลิ่ง ฮิลล์ส คอร์ส',holes:18,par:72}]},
+  {name:'ศรีราชา อินเตอร์เนชันแนล กอล์ฟคลับ',province:'ชลบุรี',region:'ชลบุรี / พัทยา',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'เซนต์ แอนดรูว์ 2000',province:'ระยอง',region:'ชลบุรี / พัทยา',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  // ── หัวหิน / ประจวบฯ ──
+  {name:'แบล็ค เมาท์เทน กอล์ฟคลับ',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'หัวหิน คันทรีคลับ',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามหลัก',holes:18,par:71}]},
+  {name:'ปาล์ม ฮิลส์ กอล์ฟคลับ',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'ไพน์แอปเปิ้ล วัลเลย์ กอล์ฟคลับ (บันยัน)',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'รอยัล หัวหิน กอล์ฟคอร์ส',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'สปริงฟิลด์ รอยัล คันทรีคลับ',province:'ประจวบคีรีขันธ์',region:'หัวหิน / ประจวบฯ',courses:[{name:'วัลเลย์ คอร์ส',holes:18,par:72},{name:'เมาท์เทน คอร์ส',holes:9,par:36}]},
+  // ── ภาคเหนือ ──
+  {name:'แอลไพน์ กอล์ฟ รีสอร์ท เชียงใหม่',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'เชียงใหม่ ไฮแลนด์ส กอล์ฟคลับ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'ไฮแลนด์ คอร์ส',holes:18,par:72},{name:'วัลเลย์ คอร์ส',holes:9,par:36}]},
+  {name:'แก๊สซัน คุณตาน กอล์ฟ แอนด์ รีสอร์ท',province:'ลำพูน',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'แก๊สซัน เลค ซิตี้ กอล์ฟคลับ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'แก๊สซัน พาโนรามา กอล์ฟคลับ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'พาโนรามา คอร์ส',holes:18,par:72}]},
+  {name:'ล้านนา กอล์ฟคลับ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'นอร์ท ฮิลล์ เชียงใหม่ กอล์ฟ',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'ซัมมิท กรีนวัลเลย์ คันทรีคลับ เชียงใหม่',province:'เชียงใหม่',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'สันติบุรี เชียงราย คันทรีคลับ',province:'เชียงราย',region:'ภาคเหนือ',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'สิงห์ปาร์ค เชียงราย กอล์ฟคลับ',province:'เชียงราย',region:'ภาคเหนือ',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  // ── ภาคอีสาน ──
+  {name:'โบนันซ่า กอล์ฟ แอนด์ คันทรีคลับ',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'คิริมายา กอล์ฟ รีสอร์ท แอนด์ สปา',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'รุกส์ โคราช คันทรีคลับ',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'สตาร์รี่ วัลเลย์ กอล์ฟคลับ',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'สุรนารี กอล์ฟคลับ',province:'นครราชสีมา',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'สิงห์ปาร์ค ขอนแก่น กอล์ฟคลับ',province:'ขอนแก่น',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'อุดรธานี คันทรีคลับ',province:'อุดรธานี',region:'ภาคอีสาน',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  // ── ภาคกลาง ──
+  {name:'แกรนด์ ปรีซ์ กอล์ฟคลับ',province:'กาญจนบุรี',region:'ภาคกลาง',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'บลู แซฟไฟร์ กอล์ฟ แอนด์ รีสอร์ท',province:'กาญจนบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'ดราก้อน ฮิลส์ กอล์ฟ แอนด์ คันทรีคลับ',province:'กาญจนบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'มิชชั่น ฮิลส์ กอล์ฟคลับ กาญจนบุรี',province:'กาญจนบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'สนามกอล์ฟกองทัพบก ลพบุรี',province:'ลพบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'สนามกอล์ฟนารายณ์',province:'ลพบุรี',region:'ภาคกลาง',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  // ── ภาคตะวันออก ──
+  {name:'ระยอง กรีนวัลเลย์ คันทรีคลับ',province:'ระยอง',region:'ภาคตะวันออก',courses:[{name:'วัลเลย์ คอร์ส',holes:18,par:72},{name:'ไฮแลนด์ คอร์ส',holes:18,par:72}]},
+  {name:'331 กอล์ฟคลับ',province:'ปราจีนบุรี',region:'ภาคตะวันออก',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  // ── ภาคใต้ ──
+  {name:'บลู แคนยอน คันทรีคลับ',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'แคนยอน คอร์ส',holes:18,par:72},{name:'เลคส์ คอร์ส',holes:18,par:72}]},
+  {name:'ลากูนา กอล์ฟ ภูเก็ต',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:71}]},
+  {name:'มิชชั่น ฮิลส์ ภูเก็ต กอล์ฟ รีสอร์ท',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'ภูเก็ต คันทรีคลับ',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'เรด เมาท์เทน กอล์ฟคลับ ภูเก็ต',province:'ภูเก็ต',region:'ภาคใต้',courses:[{name:'สนามแชมเปี้ยนชิพ',holes:18,par:72}]},
+  {name:'สันติบุรี สมุย คันทรีคลับ',province:'สุราษฎร์ธานี',region:'ภาคใต้',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+  {name:'เซาเทิร์น ฮิลส์ กอล์ฟ แอนด์ คันทรีคลับ',province:'สงขลา',region:'ภาคใต้',courses:[{name:'สนามหลัก',holes:18,par:72}]},
+];
+function searchCourses(q){
+  if(!q.trim())return GOLF_DB;
+  const lq=q.toLowerCase();
+  return GOLF_DB.filter(c=>c.name.toLowerCase().includes(lq)||c.province.toLowerCase().includes(lq)||c.region.toLowerCase().includes(lq));
+}
+function filterCourses(){
+  const q=document.getElementById('course-search').value;
+  renderCourseList(searchCourses(q));
+  document.getElementById('course-dropdown').style.display='block';
+}
+function showCourseList(){
+  renderCourseList(searchCourses(document.getElementById('course-search').value));
+  document.getElementById('course-dropdown').style.display='block';
+}
+function hideCourseList(){setTimeout(()=>{const d=document.getElementById('course-dropdown');if(d)d.style.display='none';},200);}
+function clearCourseSearch(){
+  document.getElementById('course-search').value='';
+  document.getElementById('course-dropdown').style.display='none';
+}
+function renderCourseList(list){
+  const el=document.getElementById('course-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div style="padding:10px 12px;color:var(--cream-m);font-size:14px">ไม่พบสนามครับ</div>';return;}
+  const grouped={};
+  list.slice(0,60).forEach(c=>{if(!grouped[c.region])grouped[c.region]=[];grouped[c.region].push(c);});
+  let html='';
+  Object.entries(grouped).forEach(([region,courses])=>{
+    html+=`<div style="padding:5px 12px 3px;font-size:10px;letter-spacing:2px;color:var(--gold);background:rgba(0,0,0,0.2)">${region}</div>`;
+    courses.forEach(c=>{
+      const multi=c.courses.length>1;
+      html+=`<div onclick="selectCourse(this)"
+        data-name="${c.name}" data-courses='${JSON.stringify(c.courses)}'
+        style="padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px;color:var(--cream)"
+        onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background=''">
+        ${c.name} <span style="font-size:11px;color:var(--cream-m)">${c.province}</span>
+        ${multi?`<span style="font-size:10px;background:rgba(200,168,75,0.15);color:var(--gold);padding:1px 7px;border-radius:10px;margin-left:5px">${c.courses.length} คอร์ส</span>`:''}
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+function selectCourse(el){
+  const name=el.getAttribute('data-name');
+  const courses=JSON.parse(el.getAttribute('data-courses'));
+  document.getElementById('course-name').value=name;
+  document.getElementById('course-search').value=name;
+  document.getElementById('course-dropdown').style.display='none';
+  const sel=document.getElementById('course-layout');
+  if(courses.length>1){
+    sel.style.display='block';
+    sel.innerHTML=courses.map(c=>`<option value="${c.name}">${c.name} (${c.holes}H Par${c.par})</option>`).join('');
+    sel.onchange=()=>{document.getElementById('course-name').value=name+' — '+sel.value;};
+  } else {
+    sel.style.display='none';
+    sel.innerHTML='';
+  }
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#course-search')&&!e.target.closest('#course-dropdown'))hideCourseList();
+});
+
+// ── STATE ──
+const DEF_PARS=[4,4,3,4,5,3,4,4,5,4,4,3,5,4,3,4,5,4];
+let pars=[...DEF_PARS],players=[],scores=[],savedGames=[],gameStarted=false;
+
+let G={
+  skin:      {on:false,type:'skin',val:100},
+  turbo:     {on:false,holes:new Set(),mult:2},
+  bite:      {on:false,type:'bite',val:50},
+  stableford:{on:false,type:'point',val:10},
+  team:      {on:false,type:'hole',val:20,chuan:false,chuanVal:100,swap:false,swapInterval:6,teams:[]},
+  updown:    {on:false,type:'hole',val:100},
+  doubleRe:  {on:false,val:100,mults:Array(18).fill(1)},
+  olympic:   {on:false,val:10},
+  srikrungDay:{on:false}
+};
+let olympicData=Array(18).fill(null).map(()=>({order:[],status:{}}));
+// srikrungDay stats: per player per hole — fw=null(N/A)/true/false, gir=null/true/false, putts=null/number
+let sgdData=[];
+function initSGD(){
+  sgdData=players.map(()=>Array(18).fill(null).map(()=>({fw:null,gir:null,putts:null})));
+}
+
+// ── INIT ──
+setToday();buildParGrid();renderPlayerRows();buildTurboGrid();
+
+// ── HELPERS ──
+function setToday(){
+  const d=new Date();
+  document.getElementById('game-date').value=
+    `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function fmtDate(v){
+  if(!v)return'';
+  const[y,m,d]=v.split('-');
+  const mn=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  return`${+d} ${mn[+m-1]} ${+y+543}`;
+}
+function setT(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function totPar(){return pars.reduce((a,b)=>a+b,0);}
+function isTurbo(h){return G.turbo.on&&G.turbo.holes.has(h);}
+function tm(h){return isTurbo(h)?G.turbo.mult:1;}
+function fmtM(v){
+  if(v===0)return'<span class="me">0</span>';
+  return v>0?`<span class="mw">+${v.toLocaleString()}</span>`:`<span class="ml">${v.toLocaleString()}</span>`;
+}
+
+// ── SETUP ──
+function buildParGrid(){
+  ['par-front','par-back'].forEach((id,half)=>{
+    const el=document.getElementById(id);el.innerHTML='';
+    for(let i=half*9;i<half*9+9;i++){
+      el.innerHTML+=`<div class="par-hole"><div class="par-hole-num">H${i+1}</div>
+        <input type="number" min="3" max="5" value="${pars[i]}"
+          onchange="pars[${i}]=Math.max(3,Math.min(5,parseInt(this.value)||4))"></div>`;
+    }
+  });
+}
+function renderPlayerRows(){
+  const n=+document.getElementById('num-players').value;
+  const wrap=document.getElementById('player-rows');
+  const prev=[...wrap.querySelectorAll('.player-row')].map(r=>({name:r.querySelector('.pn').value,hcp:r.querySelector('.ph').value}));
+  const NM=['Alpha','Bravo','Charlie','Delta','Echo','Foxtrot'];
+  wrap.innerHTML='';
+  for(let i=0;i<n;i++){
+    wrap.innerHTML+=`<div class="player-row" style="display:flex;align-items:center;gap:8px;padding:10px 12px;flex-wrap:wrap">
+      <div class="p-num">${i+1}</div>
+      <input type="text" class="pn p-name-input" value="${prev[i]?.name||`ผู้เล่น ${NM[i]}`}" style="flex:1;min-width:120px" placeholder="ชื่อผู้เล่น">
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <span style="font-size:12px;color:var(--cream-m)">HCP</span>
+        <input type="number" class="ph" min="0" max="54" value="${prev[i]?.hcp||'0'}" style="width:58px;text-align:center">
+      </div>
+    </div>`;
+  }
+  renderTeamAssign();
+}
+function renderTeamAssign(){
+  const n=+document.getElementById('num-players').value;
+  const names=[...document.querySelectorAll('.pn')];
+  const el=document.getElementById('team-assign');
+  if(!el)return;
+  el.innerHTML='';
+  for(let i=0;i<n;i++){
+    const nm=names[i]?.value||`P${i+1}`;
+    const t=G.team.teams[i];
+    el.innerHTML+=`<div class="ta-row">
+      <div class="ta-name">${nm}</div>
+      <div class="ta-btns">
+        <button class="ta-btn ta-a${t==='A'?' on':''}" onclick="setTeam(${i},'A')">ทีม A</button>
+        <button class="ta-btn ta-b${t==='B'?' on':''}" onclick="setTeam(${i},'B')">ทีม B</button>
+      </div>
+    </div>`;
+  }
+}
+function setTeam(i,t){G.team.teams[i]=t;renderTeamAssign();}
+
+function buildTurboGrid(){
+  ['tg-front','tg-back'].forEach((id,half)=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML='';
+    for(let i=half*9;i<half*9+9;i++){
+      const on=G.turbo.holes.has(i);
+      el.innerHTML+=`<div class="t-hole"><div class="t-hole-num">H${i+1}</div>
+        <div class="t-cb${on?' on':''}" id="tc-${i}" onclick="toggleTH(${i})">⚡</div></div>`;
+    }
+  });
+}
+function toggleTH(h){
+  G.turbo.holes.has(h)?G.turbo.holes.delete(h):G.turbo.holes.add(h);
+  const on=G.turbo.holes.has(h);
+  [document.getElementById(`tc-${h}`),document.getElementById(`tc2-${h}`)].forEach(el=>{
+    if(!el)return;
+    if(el.classList.contains('t-cb'))el.classList.toggle('on',on);
+    else{
+      el.classList.toggle('on',on);
+      el.style.borderColor=on?'rgba(255,200,0,0.5)':'rgba(255,255,255,0.15)';
+      el.style.color=on?'#ffc800':'var(--cream-m)';
+      el.style.background=on?'rgba(255,200,0,0.1)':'transparent';
+    }
+  });
+  updateTotals();
+}
+function toggleGame(id){
+  const cb=document.getElementById(`g-${id}`);
+  G[id].on=cb.checked;
+  const body=document.getElementById(`gb-${id}`);
+  if(body)body.style.display=cb.checked?'block':'none';
+  document.getElementById(`gr-${id}`)?.classList.toggle('game-on',cb.checked);
+  if(id==='team'&&cb.checked)renderTeamAssign();
+}
+
+function startGame(){
+  const n=+document.getElementById('num-players').value;
+  document.querySelectorAll('.par-hole input').forEach((inp,i)=>{
+    if(i<18)pars[i]=Math.max(3,Math.min(5,+inp.value||4));
+  });
+  players=[...document.querySelectorAll('.pn')].slice(0,n).map((el,i)=>({
+    name:el.value.trim()||`P${i+1}`,
+    hcp:Math.max(0,+document.querySelectorAll('.ph')[i].value||0)
+  }));
+  scores=Array(n).fill(null).map(()=>Array(18).fill(null));
+
+  // read game settings
+  ['skin','bite','stableford','updown'].forEach(k=>{
+    const te=document.getElementById(`gt-${k}`);
+    const ve=document.getElementById(`gv-${k}`);
+    if(te)G[k].type=te.value;
+    if(ve)G[k].val=Math.max(1,+ve.value||100);
+  });
+  G.turbo.mult=Math.max(2,+document.getElementById('gv-turbo-mult').value||2);
+  const gve=document.getElementById('gv-team');
+  if(gve)G.team.val=Math.max(1,+gve.value||20);
+  G.team.chuan=document.getElementById('g-team-chuan')?.checked||false;
+  G.team.chuanVal=Math.max(1,+document.getElementById('gv-team-chuan')?.value||100);
+  G.team.swap=document.getElementById('g-team-swap').checked;
+  G.team.swapInterval=+document.getElementById('team-swap-sel').value||6;
+  for(let i=0;i<n;i++){if(!G.team.teams[i])G.team.teams[i]=i%2===0?'A':'B';}
+  G.doubleRe.val=Math.max(1,+document.getElementById('gv-doubleRe').value||100);
+  G.doubleRe.mults=Array(18).fill(0); // 0=normal, 1=เบิ้ล(×2), 2=รี(×3)
+  G.olympic.val=Math.max(1,+document.getElementById('gv-olympic').value||20);
+  if(G.srikrungDay.on)initSGD();
+  olympicData=Array(18).fill(null).map(()=>({order:[],status:{}}));
+
+  gameStarted=true;
+  currentHole=0;
+  buildProgressBar();
+  showHole(0,'in');
+  updateScoreStrip();
+  goTab('scorecard');updateHdrInfo();
+}
+
+// ── V2: PROGRESS + SINGLE HOLE ──
+let currentHole=0;
+
+function buildProgressBar(){
+  const dots=document.getElementById('progress-dots');if(!dots)return;
+  dots.innerHTML='';
+  for(let h=0;h<18;h++){
+    const d=document.createElement('div');
+    d.className='prog-dot';d.id=`pd-${h}`;d.title=`หลุม ${h+1}`;
+    d.onclick=()=>{const dir=h>currentHole?'in':'back';currentHole=h;showHole(h,dir);};
+    dots.appendChild(d);
+  }
+  updateProgressBar();
+}
+function updateProgressBar(){
+  for(let h=0;h<18;h++){
+    const d=document.getElementById(`pd-${h}`);if(!d)return;
+    d.className='prog-dot';
+    const hasScore=players.some((_,p)=>scores[p][h]!==null);
+    if(h===currentHole)d.classList.add('current');
+    else if(hasScore)d.classList.add('scored');
+    else if(h<currentHole)d.classList.add('done');
+  }
+  setT('prog-label',`${currentHole+1} / 18`);
+  setT('prog-total',`Par ${pars[currentHole]}`);
+}
+function holeNav(dir){
+  const next=currentHole+dir;
+  if(next<0||next>17)return;
+  currentHole=next;
+  showHole(currentHole,dir>0?'in':'back');
+}
+function showHole(h,dir='in'){
+  currentHole=h;
+  const wrap=document.getElementById('single-hole-wrap');if(!wrap)return;
+  const card=makeHoleCard(h);
+  card.className='hole-card '+(dir==='in'?'hole-in':'hole-back');
+  wrap.innerHTML='';wrap.appendChild(card);
+  // Restore olympic state
+  if(G.olympic.on&&olympicData[h]&&(olympicData[h].order.length>0||Object.keys(olympicData[h].status).length>0)){
+    setTimeout(()=>olyRenderHole(h),0);
+  }
+  // Restore doubleRe state
+  if(G.doubleRe.on)setTimeout(()=>updDR(h),0);
+  // Restore SGD state
+  if(G.srikrungDay.on)setTimeout(()=>players.forEach((_,p)=>sgdRefresh(h,p)),0);
+  const prev=document.getElementById('btn-prev');
+  const next2=document.getElementById('btn-next');
+  if(prev){prev.disabled=h===0;prev.style.opacity=h===0?'0.35':'1';}
+  if(next2)next2.textContent=h===17?'หลุม 18 ✓':'ถัดไป →';
+  updateProgressBar();
+  updateScoreStrip();
+}
+function updateScoreStrip(){
+  const strip=document.getElementById('score-strip');if(!strip||!players.length)return;
+  const tp=totPar();
+  strip.innerHTML=`
+    <div class="strip-hdr">
+      <span style="flex:1">ผู้เล่น</span>
+      <span class="strip-val">F9</span><span class="strip-val">B9</span>
+      <span class="strip-tot">รวม</span>
+      <span class="strip-pm">+/−</span>
+      <span class="strip-net">Net</span>
+    </div>
+    ${players.map((pl,p)=>{
+      const f9=scores[p].slice(0,9).reduce((a,b)=>a+(b||0),0);
+      const b9=scores[p].slice(9).reduce((a,b)=>a+(b||0),0);
+      const filledF=scores[p].slice(0,9).filter(s=>s!==null).length;
+      const filledB=scores[p].slice(9).filter(s=>s!==null).length;
+      const tot=f9+b9,filled=filledF+filledB,pm=tot-tp;
+      const pmS=filled?(pm<0?pm:pm>0?'+'+pm:'E'):'—';
+      const pmC=filled?(pm<0?'color:var(--win)':pm>0?'color:var(--lose)':'color:var(--cream-d)'):'color:var(--cream-m)';
+      return`<div class="strip-row">
+        <div class="strip-name">${pl.name}<span style="font-size:10px;color:var(--cream-m);margin-left:5px">HCP ${pl.hcp}</span></div>
+        <div class="strip-val">${filledF?f9:'—'}</div>
+        <div class="strip-val">${filledB?b9:'—'}</div>
+        <div class="strip-tot">${filled?tot:'—'}</div>
+        <div class="strip-pm" style="${pmC}">${pmS}</div>
+        <div class="strip-net">${filled?tot-pl.hcp:'—'}</div>
+      </div>`;
+    }).join('')}`;
+}
+
+// ── HOLE CARD (single) ──
+function makeHoleCard(h){
+  const div=document.createElement('div');
+  div.className='hole-card';div.id=`hc-${h}`;
+  const turboOn=isTurbo(h);
+  const widgets=players.map((_,p)=>`
+    <div class="score-widget" id="sw-${h}-${p}">
+      <div class="sw-name">${players[p].name}</div>
+      <div class="sw-ctrl" id="swc-${h}-${p}">
+        <button class="sw-btn" onpointerdown="startRpt(${h},${p},-1)" onpointerup="stopRpt()" onpointerleave="stopRpt()">−</button>
+        <div class="sw-disp empty" id="swd-${h}-${p}" data-h="${h}" data-p="${p}"
+          ontouchstart="sws(event,${h},${p})" ontouchmove="swm(event,${h},${p})" ontouchend="swe(event,${h},${p})">—</div>
+        <button class="sw-btn" onpointerdown="startRpt(${h},${p},1)" onpointerup="stopRpt()" onpointerleave="stopRpt()">+</button>
+      </div>
+      <div class="sw-badge" id="swb-${h}-${p}"></div>
+    </div>`).join('');
+
+  div.innerHTML=`
+    <div class="hc-top">
+      <div class="hc-num"><span style="font-size:10px;letter-spacing:1px;color:var(--cream-m)">หลุม</span><strong>${h+1}</strong></div>
+      <div class="hc-par-wrap">
+        <span class="hc-par-lbl">PAR</span>
+        <div class="par-stepper">
+          <button class="ps-btn" onclick="chPar(${h},-1)">−</button>
+          <div class="ps-val" id="pv-${h}">${pars[h]}</div>
+          <button class="ps-btn" onclick="chPar(${h},1)">+</button>
+        </div>
+      </div>
+      <div class="hc-right">
+        ${G.turbo.on?`<button class="turbo-tag${turboOn?' on':''}" id="tc2-${h}"
+          style="border-color:${turboOn?'rgba(255,200,0,0.5)':'rgba(255,255,255,0.15)'};color:${turboOn?'#ffc800':'var(--cream-m)'};background:${turboOn?'rgba(255,200,0,0.1)':'transparent'}"
+          onclick="toggleTH(${h})">⚡ เทอโบ</button>`:''}
+        ${h===0?'<span style="font-size:10px;color:var(--gold-d);letter-spacing:1px">FRONT 9</span>':''}
+        ${h===9?'<span style="font-size:10px;color:var(--gold-d);letter-spacing:1px">BACK 9</span>':''}
+      </div>
+    </div>
+    <div class="hc-players">${widgets}</div>
+    ${G.doubleRe.on?`<div class="dr-row" id="dr-${h}">
+      <div class="dr-info">
+        🎲 <span class="dr-mult" id="drm-${h}">×1</span>
+        <span style="font-size:12px;color:var(--cream-m)" id="drs-${h}">ปกติ</span>
+      </div>
+      <button class="dr-dbl" id="dr-dbl-${h}" onclick="drDbl(${h})">📣 เบิ้ล ×2</button>
+      <button class="dr-re" id="dr-re-${h}" onclick="drRe(${h})">🔄 รี ×3</button>
+      <button class="dr-rst" onclick="drReset(${h})">↺</button>
+    </div>`:''}
+    ${G.olympic.on?`<div class="oly-wrap" id="oly-${h}">
+      <div class="oly-title">🏅 โอลิมปิก — กดชื่อเรียงจากใกล้หลุมสุด</div>
+      <div class="oly-rank-area" id="oly-rank-${h}">
+        ${players.map((_,p)=>`<button class="oly-p-btn" id="oly-btn-${h}-${p}" onclick="olyRank(${h},${p})">
+          <span class="oly-rank-badge" id="oly-rb-${h}-${p}">?</span>
+          <span style="font-size:12px;color:var(--cream-m)">${players[p].name}</span>
+          <span class="oly-pts-badge" id="oly-pb-${h}-${p}">—</span>
+        </button>`).join('')}
+      </div>
+      <div class="oly-actions">
+        <button class="oly-act oly-chip" id="oly-chip-${h}" onclick="olySetChip(${h})">⛳ Chip-in (7พ้อย)</button>
+        <button class="oly-act oly-rst" onclick="olyReset(${h})">↺ รีเซ็ต</button>
+      </div>
+      <div class="oly-sank-row" id="oly-sank-${h}" style="display:none">
+        <div class="oly-sank-lbl">พัดลงหลุมไหมครับ?</div>
+        ${players.map((_,p)=>`<button class="oly-sb" id="oly-sb-${h}-${p}" onclick="olySank(${h},${p})">${players[p].name}</button>`).join('')}
+      </div>
+      <div class="oly-sum" id="oly-sum-${h}"></div>
+    </div>`:''}
+    ${G.srikrungDay.on?`<div class="sgd-wrap" id="sgd-${h}">
+      <div class="sgd-title">⛳ SRIKRUNG GOLF DAY</div>
+      ${players.map((_,p)=>{
+        const isPar3=pars[h]===3;
+        return`<div class="sgd-row">
+          <span class="sgd-name">${players[p].name}</span>
+          ${isPar3
+            ?`<button class="sgd-btn na" style="font-size:11px;opacity:.4;cursor:default" disabled>🏌️ FW —</button>`
+            :`<button class="sgd-btn" id="sgd-fw-${h}-${p}" onclick="sgdFW(${h},${p})">🏌️ FW</button>`
+          }
+          <button class="sgd-btn" id="sgd-gir-${h}-${p}" onclick="sgdGIR(${h},${p})">📍 GIR</button>
+          <div style="display:flex;align-items:center;gap:4px">
+            <span style="font-size:11px;color:var(--cream-m)">🎯</span>
+            <div class="sgd-putt">
+              <button class="sgd-pb" onclick="sgdPutt(${h},${p},-1)">−</button>
+              <div class="sgd-pv" id="sgd-pv-${h}-${p}">—</div>
+              <button class="sgd-pb" onclick="sgdPutt(${h},${p},1)">+</button>
+            </div>
+          </div>
+          <span style="font-size:11px" id="sgd-putt-lbl-${h}-${p}"></span>
+        </div>`;
+      }).join('')}
+    </div>`:''}
+    `;
+  return div;
+}
+
+// ── SRIKRUNG GOLF DAY ──
+function sgdFW(h,p){
+  const d=sgdData[p][h];
+  if(d.fw===null)d.fw=true;
+  else if(d.fw===true)d.fw=false;
+  else d.fw=null;
+  sgdRefresh(h,p);autoSave();
+}
+function sgdGIR(h,p){
+  const d=sgdData[p][h];
+  if(d.gir===null)d.gir=true;
+  else if(d.gir===true)d.gir=false;
+  else d.gir=null;
+  sgdRefresh(h,p);autoSave();
+}
+function sgdPutt(h,p,dir){
+  const d=sgdData[p][h];
+  if(d.putts===null)d.putts=2;
+  else d.putts=Math.max(0,d.putts+dir);
+  sgdRefresh(h,p);autoSave();
+}
+function sgdRefresh(h,p){
+  const d=sgdData[p][h];
+  // FW button
+  const fwBtn=document.getElementById(`sgd-fw-${h}-${p}`);
+  if(fwBtn){
+    if(d.fw===true){fwBtn.className='sgd-btn hit';fwBtn.textContent='🏌️ FW ✅';}
+    else if(d.fw===false){fwBtn.className='sgd-btn miss';fwBtn.textContent='🏌️ FW ❌';}
+    else{fwBtn.className='sgd-btn';fwBtn.textContent='🏌️ FW';}
+  }
+  // GIR button
+  const girBtn=document.getElementById(`sgd-gir-${h}-${p}`);
+  if(girBtn){
+    if(d.gir===true){girBtn.className='sgd-btn hit';girBtn.textContent='📍 GIR ✅';}
+    else if(d.gir===false){girBtn.className='sgd-btn miss';girBtn.textContent='📍 GIR ❌';}
+    else{girBtn.className='sgd-btn';girBtn.textContent='📍 GIR';}
+  }
+  // Putts
+  const pv=document.getElementById(`sgd-pv-${h}-${p}`);
+  const pl=document.getElementById(`sgd-putt-lbl-${h}-${p}`);
+  if(pv){
+    if(d.putts===null){pv.textContent='—';}
+    else{pv.textContent=d.putts;}
+  }
+  if(pl){
+    const lbl=d.putts===null?'':d.putts===0?'⭐ Holed out':d.putts===1?'✅ 1 พัต':d.putts===2?'2 พัต':`${d.putts} พัต`;
+    pl.textContent=lbl;
+    pl.style.color=d.putts===0?'var(--gold)':d.putts===1?'var(--win)':d.putts>=3?'var(--lose)':'var(--cream-m)';
+  }
+}
+function sgdSummary(){
+  // Returns per-player stats summary
+  return players.map((pl,p)=>{
+    let fw=0,fwTotal=0,gir=0,girTotal=0,putts=0,puttH=0;
+    for(let h=0;h<18;h++){
+      const d=sgdData[p]?.[h];if(!d)continue;
+      if(pars[h]!==3){fwTotal++;if(d.fw===true)fw++;}
+      girTotal++;if(d.gir===true)gir++;
+      if(d.putts!==null){putts+=d.putts;puttH++;}
+    }
+    return{name:pl.name,fw,fwTotal,gir,girTotal,putts,puttH,avgPutts:puttH?+(putts/puttH).toFixed(1):null};
+  });
+}
+
+// DOUBLE-RE — 0=ปกติ(×1), 1=เบิ้ล(×2), 2=รี(×3)
+function drDbl(h){
+  if(G.doubleRe.mults[h]===0){G.doubleRe.mults[h]=1;} // ปกติ → เบิ้ล
+  else if(G.doubleRe.mults[h]===1){G.doubleRe.mults[h]=0;} // เบิ้ล → ยกเลิก
+  updDR(h);autoSave();
+}
+function drRe(h){
+  if(G.doubleRe.mults[h]===1){G.doubleRe.mults[h]=2;} // เบิ้ล → รี
+  else if(G.doubleRe.mults[h]===2){G.doubleRe.mults[h]=1;} // รี → กลับเบิ้ล
+  updDR(h);autoSave();
+}
+function drReset(h){G.doubleRe.mults[h]=0;updDR(h);autoSave();}
+function updDR(h){
+  const state=G.doubleRe.mults[h]; // 0,1,2
+  const mult=[1,2,3][state];
+  const val=G.doubleRe.val*mult;
+  const multEl=document.getElementById(`drm-${h}`);
+  const stEl=document.getElementById(`drs-${h}`);
+  const dblBtn=document.getElementById(`dr-dbl-${h}`);
+  const reBtn=document.getElementById(`dr-re-${h}`);
+  if(!multEl)return;
+  // Update multiplier display
+  multEl.textContent=`×${mult}`;
+  multEl.className='dr-mult'+(state===1?' x2':state===2?' x3':'');
+  // Update status text
+  const labels=['ปกติ — ฝ่ายแพ้กด เบิ้ล ได้','เบิ้ล ×2 — ฝ่ายชนะกด รี ได้','รี ×3 — ล็อกหลุมนี้'];
+  const colors=['var(--cream-m)','#ffc800','var(--win)'];
+  if(stEl){stEl.textContent=labels[state];stEl.style.color=colors[state];}
+  // Toggle buttons
+  if(dblBtn){
+    dblBtn.style.display=state===2?'none':'inline-block';
+    dblBtn.classList.toggle('sel',state===1);
+    dblBtn.textContent=state===1?'✓ เบิ้ล ×2 (ยกเลิก?)':'📣 เบิ้ล ×2';
+  }
+  if(reBtn){
+    reBtn.style.display=state>=1?'inline-block':'none';
+    reBtn.classList.toggle('sel',state===2);
+    reBtn.textContent=state===2?'✓ รี ×3 (ยกเลิก?)':'🔄 รี ×3';
+  }
+}
+
+// PAR CHANGE
+function chPar(h,d){
+  pars[h]=Math.max(3,Math.min(5,pars[h]+d));
+  setT(`pv-${h}`,pars[h]);
+  players.forEach((_,p)=>refWidget(h,p));
+  updateTotals();
+}
+
+// SCORE
+let rptT=null,rptI=null;
+function chScore(h,p,d){
+  if(scores[p][h]===null)scores[p][h]=pars[h]+d;
+  else scores[p][h]=Math.max(1,Math.min(20,scores[p][h]+d));
+  refWidget(h,p);updateTotals();autoSave();
+}
+function startRpt(h,p,d){stopRpt();chScore(h,p,d);rptT=setTimeout(()=>{rptI=setInterval(()=>chScore(h,p,d),120);},380);}
+function stopRpt(){clearTimeout(rptT);clearInterval(rptI);rptT=null;rptI=null;}
+const SD={};
+function sws(e,h,p){e.preventDefault();SD[`${h}_${p}`]={y:e.touches[0].clientY,mv:false};}
+function swm(e,h,p){
+  e.preventDefault();const k=`${h}_${p}`;if(!SD[k])return;
+  const dy=SD[k].y-e.touches[0].clientY;
+  if(Math.abs(dy)>16){chScore(h,p,dy>0?-1:1);SD[k].y=e.touches[0].clientY;SD[k].mv=true;}
+}
+function swe(e,h,p){
+  const k=`${h}_${p}`;
+  if(SD[k]&&!SD[k].mv&&scores[p][h]===null){scores[p][h]=pars[h];refWidget(h,p);updateTotals();}
+  delete SD[k];
+}
+function refWidget(h,p){
+  const v=scores[p][h];
+  const disp=document.getElementById(`swd-${h}-${p}`);
+  const ctrl=document.getElementById(`swc-${h}-${p}`);
+  const badge=document.getElementById(`swb-${h}-${p}`);
+  if(!disp)return;
+  if(v===null){
+    disp.textContent='—';disp.className='sw-disp empty';
+    ctrl.style.cssText='border-color:rgba(200,168,75,0.25);background:var(--dg)';
+    disp.style.color='rgba(255,255,255,0.15)';badge.textContent='';badge.className='sw-badge';return;
+  }
+  disp.textContent=v;disp.className='sw-disp';
+  const d=v-pars[h];
+  const CSS={
+    'e':{b:'var(--gold)',bg:'#1a1200',c:'var(--gold)'},
+    'bi':{b:'#2d6a4f',bg:'#071a0f',c:'#5cc98a'},
+    'pa':{b:'rgba(200,168,75,0.3)',bg:'var(--dg)',c:'var(--cream-d)'},
+    'bo':{b:'#7a2a2a',bg:'#1a0606',c:'#e06060'},
+    'db':{b:'#5a1515',bg:'#140404',c:'#c04040'},
+    'wr':{b:'#400e0e',bg:'#0e0202',c:'#a03030'},
+  };
+  const k=d<=-2?'e':d===-1?'bi':d===0?'pa':d===1?'bo':d===2?'db':'wr';
+  const s=CSS[k];
+  ctrl.style.borderColor=s.b;ctrl.style.background=s.bg;disp.style.color=s.c;
+  const BT={e:{cls:'b-eagle',t:'Eagle'},bi:{cls:'b-birdie',t:'Birdie'},pa:{cls:'b-par',t:'Par'},bo:{cls:'b-bogey',t:'Bogey'},db:{cls:'b-double',t:'Double'},wr:{cls:'b-worse',t:'+'+d}};
+  const bt=BT[k];badge.textContent=bt.t;badge.className=`sw-badge ${bt.cls}`;
+}
+
+// TOTALS
+function updateTotals(){
+  updateScoreStrip();
+  updateProgressBar();
+}
+
+// ══════════════════════════
+// GAME CALCULATIONS
+// ══════════════════════════
+function calcSkin(){
+  const n=players.length,money=Array(n).fill(0);
+  let pot=1;
+  for(let h=0;h<18;h++){
+    const t=tm(h);
+    if(!players.every((_,p)=>scores[p][h]!==null)){pot++;continue;}
+    const hs=players.map((_,p)=>scores[p][h]);
+    const mn=Math.min(...hs);
+    const ws=hs.reduce((a,s,i)=>s===mn?[...a,i]:a,[]);
+    if(ws.length===1){
+      const w=ws[0],sv=G.skin.type==='skin'?pot*G.skin.val*t:G.skin.val*t;
+      players.forEach((_,p)=>{if(p===w)money[p]+=(n-1)*sv;else money[p]-=sv;});
+      pot=1;
+    } else pot++;
+  }
+  return money;
+}
+function calcBite(){
+  const n=players.length,money=Array(n).fill(0);
+  for(let h=0;h<18;h++){
+    const t=tm(h);
+    if(!players.every((_,p)=>scores[p][h]!==null))continue;
+    const hs=players.map((_,p)=>scores[p][h]);
+    const mn=Math.min(...hs);
+    const biters=hs.reduce((a,s,i)=>s===mn?[...a,i]:a,[]);
+    if(biters.length!==1)continue;
+    const br=biters[0],bv=G.bite.val*t;
+    players.forEach((_,p)=>{if(p===br)money[p]+=(n-1)*bv;else money[p]-=bv;});
+  }
+  return money;
+}
+function calcStableford(){
+  const n=players.length,pts=Array(n).fill(0),money=Array(n).fill(0);
+  const sfPts=(d)=>d<=-2?4:d===-1?3:d===0?2:d===1?1:0;
+  for(let h=0;h<18;h++)for(let p=0;p<n;p++){
+    if(scores[p][h]!==null)pts[p]+=sfPts(scores[p][h]-pars[h]);
+  }
+  if(G.stableford.type==='point'){
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+      const d=(pts[i]-pts[j])*G.stableford.val;money[i]+=d;money[j]-=d;
+    }
+  } else {
+    for(let h=0;h<18;h++){
+      const t=tm(h);
+      const hp=players.map((_,p)=>scores[p][h]!==null?sfPts(scores[p][h]-pars[h]):-1);
+      const mx=Math.max(...hp);if(mx<0)continue;
+      const ws=hp.reduce((a,v,i)=>v===mx?[...a,i]:a,[]);
+      if(ws.length===1){
+        const w=ws[0],sv=G.stableford.val*t;
+        players.forEach((_,p)=>{if(p===w)money[p]+=(n-1)*sv;else money[p]-=sv;});
+      }
+    }
+  }
+  return money;
+}
+function calcTeam(){
+  const n=players.length,money=Array(n).fill(0);
+  for(let h=0;h<18;h++){
+    const t=tm(h);
+    if(!players.every((_,p)=>scores[p][h]!==null))continue;
+    let hTeams=[...G.team.teams];
+    if(G.team.swap&&Math.floor(h/G.team.swapInterval)%2===1)
+      hTeams=hTeams.map(t=>t==='A'?'B':'A');
+    const aP=players.map((_,i)=>i).filter(i=>hTeams[i]==='A');
+    const bP=players.map((_,i)=>i).filter(i=>hTeams[i]==='B');
+    if(!aP.length||!bP.length)continue;
+
+    // Sort each team scores ascending (best = lowest)
+    const aScores=aP.map(p=>scores[p][h]).sort((a,b)=>a-b);
+    const bScores=bP.map(p=>scores[p][h]).sort((a,b)=>a-b);
+
+    // Best 1
+    const aB1=aScores[0],bB1=bScores[0];
+    // Best 2 (use best1 if team has only 1 player)
+    const aB2=aScores[1]??aScores[0];
+    const bB2=bScores[1]??bScores[0];
+
+    // Count how many "mains" each team wins (Best1 and Best2)
+    let aWins=0,bWins=0;
+    if(aB1<bB1)aWins++;else if(bB1<aB1)bWins++;
+    if(aB2<bB2)aWins++;else if(bB2<aB2)bWins++;
+
+    // No winner if tied both
+    if(aWins===0&&bWins===0)continue;
+    if(aWins===bWins)continue; // 1-1 tie
+
+    const winTeam=aWins>bWins?'A':'B';
+    const sv=G.team.val*t;
+    players.forEach((_,p)=>{
+      if(hTeams[p]===winTeam)money[p]+=sv;else money[p]-=sv;
+    });
+
+    // ช้วน: ฝ่ายแพ้ทั้ง Best1 และ Best2
+    if(G.team.chuan){
+      const loseTeam=winTeam==='A'?'B':'A';
+      const losePlayers=players.map((_,i)=>i).filter(i=>hTeams[i]===loseTeam);
+      const winPlayers=players.map((_,i)=>i).filter(i=>hTeams[i]===winTeam);
+      // ช้วน = lose both best1 and best2
+      const isChuanA=aWins===0&&bWins===2; // A แพ้ช้วน
+      const isChuanB=bWins===0&&aWins===2; // B แพ้ช้วน
+      if(isChuanA||isChuanB){
+        const cv=G.team.chuanVal*t;
+        players.forEach((_,p)=>{
+          if(hTeams[p]===winTeam)money[p]+=cv;else money[p]-=cv;
+        });
+      }
+    }
+  }
+  return money;
+}
+function calcUpDown(){
+  const n=players.length,money=Array(n).fill(0);
+  for(let h=0;h<18;h++){
+    const t=tm(h);
+    if(!players.every((_,p)=>scores[p][h]!==null))continue;
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+      const si=scores[i][h],sj=scores[j][h];if(si===sj)continue;
+      const sv=G.updown.type==='diff'?Math.abs(si-sj)*G.updown.val*t:G.updown.val*t;
+      if(si<sj){money[i]+=sv;money[j]-=sv;}else{money[j]+=sv;money[i]-=sv;}
+    }
+  }
+  return money;
+}
+function calcDoubleRe(){
+  const n=players.length,money=Array(n).fill(0);
+  for(let h=0;h<18;h++){
+    const t=tm(h);
+    if(!players.every((_,p)=>scores[p][h]!==null))continue;
+    const state=G.doubleRe.mults[h]||0;
+    const mult=[1,2,3][state];
+    const sv=G.doubleRe.val*mult*t;
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+      const si=scores[i][h],sj=scores[j][h];if(si===sj)continue;
+      if(si<sj){money[i]+=sv;money[j]-=sv;}else{money[j]+=sv;money[i]-=sv;}
+    }
+  }
+  return money;
+}
+// ── OLYMPIC FUNCTIONS ──
+const OLY_PTS=[2,3,4,5]; // nearest=2, farthest=5
+
+function olyRank(h,p){
+  const od=olympicData[h];
+  // if already disq or chipped, ignore
+  if(od.status[p]==='disq'||od.status[p]==='chip')return;
+  // if already in order, remove (deselect)
+  const idx=od.order.indexOf(p);
+  if(idx!==-1){od.order.splice(idx,1);delete od.status[p];}
+  else{
+    if(od.order.length<players.length)od.order.push(p);
+  }
+  olyRenderHole(h);
+}
+
+function olySetChip(h){
+  // toggle chip-in mode: next click on a player button sets them as chip-in
+  const btn=document.getElementById(`oly-chip-${h}`);
+  const isOn=btn.classList.contains('sel');
+  btn.classList.toggle('sel',!isOn);
+  if(!isOn){
+    // mark chip mode active — next olyRank call will set chip
+    olympicData[h]._chipMode=true;
+  } else {
+    olympicData[h]._chipMode=false;
+  }
+}
+
+function olyRankWithChip(h,p){
+  const od=olympicData[h];
+  if(od._chipMode){
+    // set this player as chip-in, remove from order if present
+    const idx=od.order.indexOf(p);
+    if(idx!==-1)od.order.splice(idx,1);
+    if(od.status[p]==='chip'){delete od.status[p];}
+    else{od.status[p]='chip';}
+    od._chipMode=false;
+    document.getElementById(`oly-chip-${h}`)?.classList.remove('sel');
+    olyRenderHole(h);return;
+  }
+  olyRank(h,p);
+}
+
+function olyDisq(h,p){
+  const od=olympicData[h];
+  const idx=od.order.indexOf(p);
+  if(idx!==-1)od.order.splice(idx,1);
+  if(od.status[p]==='disq')delete od.status[p];
+  else od.status[p]='disq';
+  olyRenderHole(h);
+}
+
+function olySank(h,p){
+  const od=olympicData[h];
+  if(od.status[p]==='sank'){od.status[p]='miss';}
+  else if(od.status[p]==='miss'){delete od.status[p];}
+  else{od.status[p]='sank';}
+  olyRenderHole(h);
+}
+
+function olyReset(h){
+  olympicData[h]={order:[],status:{}};
+  olyRenderHole(h);
+  document.getElementById(`oly-chip-${h}`)?.classList.remove('sel');
+}
+
+function olyGetPts(h,p){
+  // Returns point value for player p at hole h (or null if not ranked/chipped)
+  const od=olympicData[h];
+  if(od.status[p]==='chip')return 7;
+  if(od.status[p]==='disq')return -1; // special: consolation
+  const idx=od.order.indexOf(p);
+  if(idx===-1)return null;
+  return OLY_PTS[Math.min(idx,OLY_PTS.length-1)];
+}
+
+function olyRenderHole(h){
+  const od=olympicData[h];
+  const n=players.length;
+  // Re-render rank buttons
+  players.forEach((_,p)=>{
+    const btn=document.getElementById(`oly-btn-${h}-${p}`);
+    const rb=document.getElementById(`oly-rb-${h}-${p}`);
+    const pb=document.getElementById(`oly-pb-${h}-${p}`);
+    if(!btn)return;
+    btn.className='oly-p-btn';
+    const st=od.status[p];
+    const idx=od.order.indexOf(p);
+    if(st==='chip'){
+      btn.classList.add('chipped');
+      rb.textContent='⛳';pb.textContent='7พ้อย';pb.className='oly-pts-badge gold';
+      btn.onclick=()=>olyDisq(h,p); // long press or second click = disq
+    } else if(st==='disq'){
+      btn.classList.add('disq');
+      rb.textContent='🚫';pb.textContent='1พัด';pb.className='oly-pts-badge gray';
+      btn.onclick=()=>olyDisq(h,p);
+    } else if(idx!==-1){
+      btn.classList.add('ranked');
+      const pts=OLY_PTS[Math.min(idx,OLY_PTS.length-1)];
+      rb.textContent=`#${idx+1}`;pb.textContent=`${pts}พ้อย`;pb.className='oly-pts-badge';
+      btn.onclick=()=>olyRank(h,p);
+    } else {
+      rb.textContent='?';pb.textContent='—';pb.className='oly-pts-badge';
+      btn.onclick=()=>{
+        if(olympicData[h]._chipMode){olyRankWithChip(h,p);}
+        else olyRank(h,p);
+      };
+    }
+  });
+
+  // Show sank row if any ranked players
+  const hasRanked=od.order.length>0||Object.values(od.status).includes('chip');
+  const sankRow=document.getElementById(`oly-sank-${h}`);
+  if(sankRow)sankRow.style.display=hasRanked?'flex':'none';
+
+  // Render sank buttons
+  players.forEach((_,p)=>{
+    const sb=document.getElementById(`oly-sb-${h}-${p}`);
+    if(!sb)return;
+    const st=od.status[p];
+    const isChip=st==='chip';
+    const isDisq=st==='disq';
+    const pts=olyGetPts(h,p);
+    if(pts===null&&!isDisq){sb.style.display='none';return;}
+    sb.style.display='';
+    if(isDisq){
+      // disq gets consolation 1 putt — toggle sank/miss
+      sb.textContent=`${players[p].name} (1พัด)`;
+      const sst=od.status[p];
+      if(sst==='disq-sank'){sb.className='oly-sb sank';}
+      else if(sst==='disq-miss'){sb.className='oly-sb miss';}
+      else{sb.className='oly-sb';}
+      sb.onclick=()=>{
+        if(od.status[p]==='disq')od.status[p]='disq-sank';
+        else if(od.status[p]==='disq-sank')od.status[p]='disq-miss';
+        else od.status[p]='disq';
+        olyRenderHole(h);
+      };
+      return;
+    }
+    sb.textContent=`${players[p].name}${isChip?' (chip)':` (${pts}พ้อย)`}`;
+    if(st==='sank'){sb.className='oly-sb sank';}
+    else if(st==='miss'){sb.className='oly-sb miss';}
+    else if(st==='chip'){sb.className='oly-sb chipped';}
+    else{sb.className='oly-sb';}
+  });
+
+  // Summary
+  olyUpdateSummary(h);
+}
+
+function olyUpdateSummary(h){
+  const el=document.getElementById(`oly-sum-${h}`);if(!el)return;
+  const money=calcOlympicHole(h);
+  if(!money){el.textContent='';return;}
+  const parts=players.map((pl,p)=>{
+    const v=money[p];if(v===0)return null;
+    return`<span style="color:${v>0?'var(--win)':'var(--lose)'}">${pl.name}: ${v>0?'+':''}${v}฿</span>`;
+  }).filter(Boolean);
+  el.innerHTML=parts.length?parts.join(' &nbsp;|&nbsp; '):'';
+}
+
+function calcOlympicHole(h){
+  const od=olympicData[h];
+  const n=players.length;
+  const money=Array(n).fill(0);
+  const rate=G.olympic.val;
+
+  // Get effective pts and sank status per player
+  const info=players.map((_,p)=>{
+    const st=od.status[p];
+    const idx=od.order.indexOf(p);
+    let pts=null,sank=false;
+    if(st==='chip'){pts=7;sank=true;}
+    else if(st==='sank'){pts=OLY_PTS[Math.min(idx,OLY_PTS.length-1)];sank=true;}
+    else if(st==='miss'){pts=OLY_PTS[Math.min(idx,OLY_PTS.length-1)];sank=false;}
+    else if(st==='disq-sank'){pts=1;sank=true;}
+    else if(st==='disq-miss'){pts=1;sank=false;}
+    return{p,pts,sank};
+  });
+
+  const sankers=info.filter(x=>x.sank&&x.pts!==null);
+  const missers=info.filter(x=>!x.sank&&x.pts!==null);
+
+  if(sankers.length===0)return money; // no transactions
+
+  // Among sankers: higher pts collects difference from lower pts (pairwise)
+  for(let i=0;i<sankers.length;i++){
+    for(let j=i+1;j<sankers.length;j++){
+      const a=sankers[i],b=sankers[j];
+      const diff=Math.abs(a.pts-b.pts)*rate;
+      if(diff===0)continue;
+      if(a.pts>b.pts){money[a.p]+=diff;money[b.p]-=diff;}
+      else{money[b.p]+=diff;money[a.p]-=diff;}
+    }
+  }
+
+  // Sankers collect from missers: sanker gets their own pts × rate from each misser
+  // misser pays each sanker the sanker's pt value × rate
+  for(const s of sankers){
+    for(const m of missers){
+      const amt=s.pts*rate;
+      money[s.p]+=amt;
+      money[m.p]-=amt;
+    }
+  }
+
+  return money;
+}
+
+function calcOlympic(){
+  const total=Array(players.length).fill(0);
+  for(let h=0;h<18;h++){
+    const m=calcOlympicHole(h);
+    m.forEach((v,p)=>total[p]+=v);
+  }
+  return total;
+}
+
+function calcAll(){
+  const r={};
+  if(G.skin.on)r.skin=calcSkin();
+  if(G.bite.on)r.bite=calcBite();
+  if(G.stableford.on)r.stableford=calcStableford();
+  if(G.team.on)r.team=calcTeam();
+  if(G.updown.on)r.updown=calcUpDown();
+  if(G.doubleRe.on)r.doubleRe=calcDoubleRe();
+  if(G.olympic.on)r.olympic=calcOlympic();
+  const tot=Array(players.length).fill(0);
+  Object.values(r).forEach(arr=>arr.forEach((v,i)=>tot[i]+=v));
+  r.total=tot;return r;
+}
+
+// ── RESULTS ──
+function buildResults(){
+  const tp=totPar();
+  const stats=players.map((pl,p)=>{
+    const filled=scores[p].filter(s=>s!==null).length;
+    const tot=scores[p].reduce((a,b)=>a+(b||0),0);
+    const f9=scores[p].slice(0,9).reduce((a,b)=>a+(b||0),0);
+    const b9=scores[p].slice(9).reduce((a,b)=>a+(b||0),0);
+    let e=0,bi=0,pa=0,bo=0,db=0;
+    scores[p].forEach((s,h)=>{if(s===null)return;const d=s-pars[h];
+      if(d<=-2)e++;else if(d===-1)bi++;else if(d===0)pa++;else if(d===1)bo++;else db++;});
+    return{...pl,p,filled,tot,f9,b9,pm:tot-tp,net:tot-pl.hcp,e,bi,pa,bo,db};
+  });
+  const sorted=[...stats].sort((a,b)=>a.net-b.net);
+  const ds=fmtDate(document.getElementById('game-date').value);
+  const cn=document.getElementById('course-name').value;
+  const gr=calcAll();
+
+  // GAME NAMES
+  const GN={skin:'สกิน',bite:'หมากัด',stableford:'Stableford',team:G.team.swap?`ทีมสลับ(${G.team.swapInterval})`:'ทีม',updown:'จดแต้',doubleRe:'เบิ้ล-รี'};
+  const activeG=Object.keys(GN).filter(k=>gr[k]);
+  let moneyHTML='';
+  if(activeG.length){
+    const hdrs=activeG.map(k=>`<th>${GN[k]}</th>`).join('')+`<th style="color:var(--gold-l)">รวม ฿</th>`;
+    const rows=players.map((pl,p)=>{
+      const cells=activeG.map(k=>`<td>${fmtM(gr[k][p])}</td>`).join('');
+      return`<tr><td>${pl.name}</td>${cells}<td style="font-size:16px">${fmtM(gr.total[p])}</td></tr>`;
+    }).join('');
+    moneyHTML=`
+      <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">สรุปเงินพนัน <span style="color:var(--cream-m);font-weight:300">(+ได้ สีเขียว / −เสีย สีแดง)</span></div>
+      <div class="money-wrap"><table class="money-tbl">
+        <thead><tr><th>ผู้เล่น</th>${hdrs}</tr></thead>
+        <tbody>${rows}<tr>${['',  ...activeG.map(()=>''), ''].map((_,ci)=>ci===0?`<td>รวม</td>`:ci<=activeG.length?`<td></td>`:`<td></td>`).join('')}</tr></tbody>
+      </table></div>`;
+  }
+
+  const sumRows=stats.map(st=>{
+    const cells=Array.from({length:18},(_,h)=>{
+      const s=scores[st.p][h];if(s===null)return`<td style="color:var(--cream-m)">—</td>`;
+      const d=s-pars[h];let sy='';
+      if(d<=-2)sy='background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
+      else if(d===-1)sy='background:#1a4a2e;color:#5cc98a;border-radius:50%';
+      else if(d===1)sy='background:#5a1e1e;color:#e06060';
+      else if(d>=2)sy='background:#3a0e0e;color:#c04040';
+      return`<td><span style="display:inline-block;width:25px;height:25px;line-height:25px;text-align:center;font-size:13px;${sy}">${s}</span></td>`;
+    }).join('');
+    const monV=gr.total?gr.total[st.p]:null;
+    const monStr=monV!==null&&monV!==0?`<span style="font-size:11px;${monV>0?'color:var(--win)':'color:var(--lose)'}">${monV>0?'+'+monV:monV}฿</span>`:'';
+    return`<tr>
+      <td style="text-align:left;padding:6px 9px;white-space:nowrap;font-size:14px">${st.name}${monStr?'<br>'+monStr:''}</td>
+      ${cells}
+      <td>${st.filled?st.f9:'—'}</td><td>${st.filled?st.b9:'—'}</td>
+      <td style="font-weight:600;color:var(--cream)">${st.filled?st.tot:'—'}</td>
+      <td style="font-weight:600;color:var(--gold)">${st.filled?st.net:'—'}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('res-content').innerHTML=`
+    <div class="res-hdr">
+      <div class="res-sub">SCORECARD RESULTS</div>
+      <div class="res-course">⛳ ${cn}</div>
+      <div class="res-date">${ds}</div>
+    </div>
+    <div class="cards-grid">
+      ${sorted.map((st,rk)=>`
+        <div class="p-card${rk===0&&st.filled?' winner':''}">
+          ${rk===0&&st.filled?'<div class="w-badge">🏆 CHAMPION</div>':`<div class="r-badge">RANK #${rk+1}</div>`}
+          <div class="pc-name">${st.name}</div>
+          <div class="st"><span class="sl">Total Score</span><span class="sr">${st.filled?st.tot:'—'}</span></div>
+          <div class="st"><span class="sl">+/− Par</span><span class="sr" style="color:${st.pm<0?'var(--win)':st.pm>0?'var(--lose)':'var(--cream-d)'}">
+            ${st.filled?(st.pm<0?st.pm:st.pm>0?'+'+st.pm:'E'):'—'}</span></div>
+          <div class="st"><span class="sl">Handicap</span><span class="sr">−${st.hcp}</span></div>
+          <div class="cd"></div>
+          <div class="st"><span class="sl">Net Score</span><span class="net-val">${st.filled?st.net:'—'}</span></div>
+          ${gr.total&&gr.total[st.p]!==0?`<div class="st"><span class="sl">เงินพนัน</span>
+            <span class="sr" style="color:${gr.total[st.p]>0?'var(--win)':'var(--lose)'};font-size:17px">${gr.total[st.p]>0?'+'+gr.total[st.p]:gr.total[st.p]}฿</span></div>`:''}
+          <div class="badges">
+            ${st.e?`<span class="badge be">Eagle ×${st.e}</span>`:''}
+            ${st.bi?`<span class="badge bb">Birdie ×${st.bi}</span>`:''}
+            ${st.pa?`<span class="badge bp">Par ×${st.pa}</span>`:''}
+            ${st.bo?`<span class="badge bbo">Bogey ×${st.bo}</span>`:''}
+            ${st.db?`<span class="badge bd">Dbl+ ×${st.db}</span>`:''}
+          </div>
+          <div class="f9b9">F9: ${st.filled?st.f9:'—'} &nbsp;|&nbsp; B9: ${st.filled?st.b9:'—'}</div>
+        </div>`).join('')}
+    </div>
+    ${moneyHTML}
+    <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">สกอร์แต่ละหลุม</div>
+    <div class="sc-sum"><table>
+      <thead>
+        <tr><th style="text-align:left;padding:8px 9px">ผู้เล่น</th>
+          ${Array.from({length:18},(_,i)=>`<th>${i+1}</th>`).join('')}
+          <th>F9</th><th>B9</th><th>รวม</th><th>Net</th></tr>
+        <tr style="background:rgba(0,0,0,0.2)">
+          <td style="text-align:left;padding:4px 9px;font-size:11px;color:var(--cream-m)">Par</td>
+          ${pars.map(p=>`<td style="font-size:11px;color:var(--cream-m)">${p}</td>`).join('')}
+          <td style="color:var(--cream-m)">${pars.slice(0,9).reduce((a,b)=>a+b,0)}</td>
+          <td style="color:var(--cream-m)">${pars.slice(9).reduce((a,b)=>a+b,0)}</td>
+          <td style="color:var(--cream-d)">${tp}</td><td style="color:var(--cream-m)">—</td>
+        </tr>
+      </thead>
+      <tbody>${sumRows}</tbody>
+    </table></div>
+    <div style="text-align:center;padding:14px 0 3px;font-size:12px;color:var(--cream-m);letter-spacing:2px">SRIKRUNG GOLF DAY · ${ds}</div>
+    ${G.srikrungDay.on?`
+    <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">⛳ SRIKRUNG GOLF DAY — สถิติส่วนตัว</div>
+    <div style="overflow-x:auto;border-radius:5px;border:1px solid var(--gold-d);margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse;min-width:360px">
+        <thead style="background:var(--lg)">
+          <tr>
+            <th style="text-align:left;padding:8px 12px;font-size:13px;color:var(--gold)">ผู้เล่น</th>
+            <th style="text-align:center;padding:8px 8px;font-size:12px;color:var(--cream-m)">FW Hit</th>
+            <th style="text-align:center;padding:8px 8px;font-size:12px;color:var(--cream-m)">GIR</th>
+            <th style="text-align:center;padding:8px 8px;font-size:12px;color:var(--cream-m)">Putts รวม</th>
+            <th style="text-align:center;padding:8px 8px;font-size:12px;color:var(--cream-m)">เฉลี่ย/หลุม</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${sgdSummary().map(s=>`<tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+            <td style="padding:8px 12px;font-size:14px;color:var(--cream)">${s.name}</td>
+            <td style="text-align:center;padding:7px 6px">
+              <span style="font-size:15px;font-weight:600;color:${s.fw>=s.fwTotal*0.6?'var(--win)':'var(--cream)'}">${s.fwTotal?s.fw+'/'+s.fwTotal:'—'}</span>
+              ${s.fwTotal?`<br><span style="font-size:10px;color:var(--cream-m)">${Math.round(s.fw/s.fwTotal*100)}%</span>`:''}
+            </td>
+            <td style="text-align:center;padding:7px 6px">
+              <span style="font-size:15px;font-weight:600;color:${s.gir>=s.girTotal*0.5?'var(--win)':'var(--cream)'}">${s.girTotal?s.gir+'/'+s.girTotal:'—'}</span>
+              ${s.girTotal?`<br><span style="font-size:10px;color:var(--cream-m)">${Math.round(s.gir/s.girTotal*100)}%</span>`:''}
+            </td>
+            <td style="text-align:center;font-size:15px;font-weight:600;color:var(--cream)">${s.puttH?s.putts:'—'}</td>
+            <td style="text-align:center;font-size:15px;font-weight:600;color:${s.avgPutts&&s.avgPutts<=1.8?'var(--win)':s.avgPutts&&s.avgPutts>=2.2?'var(--lose)':'var(--cream)'}">
+              ${s.avgPutts??'—'}
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`:''}
+    <div style="margin-top:14px;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.25);border-radius:20px;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center">
+      <span style="font-size:13px;color:var(--cream-m)">⛳ รู้ไหม? ประกันกอล์ฟครอบคลุมถึง Hole-in-One โบนัสด้วยนะ</span>
+      <a href="https://insure.724.co.th/golf-insure/u/AM00035138" target="_blank" style="font-size:13px;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(200,168,75,0.4);white-space:nowrap;flex-shrink:0">ดูรายละเอียด → www.ศรีกรุง.com</a>
+    </div>`;
+}
+
+// ── SAVE IMAGE ──
+function saveAsImage(){
+  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
+  const ov=document.getElementById('saving-ov');ov.classList.add('show');
+  setTimeout(()=>{
+    html2canvas(document.getElementById('cap'),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false})
+    .then(c=>{
+      ov.classList.remove('show');
+      const a=document.createElement('a');
+      a.download=`${(document.getElementById('course-name').value||'golf').replace(/\s+/g,'-')}-${document.getElementById('game-date').value||'day'}.png`;
+      a.href=c.toDataURL('image/png');a.click();
+    }).catch(()=>{ov.classList.remove('show');alert('ลองใช้ปุ่มพิมพ์แทนครับ');});
+  },300);
+}
+function saveGame(){
+  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
+  const tp=totPar();
+  savedGames.push({
+    id:Date.now(),date:fmtDate(document.getElementById('game-date').value),
+    course:document.getElementById('course-name').value,
+    players:players.map((pl,p)=>({name:pl.name,hcp:pl.hcp,
+      tot:scores[p].reduce((a,b)=>a+(b||0),0),
+      net:scores[p].reduce((a,b)=>a+(b||0),0)-pl.hcp,
+      pm:scores[p].reduce((a,b)=>a+(b||0),0)-tp}))
+  });
+  renderSaved();
+}
+function renderSaved(){
+  if(!savedGames.length)return;
+  document.getElementById('saved-section').innerHTML=`
+    <div style="font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">ผลที่บันทึกไว้ (${savedGames.length} เกม)</div>
+    ${savedGames.map(g=>`<div class="saved-game">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:8px">
+        <span style="color:var(--gold);font-size:15px">${g.course}</span>
+        <span style="color:var(--cream-m);font-size:13px">${g.date}</span>
+      </div>
+      <div class="saved-players">
+        ${g.players.sort((a,b)=>a.net-b.net).map((p,r)=>`
+          <div class="saved-p">${r===0?'🏆 ':''}${p.name}: <strong>${p.net}</strong>
+            <span style="color:var(--cream-m);font-size:11px">(${p.pm>=0?'+':''}${p.pm})</span>
+          </div>`).join('')}
+      </div></div>`).join('')}`;
+}
+
+// ── NAV ──
+function goTab(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(`scr-${n}`).classList.add('active');
+  document.getElementById(`tab-${n}`).classList.add('active');
+}
+function goMoney(){
+  if(!gameStarted){alert('กรุณาตั้งค่าและเริ่มเกมก่อนครับ');return;}
+  buildMoney();goTab('money');
+}
+
+function buildMoney(){
+  const gr=calcAll();
+  const n=players.length;
+  const activeGames=Object.keys(gr).filter(k=>k!=='total');
+  const GN={skin:'สกิน',bite:'หมากัด',stableford:'Stableford',
+    team:G.team.swap?`ทีมสลับ(${G.team.swapInterval}h)`:'ทีม',
+    updown:'จดแต้ได้/เสีย',doubleRe:'เบิ้ล-รี',olympic:'โอลิมปิก'};
+  const ds=fmtDate(document.getElementById('game-date').value);
+  const cn=document.getElementById('course-name').value;
+
+  if(!activeGames.length){
+    document.getElementById('money-content').innerHTML=`
+      <div style="text-align:center;padding:40px 20px;color:var(--cream-m);font-size:16px">
+        ยังไม่ได้เปิดใช้เกมพนัน<br>
+        <span style="font-size:13px">กลับไปตั้งค่าเพื่อเปิดเกมที่ต้องการ</span>
+      </div>`;
+    return;
+  }
+
+  // สรุปยอดรวมแต่ละคน
+  const sortedByMoney=[...players.map((pl,p)=>({...pl,p,total:gr.total[p]}))].sort((a,b)=>b.total-a.total);
+  const winRows=sortedByMoney.map((pl,i)=>{
+    const v=pl.total;
+    const bar=v===0?'':`<div style="height:6px;border-radius:3px;margin-top:5px;width:${Math.min(100,Math.abs(v)/Math.max(...sortedByMoney.map(x=>Math.abs(x.total)||1))*100)}%;background:${v>0?'var(--win)':'var(--lose)'}"></div>`;
+    return`<div style="background:var(--mg);border:1px solid ${v>0?'rgba(92,201,138,0.35)':v<0?'rgba(224,96,96,0.35)':'rgba(200,168,75,0.2)'};border-radius:7px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:17px;color:var(--cream)">${i===0&&v>0?'🏆 ':i===sortedByMoney.length-1&&v<0?'💸 ':''}${pl.name}</div>
+          <div style="font-size:11px;color:var(--cream-m);margin-top:2px">${activeGames.map(k=>gr[k]&&gr[k][pl.p]!==0?`${GN[k]}: ${gr[k][pl.p]>0?'+':''}<span style="color:${gr[k][pl.p]>0?'var(--win)':'var(--lose)'}">${gr[k][pl.p].toLocaleString()}</span>`:'').filter(Boolean).join(' &nbsp;·&nbsp; ')}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:26px;font-weight:600;color:${v>0?'var(--win)':v<0?'var(--lose)':'var(--cream-m)'}">
+            ${v>0?'+':''}${v.toLocaleString()}<span style="font-size:14px;color:${v>0?'var(--win)':v<0?'var(--lose)':'var(--cream-m)'}">฿</span>
+          </div>
+        </div>
+      </div>${bar}
+    </div>`;
+  }).join('');
+
+  // ตารางรายละเอียดแต่ละเกม
+  let gameBreakdown='';
+  activeGames.forEach(k=>{
+    if(!gr[k])return;
+    const vals=gr[k];
+    const sortedP=[...players.map((pl,p)=>({...pl,p,v:vals[p]}))].sort((a,b)=>b.v-a.v);
+    gameBreakdown+=`
+      <div style="background:var(--mg);border:1px solid rgba(200,168,75,0.2);border-radius:7px;padding:13px 14px;margin-bottom:8px">
+        <div style="font-size:12px;letter-spacing:2px;color:var(--gold);margin-bottom:10px">${GN[k]}</div>
+        ${sortedP.map(pl=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+            <span style="font-size:15px;color:var(--cream)">${pl.name}</span>
+            <span style="font-size:17px;font-weight:600;color:${pl.v>0?'var(--win)':pl.v<0?'var(--lose)':'var(--cream-m)'}">
+              ${pl.v>0?'+':''}${pl.v.toLocaleString()}฿
+            </span>
+          </div>`).join('')}
+      </div>`;
+  });
+
+  // ตารางคิดหนี้: ใครโอนให้ใคร
+  let transfers='';
+  const bal=[...gr.total];
+  const debtors=[];
+  for(let i=0;i<n;i++){if(bal[i]!==0)debtors.push({p:i,name:players[i].name,b:bal[i]});}
+  const pos=debtors.filter(x=>x.b>0).sort((a,b)=>b.b-a.b);
+  const neg=debtors.filter(x=>x.b<0).sort((a,b)=>a.b-b.b);
+  const txs=[];
+  let pi=0,ni=0;
+  const pb=[...pos.map(x=>x.b)],nb=[...neg.map(x=>Math.abs(x.b))];
+  while(pi<pos.length&&ni<neg.length){
+    const amt=Math.min(pb[pi],nb[ni]);
+    if(amt>0)txs.push({from:neg[ni].name,to:pos[pi].name,amt});
+    pb[pi]-=amt;nb[ni]-=amt;
+    if(pb[pi]===0)pi++;if(nb[ni]===0)ni++;
+  }
+  if(txs.length){
+    transfers=`<div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">รายการโอนเงิน</div>
+      ${txs.map(tx=>`<div style="display:flex;align-items:center;gap:10px;background:var(--mg);border:1px solid rgba(200,168,75,0.15);border-radius:6px;padding:12px 14px;margin-bottom:7px">
+        <span style="font-size:15px;color:var(--lose)">${tx.from}</span>
+        <span style="flex:1;text-align:center;color:var(--cream-m);font-size:13px">โอน →</span>
+        <span style="font-size:15px;color:var(--win)">${tx.to}</span>
+        <span style="font-size:20px;font-weight:600;color:var(--gold);margin-left:8px">${tx.amt.toLocaleString()}฿</span>
+      </div>`).join('')}`;
+  }
+
+  document.getElementById('money-content').innerHTML=`
+    <div style="text-align:center;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--gold-d)">
+      <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:4px">สรุปยอดเงินพนัน</div>
+      <div style="font-size:20px;color:var(--cream)">${cn}</div>
+      <div style="font-size:13px;color:var(--cream-m);margin-top:3px">${ds}</div>
+    </div>
+    <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">ยอดรวมแต่ละคน</div>
+    ${winRows}
+    ${transfers}
+    <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">แยกตามเกม</div>
+    ${gameBreakdown}
+    <div style="margin-top:16px;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.25);border-radius:20px;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center">
+      <span style="font-size:13px;color:var(--cream-m)">⛳ รู้ไหม? ประกันกอล์ฟครอบคลุมถึง Hole-in-One โบนัสด้วยนะ</span>
+      <a href="https://insure.724.co.th/golf-insure/u/AM00035138" target="_blank" style="font-size:13px;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(200,168,75,0.4);white-space:nowrap">ดูรายละเอียด → www.ศรีกรุง.com</a>
+    </div>`;
+}
+
+function goResults(){
+  if(!gameStarted){alert('กรุณาตั้งค่าและเริ่มเกมก่อนครับ');return;}
+  buildResults();renderSaved();goTab('results');
+}
+
+function newGame(){
+  if(!confirm('เริ่มเกมใหม่?'))return;
+  gameStarted=false;players=[];scores=[];currentHole=0;
+  clearSession();
+  document.getElementById('single-hole-wrap').innerHTML='';
+  document.getElementById('score-strip').innerHTML='';
+  document.getElementById('progress-dots').innerHTML='';
+  goTab('setup');
+}
+function updateHdrInfo(){
+  const el=document.getElementById('hdr-info');
+  const gl=Object.entries({skin:'สกิน',bite:'หมากัด',stableford:'SF',team:G.team.swap?`ทีมสลับ(${G.team.swapInterval}h)`:'ทีม',updown:'จดแต้',doubleRe:'เบิ้ล-รี',olympic:'โอลิมปิก'}).filter(([k])=>G[k].on).map(([,v])=>v);
+  el.textContent=players.map(p=>p.name).join(' · ')+' — Par '+totPar()+(gl.length?` | ${gl.join(' + ')}`:'');
+}
+
+// ── SESSION ──
+const SESSION_KEY='srikrung_golf_v2';
+function getSessionData(){
+  return{
+    v:1,ts:Date.now(),
+    courseName:document.getElementById('course-name').value,
+    gameDate:document.getElementById('game-date').value,
+    pars:[...pars],players:JSON.parse(JSON.stringify(players)),
+    scores:JSON.parse(JSON.stringify(scores)),
+    G:JSON.parse(JSON.stringify(G,(_,v)=>v instanceof Set?[...v]:v)),
+    turboHoles:[...turboHoles],
+    olympicData:JSON.parse(JSON.stringify(olympicData)),
+    sgdData:JSON.parse(JSON.stringify(sgdData)),
+    gameStarted
+  };
+}
+function saveSession(){
+  if(!gameStarted)return;
+  try{localStorage.setItem(SESSION_KEY,JSON.stringify(getSessionData()));}catch(e){}
+}
+function clearSession(){
+  try{localStorage.removeItem(SESSION_KEY);}catch(e){}
+  document.getElementById('resume-banner').style.display='none';
+}
+function checkSession(){
+  try{
+    const raw=localStorage.getItem(SESSION_KEY);
+    if(!raw)return;
+    const data=JSON.parse(raw);
+    if(!data.gameStarted)return;
+    const banner=document.getElementById('resume-banner');
+    banner.style.display='flex';
+  }catch(e){}
+}
+function resumeSession(){
+  try{
+    const raw=localStorage.getItem(SESSION_KEY);
+    if(!raw)return;
+    applySession(JSON.parse(raw));
+    document.getElementById('resume-banner').style.display='none';
+  }catch(e){alert('โหลด session ไม่ได้ครับ');}
+}
+function applySession(data){
+  pars=[...data.pars];
+  players=data.players;
+  scores=data.scores;
+  olympicData=data.olympicData||Array(18).fill(null).map(()=>({order:[],status:{},_chipMode:false}));
+  turboHoles=new Set(data.turboHoles||[]);
+
+  const savedG=data.G||{};
+  Object.keys(savedG).forEach(k=>{
+    if(G[k]!==undefined){
+      if(k==='turbo'&&Array.isArray(savedG[k].holes))savedG[k].holes=new Set(savedG[k].holes);
+      G[k]={...G[k],...savedG[k]};
+    }
+  });
+
+  document.getElementById('course-name').value=data.courseName||'';
+  document.getElementById('game-date').value=data.gameDate||'';
+
+  gameStarted=true;
+  currentHole=0;
+  buildProgressBar();
+  showHole(0,'in');
+  updateScoreStrip();
+  goTab('scorecard');
+  updateHdrInfo();
+}
+function exportSession(){
+  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
+  const data=getSessionData();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  const date=document.getElementById('game-date').value||'session';
+  a.download=`srikrung-golf-v2-${date}.json`;
+  a.href=URL.createObjectURL(blob);a.click();
+}
+function importSession(){
+  document.getElementById('import-file').click();
+}
+function handleImport(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!data.pars||!data.players){alert('ไฟล์ไม่ถูกต้องครับ');return;}
+      if(confirm(`โหลด session: ${data.courseName||'?'} (${data.players?.length||0} คน)\nดำเนินการต่อไหมครับ?`)){
+        applySession(data);
+        localStorage.setItem(SESSION_KEY,JSON.stringify(data));
+      }
+    }catch(err){alert('อ่านไฟล์ไม่ได้ครับ');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+// Auto-save hook — called after every score/game change
+function autoSave(){saveSession();}
+
+// Check session on load
+window.addEventListener('load',()=>checkSession());
+
+</script>
+</body>
+</html>
