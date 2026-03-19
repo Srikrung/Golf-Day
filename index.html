@@ -130,8 +130,11 @@ select option{background:var(--mg)}
 .sw-btn:active{background:rgba(200,168,75,0.15);color:var(--gold)}
 .sw-disp{flex:1;text-align:center;font-size:24px;font-weight:600;color:var(--cream);padding:7px 2px;user-select:none;-webkit-user-select:none;touch-action:none}
 .sw-disp.empty{font-size:18px;color:rgba(255,255,255,0.15)}
-.sw-badge{font-size:11px;height:16px;display:flex;align-items:center;justify-content:center;min-width:60px}
-.b-eagle{color:var(--gold)}.b-birdie{color:#5cc98a}.b-par{color:var(--cream-m)}.b-bogey{color:#e06060}.b-double{color:#c04040}.b-worse{color:#a03030}
+.sw-badge{font-size:11px;height:16px;display:flex;align-items:center;justify-content:center;min-width:60px; border-radius:10px;}
+.b-eagle{color:var(--gold)}
+.b-birdie{color:#5cc98a}
+.b-par{color:#ffd700}
+.b-bogey, .b-double, .b-worse {color:#ffffff}
 
 /* DR ROW */
 .dr-row{display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(0,0,0,0.25);border-top:1px solid rgba(200,168,75,0.1);flex-wrap:wrap}
@@ -185,9 +188,9 @@ select option{background:var(--mg)}
 .badge{font-size:12px;padding:2px 9px;border-radius:20px}
 .be{background:var(--gold-d);color:var(--cream)}
 .bb{background:#1a4030;color:#5cc98a}
-.bp{background:rgba(255,255,255,0.07);color:var(--cream-m)}
-.bbo{background:#3a1010;color:#e06060}
-.bd{background:#200808;color:#c04040}
+.bp{background:rgba(255,215,0,0.2);color:#ffd700}
+.bbo{background:rgba(255,255,255,0.1);color:#ffffff}
+.bd{background:rgba(255,255,255,0.2);color:#ffffff}
 .f9b9{margin-top:9px;font-size:13px;color:var(--cream-m);border-top:1px solid rgba(255,255,255,0.07);padding-top:9px}
 .sc-sum{overflow-x:auto;margin-bottom:18px;border-radius:5px;border:1px solid var(--gold-d)}
 .sc-sum table{min-width:300px;width:100%;border-collapse:collapse}
@@ -271,13 +274,7 @@ select option{background:var(--mg)}
 </style>
 </head>
 <body>
-<div id="saving-ov"><div style="font-size:38px">⛳</div><div style="color:var(--gold);font-size:17px;letter-spacing:2px">กำลังบันทึกภาพ...</div></div>
-
-<div id="resume-banner" style="display:none;background:rgba(200,168,75,0.12);border-bottom:1px solid rgba(200,168,75,0.35);padding:10px 16px;display:none;align-items:center;gap:12px;flex-wrap:wrap">
-  <span style="font-size:14px;color:var(--gold);flex:1">⚡ พบข้อมูลเกมค้างไว้ — กลับมาต่อไหมครับ?</span>
-  <button onclick="resumeSession()" style="padding:7px 16px;background:var(--gold-d);border:none;color:var(--cream);border-radius:4px;cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px">▶ เล่นต่อ</button>
-  <button onclick="clearSession()" style="padding:7px 14px;background:none;border:1px solid rgba(200,168,75,0.3);color:var(--cream-m);border-radius:4px;cursor:pointer;font-family:'Kanit',sans-serif;font-size:13px">✕ เริ่มใหม่</button>
-</div>
+<div id="saving-ov"><div style="font-size:38px">⛳</div><div style="color:var(--gold);font-size:17px;letter-spacing:2px">กำลังประมวลผลภาพ...</div></div>
 
 <div class="hdr">
   <div class="hdr-eyebrow">⛳ Golf Scorecard</div>
@@ -431,7 +428,7 @@ select option{background:var(--mg)}
     <div class="game-row" id="gr-doubleRe">
       <div class="g-header" onclick="toggleGame('doubleRe')">
         <div class="g-icon">🎲</div>
-        <div class="g-info"><div class="g-name">เบิ้ล-รี</div><div class="g-desc">แพ้หลุม → กด เบิ้ล (×2) หรือ รี (รีเซ็ต) ได้เลย</div></div>
+        <div class="g-info"><div class="g-name">เบิ้ล-รี</div><div class="g-desc">ผู้แพ้ → กด เบิ้ล (×2) ผู้ชนะ → กด รี (x3) ได้เลย</div></div>
         <label class="toggle" onclick="e=>e.stopPropagation()"><input type="checkbox" id="g-doubleRe" onchange="toggleGame('doubleRe')"><span class="toggle-sl"></span></label>
       </div>
       <div class="g-body" id="gb-doubleRe"><div class="g-body-inner">
@@ -510,9 +507,7 @@ select option{background:var(--mg)}
 
   <div style="text-align:center;margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
     <button class="btn btn-primary btn-lg" onclick="startGame()">เริ่มบันทึกสกอร์ →</button>
-    <button class="btn btn-lg" onclick="document.getElementById('import-file').click()">📥 โหลด Session</button>
   </div>
-  <input type="file" id="import-file" accept=".json" style="display:none" onchange="handleImport(event)">
 </div>
 
 <div class="screen" id="scr-scorecard">
@@ -537,7 +532,7 @@ select option{background:var(--mg)}
 
 <div class="screen" id="scr-money">
   <div id="money-content"></div>
-  <div class="actions">
+  <div class="actions" style="justify-content:center">
     <button class="btn" onclick="goTab('scorecard')">← กลับสกอร์</button>
     <button class="btn btn-primary" onclick="saveAsImage()">📷 บันทึกรูป</button>
   </div>
@@ -546,11 +541,10 @@ select option{background:var(--mg)}
 <div class="screen" id="scr-results">
   <div id="cap"><div id="res-content"></div></div>
   <div class="actions">
-    <button class="btn btn-primary" onclick="saveAsImage()">📷 รูปภาพ</button>
-    <button class="btn btn-primary" onclick="saveGame()">💾 บันทึก</button>
-    <button class="btn" onclick="exportSession()">📤 Export</button>
-    <button class="btn" onclick="window.print()">🖨 พิมพ์</button>
-    <button class="btn" onclick="goTab('scorecard')">← สกอร์</button>
+    <button class="btn btn-primary" onclick="shareToLine()">🟢 แชร์รูปลง LINE</button>
+    <button class="btn btn-primary" onclick="saveAsImage()">📷 บันทึกรูป</button>
+    <button class="btn" onclick="saveGame()">💾 บันทึกไว้ดูย้อนหลัง</button>
+    <button class="btn" onclick="goTab('scorecard')">← แก้สกอร์</button>
     <button class="btn" onclick="newGame()">+ เกมใหม่</button>
   </div>
   <div id="saved-section" style="margin-top:28px"></div>
@@ -599,7 +593,7 @@ function searchCourses(q){
 function filterCourses(){
   const q=document.getElementById('course-search').value;
   renderCourseList(searchCourses(q));
-  document.getElementById('course-name').value = q; // Allow custom name typing
+  document.getElementById('course-name').value = q; 
   document.getElementById('course-dropdown').style.display='block';
 }
 function showCourseList(){
@@ -634,7 +628,6 @@ function renderCourseList(list){
   el.innerHTML=html;
 }
 
-// ✨ FIXED BUG: Force Update Par Grid When Selecting Course
 function selectCourse(el){
   const cIdx = el.getAttribute('data-cidx');
   const c = GOLF_DB[cIdx];
@@ -646,19 +639,15 @@ function selectCourse(el){
   if(c.courses.length>0){
     sel.style.display = c.courses.length > 1 ? 'block' : 'none';
     sel.innerHTML=c.courses.map((cs, i)=>`<option value="${i}">${cs.name} (${cs.holes}H Par${cs.par})</option>`).join('');
-    
-    // Assign handler to sync Pars
     sel.onchange = () => {
        const idx = sel.value || 0;
        const cs = c.courses[idx];
        document.getElementById('course-name').value = c.name + (c.courses.length > 1 ? ' — ' + cs.name : '');
        if(cs.pars && cs.pars.length === 18) { 
          pars = [...cs.pars]; 
-         buildParGrid(); // Force regenerate Par Inputs
+         buildParGrid(); 
        }
     };
-    
-    // Trigger it explicitly
     sel.value = "0"; 
     sel.onchange(); 
   } else {
@@ -688,12 +677,12 @@ let G={
 let olympicData=Array(18).fill(null).map(()=>({order:[],status:{}}));
 let sgdData=[];
 function initSGD(){
-  sgdData=players.map(()=>Array(18).fill(null).map(()=>({fw:null,gir:null,putts:null})));
+  // ตั้งค่า putts เริ่มต้นให้เป็น 1 ตามรีเควสต์
+  sgdData=players.map(()=>Array(18).fill(null).map(()=>({fw:null,gir:null,putts:1})));
 }
 
 // ── INIT ──
 setToday();
-// Set default to MTB 13
 document.getElementById('course-name').value = 'มลฑลทหารบกที่ 13 (มทบ.13)';
 document.getElementById('course-search').value = 'มลฑลทหารบกที่ 13 (มทบ.13)';
 pars = [...GOLF_DB[0].courses[0].pars]; 
@@ -738,12 +727,11 @@ function renderPlayerRows(){
   const n=+document.getElementById('num-players').value;
   const wrap=document.getElementById('player-rows');
   const prev=[...wrap.querySelectorAll('.player-row')].map(r=>({name:r.querySelector('.pn').value,hcp:r.querySelector('.ph').value}));
-  const NM=['Alpha','Bravo','Charlie','Delta','Echo','Foxtrot'];
   wrap.innerHTML='';
   for(let i=0;i<n;i++){
     wrap.innerHTML+=`<div class="player-row" style="display:flex;align-items:center;gap:8px;padding:10px 12px;flex-wrap:wrap">
       <div class="p-num">${i+1}</div>
-      <input type="text" class="pn p-name-input" value="${prev[i]?.name||`ผู้เล่น ${NM[i]}`}" style="flex:1;min-width:120px" placeholder="ชื่อผู้เล่น">
+      <input type="text" class="pn p-name-input" value="${prev[i]?.name||''}" placeholder="ผู้เล่น ${i+1}" style="flex:1;min-width:120px">
       <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
         <span style="font-size:12px;color:var(--cream-m)">HCP</span>
         <input type="number" class="ph" min="0" max="54" value="${prev[i]?.hcp||'0'}" style="width:58px;text-align:center">
@@ -759,7 +747,7 @@ function renderTeamAssign(){
   if(!el)return;
   el.innerHTML='';
   for(let i=0;i<n;i++){
-    const nm=names[i]?.value||`P${i+1}`;
+    const nm=names[i]?.value.trim()||`ผู้เล่น ${i+1}`;
     const t=G.team.teams[i] || (i%2===0?'A':'B');
     el.innerHTML+=`<div class="ta-row">
       <div class="ta-name">${nm}</div>
@@ -800,7 +788,7 @@ function toggleTH(h){
 }
 function toggleGame(id){
   const cb=document.getElementById(`g-${id}`);
-  G[id].on=cb.checked;
+  if(cb) G[id].on=cb.checked;
   const body=document.getElementById(`gb-${id}`);
   if(body)body.style.display=cb.checked?'block':'none';
   document.getElementById(`gr-${id}`)?.classList.toggle('game-on',cb.checked);
@@ -808,48 +796,53 @@ function toggleGame(id){
 }
 
 function startGame(){
-  const n=+document.getElementById('num-players').value;
-  // Update pars securely from grid in case user manually typed custom pars
-  document.querySelectorAll('.par-hole input').forEach((inp,i)=>{
-    if(i<18)pars[i]=Math.max(3,Math.min(5,+inp.value||4));
-  });
-  players=[...document.querySelectorAll('.pn')].slice(0,n).map((el,i)=>({
-    name:el.value.trim()||`P${i+1}`,
-    hcp:Math.max(0,+document.querySelectorAll('.ph')[i].value||0)
-  }));
-  scores=Array(n).fill(null).map(()=>Array(18).fill(null));
+  try {
+    const n=+document.getElementById('num-players').value;
+    document.querySelectorAll('.par-hole input').forEach((inp,i)=>{
+      if(i<18)pars[i]=Math.max(3,Math.min(5,+inp.value||4));
+    });
+    players=[...document.querySelectorAll('.pn')].slice(0,n).map((el,i)=>({
+      name:el.value.trim()||el.placeholder||`ผู้เล่น ${i+1}`,
+      hcp:Math.max(0,+document.querySelectorAll('.ph')[i].value||0)
+    }));
+    scores=Array(n).fill(null).map(()=>Array(18).fill(null));
 
-  // read game settings
-  ['skin','bite','stableford','updown'].forEach(k=>{
-    const te=document.getElementById(`gt-${k}`);
-    const ve=document.getElementById(`gv-${k}`);
-    if(te)G[k].type=te.value;
-    if(ve)G[k].val=Math.max(1,+ve.value||100);
-  });
-  G.turbo.mult=Math.max(2,+document.getElementById('gv-turbo-mult').value||2);
-  const gve=document.getElementById('gv-team');
-  if(gve)G.team.val=Math.max(1,+gve.value||20);
-  G.team.chuan=document.getElementById('g-team-chuan')?.checked||false;
-  G.team.chuanVal=Math.max(1,+document.getElementById('gv-team-chuan')?.value||100);
-  
-  G.team.swap=document.getElementById('g-team-swap').checked;
-  G.team.swapType = G.team.swap ? document.getElementById('team-swap-sel').value : 'fixed';
-  for(let i=0;i<n;i++){if(!G.team.teams[i])G.team.teams[i]=i%2===0?'A':'B';}
-  G.team.baseTeams = [...G.team.teams];
-  G.team.domoTeams = Array(18).fill(null).map(() => [...G.team.teams]);
+    ['skin','bite','stableford','updown'].forEach(k=>{
+      const te=document.getElementById(`gt-${k}`);
+      const ve=document.getElementById(`gv-${k}`);
+      if(te)G[k].type=te.value;
+      if(ve)G[k].val=Math.max(1,+ve.value||100);
+    });
+    
+    G.turbo.mult=Math.max(2,+document.getElementById('gv-turbo-mult')?.value||2);
+    const gve=document.getElementById('gv-team');
+    if(gve)G.team.val=Math.max(1,+gve.value||20);
+    G.team.chuan=document.getElementById('g-team-chuan')?.checked||false;
+    G.team.chuanVal=Math.max(1,+document.getElementById('gv-team-chuan')?.value||100);
+    
+    G.team.swap=document.getElementById('g-team-swap')?.checked||false;
+    G.team.swapType = G.team.swap ? (document.getElementById('team-swap-sel')?.value || 'fixed') : 'fixed';
+    for(let i=0;i<n;i++){if(!G.team.teams[i])G.team.teams[i]=i%2===0?'A':'B';}
+    G.team.baseTeams = [...G.team.teams];
+    G.team.domoTeams = Array(18).fill(null).map(() => [...G.team.teams]);
 
-  G.doubleRe.val=Math.max(1,+document.getElementById('gv-doubleRe').value||100);
-  G.doubleRe.mults=Array(18).fill(0); 
-  G.olympic.val=Math.max(1,+document.getElementById('gv-olympic').value||20);
-  if(G.srikrungDay.on)initSGD();
-  olympicData=Array(18).fill(null).map(()=>({order:[],status:{}}));
+    G.doubleRe.val=Math.max(1,+document.getElementById('gv-doubleRe')?.value||100);
+    G.doubleRe.mults=Array(18).fill(0); 
+    G.olympic.val=Math.max(1,+document.getElementById('gv-olympic')?.value||20);
+    if(G.srikrungDay.on)initSGD();
+    olympicData=Array(18).fill(null).map(()=>({order:[],status:{}}));
 
-  gameStarted=true;
-  currentHole=0;
-  buildProgressBar();
-  showHole(0,'in');
-  updateScoreStrip();
-  goTab('scorecard');updateHdrInfo();
+    gameStarted=true;
+    currentHole=0;
+    buildProgressBar();
+    showHole(0,'in');
+    updateScoreStrip();
+    goTab('scorecard');
+    updateHdrInfo();
+    autoSave();
+  } catch(e) {
+    alert("เกิดข้อผิดพลาดในการโหลด กรุณารีเฟรชหน้าเว็บ");
+  }
 }
 
 // ── V2: PROGRESS + SINGLE HOLE ──
@@ -870,7 +863,7 @@ function updateProgressBar(){
   for(let h=0;h<18;h++){
     const d=document.getElementById(`pd-${h}`);if(!d)return;
     d.className='prog-dot';
-    const hasScore=players.some((_,p)=>scores[p][h]!==null);
+    const hasScore=players.some((_,p)=>scores[p] && scores[p][h]!==null);
     if(h===currentHole)d.classList.add('current');
     else if(hasScore)d.classList.add('scored');
     else if(h<currentHole)d.classList.add('done');
@@ -891,17 +884,15 @@ function showHole(h,dir='in'){
   card.className='hole-card '+(dir==='in'?'hole-in':'hole-back');
   wrap.innerHTML='';wrap.appendChild(card);
   
-  // RESTORE SCORES VISUALLY (Fix bug where scores disappear when navigating back)
+  // RESTORE SCORES VISUALLY
   players.forEach((_, p) => refWidget(h, p));
 
-  // Restore olympic state
   if(G.olympic.on&&olympicData[h]&&(olympicData[h].order.length>0||Object.keys(olympicData[h].status).length>0)){
     setTimeout(()=>olyRenderHole(h),0);
   }
-  // Restore doubleRe state
   if(G.doubleRe.on)setTimeout(()=>updDR(h),0);
-  // Restore SGD state
   if(G.srikrungDay.on)setTimeout(()=>players.forEach((_,p)=>sgdRefresh(h,p)),0);
+  
   const prev=document.getElementById('btn-prev');
   const next2=document.getElementById('btn-next');
   if(prev){prev.disabled=h===0;prev.style.opacity=h===0?'0.35':'1';}
@@ -957,7 +948,7 @@ window.toggleTeamScorecard = function(h, p) {
     G.team.domoTeams[h][p] = G.team.domoTeams[h][p] === 'A' ? 'B' : 'A';
   } else {
     G.team.baseTeams[p] = G.team.baseTeams[p] === 'A' ? 'B' : 'A';
-    G.team.teams[p] = G.team.baseTeams[p]; // Sync back to setup
+    G.team.teams[p] = G.team.baseTeams[p]; 
     renderTeamAssign();
   }
   document.getElementById(`tb-${h}-${p}`).innerHTML = getTeamBadgeHTML(h, p);
@@ -1081,37 +1072,35 @@ function sgdGIR(h,p){
 }
 function sgdPutt(h,p,dir){
   const d=sgdData[p][h];
-  if(d.putts===null)d.putts=2;
+  if(d.putts===null)d.putts=1; // Start at 1
   else d.putts=Math.max(0,d.putts+dir);
   sgdRefresh(h,p);autoSave();
 }
 function sgdRefresh(h,p){
   const d=sgdData[p][h];
-  // FW button
   const fwBtn=document.getElementById(`sgd-fw-${h}-${p}`);
   if(fwBtn){
     if(d.fw===true){fwBtn.className='sgd-btn hit';fwBtn.textContent='🏌️ FW ✅';}
     else if(d.fw===false){fwBtn.className='sgd-btn miss';fwBtn.textContent='🏌️ FW ❌';}
     else{fwBtn.className='sgd-btn';fwBtn.textContent='🏌️ FW';}
   }
-  // GIR button
   const girBtn=document.getElementById(`sgd-gir-${h}-${p}`);
   if(girBtn){
     if(d.gir===true){girBtn.className='sgd-btn hit';girBtn.textContent='📍 GIR ✅';}
     else if(d.gir===false){girBtn.className='sgd-btn miss';girBtn.textContent='📍 GIR ❌';}
     else{girBtn.className='sgd-btn';girBtn.textContent='📍 GIR';}
   }
-  // Putts
   const pv=document.getElementById(`sgd-pv-${h}-${p}`);
   const pl=document.getElementById(`sgd-putt-lbl-${h}-${p}`);
   if(pv){
-    if(d.putts===null){pv.textContent='—';}
+    if(d.putts===null){pv.textContent='1';} // Visual default
     else{pv.textContent=d.putts;}
   }
   if(pl){
-    const lbl=d.putts===null?'':d.putts===0?'⭐ Holed out':d.putts===1?'✅ 1 พัต':d.putts===2?'2 พัต':`${d.putts} พัต`;
+    const v = d.putts===null ? 1 : d.putts;
+    const lbl = v===0?'⭐ Holed out':v===1?'✅ 1 พัต':v===2?'2 พัต':`${v} พัต`;
     pl.textContent=lbl;
-    pl.style.color=d.putts===0?'var(--gold)':d.putts===1?'var(--win)':d.putts>=3?'var(--lose)':'var(--cream-m)';
+    pl.style.color=v===0?'var(--gold)':v===1?'var(--win)':v>=3?'var(--lose)':'var(--cream-m)';
   }
 }
 function sgdSummary(){
@@ -1121,26 +1110,31 @@ function sgdSummary(){
       const d=sgdData[p]?.[h];if(!d)continue;
       if(pars[h]!==3){fwTotal++;if(d.fw===true)fw++;}
       girTotal++;if(d.gir===true)gir++;
-      if(d.putts!==null){putts+=d.putts;puttH++;}
+      // Since default is technically 1 putts, calculate it if played
+      if(scores[p] && scores[p][h]!==null) {
+         const pVal = d.putts !== null ? d.putts : 1; 
+         putts += pVal;
+         puttH++;
+      }
     }
     return{name:pl.name,fw,fwTotal,gir,girTotal,putts,puttH,avgPutts:puttH?+(putts/puttH).toFixed(1):null};
   });
 }
 
-// DOUBLE-RE — 0=ปกติ(×1), 1=เบิ้ล(×2), 2=รี(×3)
+// DOUBLE-RE
 function drDbl(h){
-  if(G.doubleRe.mults[h]===0){G.doubleRe.mults[h]=1;} // ปกติ → เบิ้ล
-  else if(G.doubleRe.mults[h]===1){G.doubleRe.mults[h]=0;} // เบิ้ล → ยกเลิก
+  if(G.doubleRe.mults[h]===0){G.doubleRe.mults[h]=1;} 
+  else if(G.doubleRe.mults[h]===1){G.doubleRe.mults[h]=0;} 
   updDR(h);autoSave();
 }
 function drRe(h){
-  if(G.doubleRe.mults[h]===1){G.doubleRe.mults[h]=2;} // เบิ้ล → รี
-  else if(G.doubleRe.mults[h]===2){G.doubleRe.mults[h]=1;} // รี → กลับเบิ้ล
+  if(G.doubleRe.mults[h]===1){G.doubleRe.mults[h]=2;} 
+  else if(G.doubleRe.mults[h]===2){G.doubleRe.mults[h]=1;} 
   updDR(h);autoSave();
 }
 function drReset(h){G.doubleRe.mults[h]=0;updDR(h);autoSave();}
 function updDR(h){
-  const state=G.doubleRe.mults[h]; // 0,1,2
+  const state=G.doubleRe.mults[h]; 
   const mult=[1,2,3][state];
   const val=G.doubleRe.val*mult;
   const multEl=document.getElementById(`drm-${h}`);
@@ -1150,7 +1144,7 @@ function updDR(h){
   if(!multEl)return;
   multEl.textContent=`×${mult}`;
   multEl.className='dr-mult'+(state===1?' x2':state===2?' x3':'');
-  const labels=['ปกติ — ฝ่ายแพ้กด เบิ้ล ได้','เบิ้ล ×2 — ฝ่ายชนะกด รี ได้','รี ×3 — ล็อกหลุมนี้'];
+  const labels=['ปกติ — ผู้แพ้กด เบิ้ล ได้','เบิ้ล ×2 — ผู้ชนะกด รี ได้','รี ×3 — ล็อกหลุมนี้'];
   const colors=['var(--cream-m)','#ffc800','var(--win)'];
   if(stEl){stEl.textContent=labels[state];stEl.style.color=colors[state];}
   if(dblBtn){
@@ -1208,13 +1202,15 @@ function refWidget(h,p){
   }
   disp.textContent=v;disp.className='sw-disp';
   const d=v-pars[h];
+  
+  // COLOR RULES: Birdie=Green, Par=Yellow, Others=White
   const CSS={
     'e':{b:'var(--gold)',bg:'#1a1200',c:'var(--gold)'},
     'bi':{b:'#2d6a4f',bg:'#071a0f',c:'#5cc98a'},
-    'pa':{b:'rgba(200,168,75,0.3)',bg:'var(--dg)',c:'var(--cream-d)'},
-    'bo':{b:'#7a2a2a',bg:'#1a0606',c:'#e06060'},
-    'db':{b:'#5a1515',bg:'#140404',c:'#c04040'},
-    'wr':{b:'#400e0e',bg:'#0e0202',c:'#a03030'},
+    'pa':{b:'rgba(255,215,0,0.4)',bg:'rgba(255,215,0,0.05)',c:'#ffd700'},
+    'bo':{b:'rgba(255,255,255,0.3)',bg:'rgba(255,255,255,0.05)',c:'#ffffff'},
+    'db':{b:'rgba(255,255,255,0.3)',bg:'rgba(255,255,255,0.05)',c:'#ffffff'},
+    'wr':{b:'rgba(255,255,255,0.3)',bg:'rgba(255,255,255,0.05)',c:'#ffffff'},
   };
   const k=d<=-2?'e':d===-1?'bi':d===0?'pa':d===1?'bo':d===2?'db':'wr';
   const s=CSS[k];
@@ -1223,7 +1219,6 @@ function refWidget(h,p){
   const bt=BT[k];badge.textContent=bt.t;badge.className=`sw-badge ${bt.cls}`;
 }
 
-// TOTALS
 function updateTotals(){
   updateScoreStrip();
   updateProgressBar();
@@ -1249,7 +1244,6 @@ function calcSkin(){
   }
   return money;
 }
-// BITE GAME LOGIC (หมากัด)
 function calcBite(){
   const n=players.length,money=Array(n).fill(0);
   for(let h=0;h<18;h++){
@@ -1258,16 +1252,15 @@ function calcBite(){
     const hs=players.map((_,p)=>scores[p][h]);
     const mn=Math.min(...hs);
     const biters=hs.reduce((a,s,i)=>s===mn?[...a,i]:a,[]);
-    
     if(biters.length!==1)continue; 
     
     const br=biters[0];
     const diff = mn - pars[h];
     
     let mult = 1;
-    if (mn === 1) mult = 50; // Hole in One x50
-    else if (diff <= -2) mult = 3; // Eagle x3
-    else if (diff === -1) mult = 2; // Birdie x2
+    if (mn === 1) mult = 50; 
+    else if (diff <= -2) mult = 3; 
+    else if (diff === -1) mult = 2; 
 
     const bv = G.bite.val * t * mult;
     players.forEach((_,p)=>{if(p===br)money[p]+=(n-1)*bv;else money[p]-=bv;});
@@ -1298,7 +1291,6 @@ function calcStableford(){
   }
   return money;
 }
-// TEAM GAME LOGIC
 function calcTeam(){
   const n=players.length,money=Array(n).fill(0);
   for(let h=0;h<18;h++){
@@ -1374,6 +1366,7 @@ function calcDoubleRe(){
   }
   return money;
 }
+
 // ── OLYMPIC FUNCTIONS ──
 const OLY_PTS=[2,3,4,5]; 
 
@@ -1629,11 +1622,11 @@ function buildResults(){
       </table></div>`;
   }
 
-  // VERTICAL SCORECARD FIX
+  // BIGGER VERTICAL SCORECARD 
   const vertSumRows = Array.from({length:18}, (_, h) => {
     return `<tr>
-      <td style="text-align:center; padding:6px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05)">${h+1}</td>
-      <td style="text-align:center; padding:6px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05)">${pars[h]}</td>
+      <td style="text-align:center; padding:10px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px;">${h+1}</td>
+      <td style="text-align:center; padding:10px 4px; color:var(--cream-m); border-bottom:1px solid rgba(255,255,255,0.05); font-size:15px;">${pars[h]}</td>
       ${players.map((pl, p) => {
          const s = scores[p][h];
          if (s === null) return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.2)">—</td>`;
@@ -1641,9 +1634,11 @@ function buildResults(){
          let sy = '';
          if (d <= -2) sy = 'background:var(--gold);color:var(--dg);border-radius:50%;font-weight:bold';
          else if (d === -1) sy = 'background:#1a4a2e;color:#5cc98a;border-radius:50%';
-         else if (d === 1) sy = 'background:#5a1e1e;color:#e06060';
-         else if (d >= 2) sy = 'background:#3a0e0e;color:#c04040';
-         return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05)"><span style="display:inline-block;width:25px;height:25px;line-height:25px;text-align:center;font-size:13px;${sy}">${s}</span></td>`;
+         else if (d === 1) sy = 'background:#5a1e1e;color:#ffffff';
+         else if (d >= 2) sy = 'background:#3a0e0e;color:#ffffff';
+         return `<td style="text-align:center; border-bottom:1px solid rgba(255,255,255,0.05)">
+                   <span style="display:inline-block;width:32px;height:32px;line-height:32px;text-align:center;font-size:18px;${sy}">${s}</span>
+                 </td>`;
       }).join('')}
     </tr>`;
   }).join('');
@@ -1684,32 +1679,32 @@ function buildResults(){
       <table style="width:100%; border-collapse:collapse;">
         <thead style="background:var(--lg)">
           <tr>
-            <th style="padding:8px 4px; color:var(--gold); font-size:12px; border-bottom:1px solid var(--gold-d);">หลุม</th>
-            <th style="padding:8px 4px; color:var(--gold); font-size:12px; border-bottom:1px solid var(--gold-d);">Par</th>
-            ${players.map(p => `<th style="padding:8px 4px; color:var(--gold); font-size:12px; border-bottom:1px solid var(--gold-d);">${p.name}</th>`).join('')}
+            <th style="padding:10px 4px; color:var(--gold); font-size:13px; border-bottom:1px solid var(--gold-d);">หลุม</th>
+            <th style="padding:10px 4px; color:var(--gold); font-size:13px; border-bottom:1px solid var(--gold-d);">Par</th>
+            ${players.map(p => `<th style="padding:10px 4px; color:var(--gold); font-size:13px; border-bottom:1px solid var(--gold-d);">${p.name}</th>`).join('')}
           </tr>
         </thead>
         <tbody>
           ${vertSumRows}
           <tr style="background:rgba(255,255,255,0.03)">
-            <td style="text-align:center; padding:6px 4px; font-size:12px; color:var(--cream-m)">F9</td>
-            <td style="text-align:center; padding:6px 4px; font-size:12px; color:var(--cream-m)">${pars.slice(0,9).reduce((a,b)=>a+b,0)}</td>
-            ${stats.map(st => `<td style="text-align:center; padding:6px 4px; font-weight:500;">${st.filled?st.f9:'—'}</td>`).join('')}
+            <td style="text-align:center; padding:10px 4px; font-size:14px; color:var(--cream-m)">F9</td>
+            <td style="text-align:center; padding:10px 4px; font-size:14px; color:var(--cream-m)">${pars.slice(0,9).reduce((a,b)=>a+b,0)}</td>
+            ${stats.map(st => `<td style="text-align:center; padding:10px 4px; font-weight:500; font-size:16px;">${st.filled?st.f9:'—'}</td>`).join('')}
           </tr>
           <tr style="background:rgba(255,255,255,0.03)">
-            <td style="text-align:center; padding:6px 4px; font-size:12px; color:var(--cream-m)">B9</td>
-            <td style="text-align:center; padding:6px 4px; font-size:12px; color:var(--cream-m)">${pars.slice(9).reduce((a,b)=>a+b,0)}</td>
-            ${stats.map(st => `<td style="text-align:center; padding:6px 4px; font-weight:500;">${st.filled?st.b9:'—'}</td>`).join('')}
+            <td style="text-align:center; padding:10px 4px; font-size:14px; color:var(--cream-m)">B9</td>
+            <td style="text-align:center; padding:10px 4px; font-size:14px; color:var(--cream-m)">${pars.slice(9).reduce((a,b)=>a+b,0)}</td>
+            ${stats.map(st => `<td style="text-align:center; padding:10px 4px; font-weight:500; font-size:16px;">${st.filled?st.b9:'—'}</td>`).join('')}
           </tr>
           <tr style="background:rgba(200,168,75,0.1)">
-            <td style="text-align:center; padding:8px 4px; font-size:13px; color:var(--gold)">รวม</td>
-            <td style="text-align:center; padding:8px 4px; font-size:13px; color:var(--gold)">${tp}</td>
-            ${stats.map(st => `<td style="text-align:center; padding:8px 4px; font-weight:600; color:var(--cream)">${st.filled?st.tot:'—'}</td>`).join('')}
+            <td style="text-align:center; padding:12px 4px; font-size:15px; color:var(--gold)">รวม</td>
+            <td style="text-align:center; padding:12px 4px; font-size:15px; color:var(--gold)">${tp}</td>
+            ${stats.map(st => `<td style="text-align:center; padding:12px 4px; font-weight:600; color:var(--cream); font-size:18px;">${st.filled?st.tot:'—'}</td>`).join('')}
           </tr>
           <tr style="background:rgba(200,168,75,0.2)">
-            <td style="text-align:center; padding:8px 4px; font-size:13px; color:var(--gold)">Net</td>
-            <td style="text-align:center; padding:8px 4px;"></td>
-            ${stats.map(st => `<td style="text-align:center; padding:8px 4px; font-weight:600; color:var(--gold)">${st.filled?st.net:'—'}</td>`).join('')}
+            <td style="text-align:center; padding:12px 4px; font-size:15px; color:var(--gold)">Net</td>
+            <td style="text-align:center; padding:12px 4px;"></td>
+            ${stats.map(st => `<td style="text-align:center; padding:12px 4px; font-weight:600; color:var(--gold); font-size:18px;">${st.filled?st.net:'—'}</td>`).join('')}
           </tr>
         </tbody>
       </table>
@@ -1749,12 +1744,12 @@ function buildResults(){
       </table>
     </div>`:''}
     <div style="margin-top:14px;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.25);border-radius:20px;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center">
-      <span style="font-size:13px;color:var(--cream-m)">⛳ รู้ไหม? ประกันกอล์ฟครอบคลุมถึง Hole-in-One โบนัสด้วยนะ</span>
+      <span style="font-size:13px;color:var(--cream-m)">⛳ รู้ไหม? ประกันกอล์ฟครอบคลุม Hole-in-One โบนัสด้วยนะ</span>
       <a href="https://insure.724.co.th/golf-insure/u/AM00035138" target="_blank" style="font-size:13px;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(200,168,75,0.4);white-space:nowrap;flex-shrink:0">ดูรายละเอียด → www.ศรีกรุง.com</a>
     </div>`;
 }
 
-// ── SAVE IMAGE ──
+// ── SAVE & SHARE ──
 function saveAsImage(){
   if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
   const ov=document.getElementById('saving-ov');ov.classList.add('show');
@@ -1765,9 +1760,41 @@ function saveAsImage(){
       const a=document.createElement('a');
       a.download=`${(document.getElementById('course-name').value||'golf').replace(/\s+/g,'-')}-${document.getElementById('game-date').value||'day'}.png`;
       a.href=c.toDataURL('image/png');a.click();
-    }).catch(()=>{ov.classList.remove('show');alert('ลองใช้ปุ่มพิมพ์แทนครับ');});
+      setTimeout(()=>alert('ระบบทำการดาวน์โหลดรูปภาพลงเครื่องแล้วครับ'), 500);
+    }).catch(()=>{ov.classList.remove('show');alert('เกิดข้อผิดพลาดในการบันทึกรูปภาพ');});
   },300);
 }
+
+function shareToLine(){
+  if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
+  const ov=document.getElementById('saving-ov');
+  ov.querySelector('div:last-child').textContent = 'กำลังเตรียมรูปภาพสำหรับแชร์...';
+  ov.classList.add('show');
+  
+  setTimeout(()=>{
+    html2canvas(document.getElementById('cap'),{backgroundColor:'#08180e',scale:2,useCORS:true,logging:false})
+    .then(async c=>{
+      ov.classList.remove('show');
+      ov.querySelector('div:last-child').textContent = 'กำลังบันทึกภาพ...'; // reset text
+      
+      c.toBlob(async (blob) => {
+        const file = new File([blob], 'srikrung-golf-scorecard.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'Srikrung Golf Scorecard',
+              text: 'สรุปผลคะแนนกอล์ฟวันนี้ครับ ⛳'
+            });
+          } catch(e) { console.log('Share canceled or failed', e); }
+        } else {
+          alert('เบราว์เซอร์ของคุณไม่รองรับการแชร์รูปภาพโดยตรง กรุณากดปุ่ม "📷 บันทึกรูป" แล้วส่งใน LINE ครับ');
+        }
+      }, 'image/png');
+    }).catch(()=>{ov.classList.remove('show');});
+  },300);
+}
+
 function saveGame(){
   if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
   const tp=totPar();
@@ -1780,6 +1807,7 @@ function saveGame(){
       pm:scores[p].reduce((a,b)=>a+(b||0),0)-tp}))
   });
   renderSaved();
+  alert('บันทึกสกอร์ไว้ดูย้อนหลังสำเร็จครับ');
 }
 function renderSaved(){
   if(!savedGames.length)return;
@@ -1829,7 +1857,6 @@ function buildMoney(){
     return;
   }
 
-  // สรุปยอดรวมแต่ละคน
   const sortedByMoney=[...players.map((pl,p)=>({...pl,p,total:gr.total[p]}))].sort((a,b)=>b.total-a.total);
   const winRows=sortedByMoney.map((pl,i)=>{
     const v=pl.total;
@@ -1849,7 +1876,6 @@ function buildMoney(){
     </div>`;
   }).join('');
 
-  // ตารางรายละเอียดแต่ละเกม
   let gameBreakdown='';
   activeGames.forEach(k=>{
     if(!gr[k])return;
@@ -1868,7 +1894,7 @@ function buildMoney(){
       </div>`;
   });
 
-  // ตารางคิดหนี้: ใครโอนให้ใคร
+  // รูปแบบโอนเงินใหม่ ให้อ่านง่าย
   let transfers='';
   const bal=[...gr.total];
   const debtors=[];
@@ -1885,12 +1911,14 @@ function buildMoney(){
     if(pb[pi]===0)pi++;if(nb[ni]===0)ni++;
   }
   if(txs.length){
-    transfers=`<div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">รายการโอนเงิน</div>
-      ${txs.map(tx=>`<div style="display:flex;align-items:center;gap:10px;background:var(--mg);border:1px solid rgba(200,168,75,0.15);border-radius:6px;padding:12px 14px;margin-bottom:7px">
-        <span style="font-size:15px;color:var(--lose)">${tx.from}</span>
-        <span style="flex:1;text-align:center;color:var(--cream-m);font-size:13px">โอน →</span>
-        <span style="font-size:15px;color:var(--win)">${tx.to}</span>
-        <span style="font-size:20px;font-weight:600;color:var(--gold);margin-left:8px">${tx.amt.toLocaleString()}฿</span>
+    transfers=`<div style="font-size:13px;letter-spacing:2px;color:var(--gold);margin:24px 0 12px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">รายการจ่ายเงิน (ใครโอนให้ใคร)</div>
+      ${txs.map(tx=>`<div style="display:flex;align-items:center;justify-content:space-between;background:var(--mg);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px 16px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:16px;color:var(--lose);font-weight:500">${tx.from}</span>
+          <span style="color:var(--cream-m);font-size:12px;background:rgba(255,255,255,0.05);padding:3px 8px;border-radius:12px">จ่ายให้ ➔</span>
+          <span style="font-size:16px;color:var(--win);font-weight:500">${tx.to}</span>
+        </div>
+        <span style="font-size:22px;font-weight:600;color:var(--gold)">${tx.amt.toLocaleString()} <span style="font-size:14px">฿</span></span>
       </div>`).join('')}`;
   }
 
@@ -1906,18 +1934,13 @@ function buildMoney(){
     <div style="font-size:11px;letter-spacing:3px;color:var(--gold);margin:16px 0 10px;padding-bottom:7px;border-bottom:1px solid var(--gold-d)">แยกตามเกม</div>
     ${gameBreakdown}
     <div style="margin-top:16px;background:rgba(200,168,75,0.08);border:1px solid rgba(200,168,75,0.25);border-radius:20px;padding:8px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center">
-      <span style="font-size:13px;color:var(--cream-m)">⛳ รู้ไหม? ประกันกอล์ฟครอบคลุมถึง Hole-in-One โบนัสด้วยนะ</span>
+      <span style="font-size:13px;color:var(--cream-m)">⛳ รู้ไหม? ประกันกอล์ฟครอบคลุม Hole-in-One โบนัสด้วยนะ</span>
       <a href="https://insure.724.co.th/golf-insure/u/AM00035138" target="_blank" style="font-size:13px;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(200,168,75,0.4);white-space:nowrap">ดูรายละเอียด → www.ศรีกรุง.com</a>
     </div>`;
 }
 
-function goResults(){
-  if(!gameStarted){alert('กรุณาตั้งค่าและเริ่มเกมก่อนครับ');return;}
-  buildResults();renderSaved();goTab('results');
-}
-
 function newGame(){
-  if(!confirm('เริ่มเกมใหม่?'))return;
+  if(!confirm('เริ่มเกมใหม่? ข้อมูลปัจจุบันจะถูกลบทั้งหมด'))return;
   gameStarted=false;players=[];scores=[];currentHole=0;
   clearSession();
   document.getElementById('single-hole-wrap').innerHTML='';
@@ -1953,25 +1976,17 @@ function saveSession(){
 }
 function clearSession(){
   try{localStorage.removeItem(SESSION_KEY);}catch(e){}
-  document.getElementById('resume-banner').style.display='none';
 }
-function checkSession(){
+function checkSessionAndAutoLoad(){
   try{
     const raw=localStorage.getItem(SESSION_KEY);
-    if(!raw)return;
-    const data=JSON.parse(raw);
-    if(!data.gameStarted)return;
-    const banner=document.getElementById('resume-banner');
-    banner.style.display='flex';
+    if(raw){
+      const data=JSON.parse(raw);
+      if(data.gameStarted) {
+        applySession(data);
+      }
+    }
   }catch(e){}
-}
-function resumeSession(){
-  try{
-    const raw=localStorage.getItem(SESSION_KEY);
-    if(!raw)return;
-    applySession(JSON.parse(raw));
-    document.getElementById('resume-banner').style.display='none';
-  }catch(e){alert('โหลด session ไม่ได้ครับ');}
 }
 function applySession(data){
   pars=[...data.pars];
@@ -1993,13 +2008,14 @@ function applySession(data){
 
   gameStarted=true;
   currentHole=0;
-  buildParGrid(); // Re-sync frontend setup grid with saved pars
+  buildParGrid(); 
   buildProgressBar();
   showHole(0,'in');
   updateScoreStrip();
   goTab('scorecard');
   updateHdrInfo();
 }
+
 function exportSession(){
   if(!gameStarted){alert('กรุณาเริ่มเกมก่อนครับ');return;}
   const data=getSessionData();
@@ -2032,7 +2048,8 @@ function handleImport(e){
 // Auto-save hook
 function autoSave(){saveSession();}
 
-window.addEventListener('load',()=>checkSession());
+// Auto-Load on startup
+window.addEventListener('load',()=>checkSessionAndAutoLoad());
 
 </script>
 </body>
